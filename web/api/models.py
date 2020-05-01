@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
-from database_tools import db
+from db_config import db
 
 
 class Person(db.Model):
