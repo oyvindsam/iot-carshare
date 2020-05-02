@@ -1,6 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 
-from db_config import db
+
+db = SQLAlchemy()
+ma = Marshmallow()
 
 
 class Person(db.Model):
@@ -62,3 +65,41 @@ class BookingStatus(db.Model):
     status = db.Column(db.String(20), nullable=False, unique=True)
 
 
+class PersonSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Person
+
+
+class PersonTypeSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = PersonType
+
+
+class CarSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Car
+
+
+class CarManufacturerSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = CarManufacturer
+
+
+class CarTypeSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = CarType
+
+
+class CarColourSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = CarColour
+
+
+class BookingSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Booking
+
+
+class BookingStatusSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = BookingStatus
