@@ -108,6 +108,11 @@ class CarColourSchema(ma.SQLAlchemyAutoSchema):
 class BookingSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Booking
+        include_fk = True
+
+    @post_load
+    def make_booking(self, data, **kwargs):
+        return Booking(**data)
 
 
 class BookingStatusSchema(ma.SQLAlchemyAutoSchema):
