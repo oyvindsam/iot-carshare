@@ -68,6 +68,12 @@ class BookingStatus(db.Model):
 class PersonSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Person
+        include_fk = True
+
+    # return an actual Person instance after loading json data
+    @post_load
+    def make_person(self, data, **kwargs):
+        return Person(**data)
 
 
 class PersonTypeSchema(ma.SQLAlchemyAutoSchema):
