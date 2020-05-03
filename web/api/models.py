@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-
+from marshmallow import post_load
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -73,6 +73,10 @@ class PersonSchema(ma.SQLAlchemyAutoSchema):
 class PersonTypeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = PersonType
+
+    @post_load
+    def make_person_type(self, data, **kwargs):
+        return PersonType(**data)
 
 
 class CarSchema(ma.SQLAlchemyAutoSchema):
