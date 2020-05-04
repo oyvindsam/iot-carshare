@@ -91,6 +91,7 @@ class DummyCarColour:
 
 class DummyBooking:
     b1 = Booking(
+        id=1,
         car_id=1,
         person_id=1,
         start_time=datetime.now(),
@@ -98,7 +99,8 @@ class DummyBooking:
         booking_status=1
     )
 
-    b1_no_id_json = json.dumps({
+    b1_json = json.dumps({
+        'id': 1,
         'car_id': 1,
         'person_id': 1,
         'start_time': '2020-05-03T21:2',

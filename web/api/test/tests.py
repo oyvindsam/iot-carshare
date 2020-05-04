@@ -67,9 +67,10 @@ class ModelTest(TestCase):
             self.assertEqual(type(person), Person)
 
             booking_schema = BookingSchema()
+            # deserialize to json string
             booking_json = booking_schema.dumps(DummyBooking.b1)
-            # TODO: fix serializing datetime field
-            booking = booking_schema.loads(booking_json)
-
+            # serialize from json string
+            booking = booking_schema.loads(DummyBooking.b1_json)
+            self.assertEqual(type(booking), Booking)
 
 

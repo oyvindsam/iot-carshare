@@ -54,8 +54,8 @@ class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     car_id = db.Column(db.Integer, db.ForeignKey('car.id'), nullable=False)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
-    start_time = db.Column(db.Time, nullable=False)
-    end_time = db.Column(db.Time, nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
     booking_status = db.Column(db.Integer, db.ForeignKey('booking_status.id'),
                                nullable=False)
 
