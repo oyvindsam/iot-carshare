@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from marshmallow import post_load
+from marshmallow import post_load, validate, fields
+from marshmallow_sqlalchemy import auto_field
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -65,10 +66,15 @@ class BookingStatus(db.Model):
     status = db.Column(db.String(20), nullable=False, unique=True)
 
 
+not_blank = validate.Length(min=1, error='Field cannot be blank')
+
+
 class PersonSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Person
         include_fk = True
+
+    first_name = auto_field(validate=not_blank)
 
     # return an actual Person instance after loading json data
     @post_load
