@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, abort
+from flask_marshmallow import Schema
 
-from .models import db, Person, PersonSchema, PersonTypeSchema
+from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema
 
 api = Blueprint('api', __name__, url_prefix='/api/')
 
@@ -25,6 +26,8 @@ def get_person(username: str):
 def add_person():
     schema = PersonSchema()
     person = schema.loads(request.get_json())
+    if person.id is not None:
+        return abort(409)
     db.session.add(person)
     db.session.commit()
     return schema.jsonify(person), 201
@@ -37,3 +40,15 @@ def add_person_type():
     db.session.add(person_type)
     db.session.commit()
     return schema.jsonify(person_type), 201
+
+
+@api.route('/booking', methods=['POST'])
+def add_booking():
+    schema = BookingSchema()
+    booking = schema.loads(request.get_json())
+    if booking.id is not None:
+        return abort(409)
+    db.session.add(booking)
+    db.session.commit()
+    return schema.jsonify(booking), 201
+

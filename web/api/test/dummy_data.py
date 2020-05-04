@@ -27,6 +27,15 @@ class DummyPerson:
         face=None
     )
 
+    p1_no_id_json = json.dumps({
+        'username': 'test',
+        'first_name': 'first',
+        'last_name': 'last',
+        'email': 'test@gmail.com',
+        'person_type': 1,
+        'password_hashed': 'password',
+    })
+
     p1_id_json = json.dumps({
         'id': 1,
         'username': 'test',
@@ -54,7 +63,6 @@ class DummyPersonType:
     )
 
     pt1_json = json.dumps({
-        'id': 1,
         'type': 'Customer'
     })
 
@@ -100,6 +108,14 @@ class DummyBooking:
     )
 
     b1_json = json.dumps({
+        'car_id': 1,
+        'person_id': 1,
+        'start_time': '2020-05-03T21:2',
+        'end_time': '2020-05-04T02:2',
+        'booking_status': 1
+    })
+
+    b1_id_json = json.dumps({
         'id': 1,
         'car_id': 1,
         'person_id': 1,

@@ -48,10 +48,17 @@ class ApiTest(TestCase):
             response = app.post('/api/person_type', json=DummyPersonType.pt1_json)
             self.assertEqual(response.status_code, 201)
 
+    # id is automatically added by the db
+    def test_cant_add_person_with_id(self):
+        with self.app.test_client() as app:
+            response_post = app.post('/api/person', json=DummyPerson.p1_id_json)
+            self.assertEqual(response_post.status_code, 409)
+
+
     def test_add_get_person(self):
         with self.app.test_client() as app:
 
-            response_post = app.post('/api/person', json=DummyPerson.p1_id_json)
+            response_post = app.post('/api/person', json=DummyPerson.p1_no_id_json)
             self.assertEqual(response_post.status_code, 201)
 
             response_get = app.get(f'/api/person/{DummyPerson.p1.username}')
@@ -67,10 +74,23 @@ class ApiTest(TestCase):
 
     def test_add_two_persons_with_same_id_raises_error(self):
         with self.app.test_client() as app:
-            response_post = app.post('/api/person', json=DummyPerson.p1_id_json)
+            response_post = app.post('/api/person', json=DummyPerson.p1_no_id_json)
             self.assertEqual(response_post.status_code, 201)
             with self.assertRaises(IntegrityError) as cm:
-                app.post('/api/person', json=DummyPerson.p1_id_json)
+                response = app.post('/api/person', json=DummyPerson.p1_no_id_json)
+
+
+    def test_add_booking(self):
+        with self.app.test_client() as app:
+            response_post = app.post('/api/booking', json=DummyBooking.b1_json)
+            self.assertEqual(response_post.status_code, 201)
+
+    # id is automatically added by the db
+    def test_cant_add_booking_with_id(self):
+        with self.app.test_client() as app:
+            response_post = app.post('/api/booking', json=DummyBooking.b1_id_json)
+            self.assertEqual(response_post.status_code, 409)
+
 
 
 
