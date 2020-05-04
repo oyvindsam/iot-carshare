@@ -17,6 +17,7 @@ class Person(db.Model):
                             nullable=False)
     password_hashed = db.Column(db.String(80), nullable=False)
     face = db.Column(db.BLOB)
+    type = db.relationship('PersonType', backref='person', lazy=True)
 
 
 class PersonType(db.Model):
@@ -34,6 +35,8 @@ class Car(db.Model):
     latitude = db.Column(db.String(20))
     longitude = db.Column(db.String(20))
     hour_rate = db.Column(db.DECIMAL(5, 2), nullable=False)
+    manufacturer = db.relationship('CarManufacturer', backref='car', lazy=True)
+    type = db.relationship('CarType', backref='car', lazy=True)
 
 
 class CarManufacturer(db.Model):
@@ -59,6 +62,9 @@ class Booking(db.Model):
     end_time = db.Column(db.DateTime, nullable=False)
     booking_status = db.Column(db.Integer, db.ForeignKey('booking_status.id'),
                                nullable=False)
+    car = db.relationship('Car', backref='booking', lazy=True)
+    person = db.relationship('Person', backref='booking', lazy=True)
+    status = db.relationship('BookingStatus', backref='booking', lazy=True)
 
 
 class BookingStatus(db.Model):
