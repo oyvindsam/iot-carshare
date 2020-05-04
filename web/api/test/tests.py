@@ -1,8 +1,11 @@
 from unittest import TestCase
+
 from flask import Flask
+from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError
 
 from api.api import api
-from api.models import db, PersonSchema, PersonTypeSchema, BookingSchema
+from api.models import db, PersonSchema, BookingSchema
 from api.test.dummy_data import *
 
 
@@ -48,11 +51,27 @@ class ApiTest(TestCase):
     def test_add_get_person(self):
         with self.app.test_client() as app:
 
-            response_post = app.post('/api/person', json=DummyPerson.p1_json)
+            response_post = app.post('/api/person', json=DummyPerson.p1_id_json)
             self.assertEqual(response_post.status_code, 201)
 
             response_get = app.get(f'/api/person/{DummyPerson.p1.username}')
             self.assertEqual(response_get.status_code, 200)
+
+    def test_add_invalid_person_raises_error(self):
+        with self.app.test_client() as app:
+            # empty first_name among other missing fields
+            invalid_person = json.dumps({'username': 'valid', 'first_name': ''})
+            with self.assertRaises(ValidationError) as cm:
+                app.post('/api/person', json=invalid_person)
+            self.assertTrue('first_name' in cm.exception.messages)
+
+    def test_add_two_persons_with_same_id_raises_error(self):
+        with self.app.test_client() as app:
+            response_post = app.post('/api/person', json=DummyPerson.p1_id_json)
+            self.assertEqual(response_post.status_code, 201)
+            with self.assertRaises(IntegrityError) as cm:
+                app.post('/api/person', json=DummyPerson.p1_id_json)
+
 
 
 class ModelTest(TestCase):
@@ -72,5 +91,6 @@ class ModelTest(TestCase):
             # serialize from json string
             booking = booking_schema.loads(DummyBooking.b1_json)
             self.assertEqual(type(booking), Booking)
+
 
 
