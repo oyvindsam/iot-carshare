@@ -79,7 +79,6 @@ class ApiTest(TestCase):
             with self.assertRaises(IntegrityError) as cm:
                 response = app.post('/api/person', json=DummyPerson.p1_no_id_json)
 
-
     def test_add_booking(self):
         with self.app.test_client() as app:
             response_post = app.post('/api/booking', json=DummyBooking.b1_json)
@@ -91,12 +90,20 @@ class ApiTest(TestCase):
             response_post = app.post('/api/booking', json=DummyBooking.b1_id_json)
             self.assertEqual(response_post.status_code, 409)
 
+    def test_get_booking(self):
+        with self.app.test_client() as app:
+            response_post = app.post('/api/booking', json=DummyBooking.b1_json)
+            self.assertEqual(response_post.status_code, 201)
+            username = DummyPerson.p1.username
 
 
 
 class ModelTest(TestCase):
     def setUp(self) -> None:
         self.app = get_test_app()
+
+        # TODO: set up valid references in dummy data?
+
 
     # for now, only test data that might actually be used by the api for first assignment
     def test_schema_load_data_from_json(self):
@@ -111,6 +118,53 @@ class ModelTest(TestCase):
             # serialize from json string
             booking = booking_schema.loads(DummyBooking.b1_json)
             self.assertEqual(type(booking), Booking)
+
+    def test_person_type_relationship(self):
+        p1 = DummyPerson.create_random()
+        p2 = DummyPerson.create_random()
+        pt1 = DummyPersonType.pt1
+        p1.person_type = pt1.id
+        p2.person_type = pt1.id
+        with self.app.app_context():
+            db.session.add(pt1)
+            db.session.add(p1)
+            db.session.add(p2)
+            db.session.commit()
+
+            self.assertEqual(Person.query.filter_by(username=p1.username).first().type.id, pt1.id)
+            self.assertEqual(Person.query.filter_by(username=p2.username).first().type.id, pt1.id)
+            # check that person1 and person2 are in the list of persons backreferenced from personType
+            self.assertTrue(set([p1, p2]) <= set(PersonType.query.filter_by(id=pt1.id).first().person))
+
+    def test_car_relationships(self):
+        ct = DummyCarType.ct1
+        manu = DummyCarManufacturer.cm1
+        with self.app.app_context():
+            db.session.add(ct)
+            db.session.add(manu)
+            db.session.commit()
+            print(id)
+            # now retrieve and get id given by db
+            ct = CarType.query.filter_by(type=ct.type).first()
+            manu = CarManufacturer.query.filter_by(manufacturer=manu.manufacturer).first()
+
+        # be sure id point to valid type/manufacturer
+        car = DummyCar.c1
+        car.car_type = ct.id
+        car.car_manufacturer = manu.id
+
+        with self.app.app_context():
+            db.session.add(car)
+            db.session.commit()
+
+            # check references to/from car/carType/carManufacturer
+            self.assertEqual(Car.query.filter_by(reg_number=car.reg_number).first().type.id, ct.id)
+            self.assertEqual(Car.query.filter_by(reg_number=car.reg_number).first().manufacturer.id, manu.id)
+            self.assertTrue(set([car]) <= set(CarManufacturer.query.filter_by(manufacturer=manu.manufacturer).first().car))
+            self.assertTrue(set([car]) <= set(CarType.query.filter_by(type=ct.type).first().car))
+
+
+
 
 
 

@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timedelta
+from uuid import uuid4
 
 from api.models import PersonType, Person, Car, CarManufacturer, CarType, \
     CarColour, Booking
@@ -26,6 +27,19 @@ class DummyPerson:
         password_hashed='password',
         face=None
     )
+
+    @staticmethod
+    def create_random() -> Person:
+        return Person(
+            username=uuid4().__str__(),
+            first_name='random',
+            last_name='random',
+            email='random@gmail.com',
+            person_type=1,
+            password_hashed='password',
+            face=None
+        )
+
 
     p1_no_id_json = json.dumps({
         'username': 'test',
