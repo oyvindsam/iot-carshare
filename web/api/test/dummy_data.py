@@ -3,12 +3,21 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from api.models import PersonType, Person, Car, CarManufacturer, CarType, \
-    CarColour, Booking
+    CarColour, Booking, BookingStatus
+
+
+class DummyPersonType:
+    customer = PersonType(
+        type='Customer'
+    )
+
+    pt_customer_no_id_json = json.dumps({
+        'type': 'Customer'
+    })
 
 
 class DummyPerson:
-
-    p1 = Person(
+    person_customer1 = Person(
         username='test',
         first_name='first',
         last_name='last',
@@ -18,7 +27,7 @@ class DummyPerson:
         face=None
     )
 
-    p2 = Person(
+    person_customer2 = Person(
         username='test2',
         first_name='first2',
         last_name='last2',
@@ -70,22 +79,30 @@ class DummyPerson:
     })
 
 
-class DummyPersonType:
-    pt1 = PersonType(
-        id=1,
-        type='Customer'
+class DummyCarManufacturer:
+    bmw = CarManufacturer(
+        manufacturer='BMW'
     )
 
-    pt1_json = json.dumps({
-        'type': 'Customer'
-    })
+
+class DummyCarType:
+    suv = CarType(
+        type='Suv'
+    )
+
+
+class DummyCarColour:
+    white = CarColour(
+        colour='White'
+    )
 
 
 class DummyCar:
-    c1 = Car(
+    bmw_suv_white = Car(
         reg_number='abc123',
         car_manufacturer=1,
         car_type=1,
+        car_colour=1,
         seats=4,
         latitude='59.9139',
         longitude='10.7522',
@@ -93,27 +110,18 @@ class DummyCar:
     )
 
 
-class DummyCarManufacturer:
-    cm1 = CarManufacturer(
-        manufacturer='BMW'
+class DummyBookingStatus:
+    available = BookingStatus(
+        status='Available'
     )
 
-
-class DummyCarType:
-    ct1 = CarType(
-        type='Suv'
-    )
-
-
-class DummyCarColour:
-    cc = CarColour(
-        colour='White'
+    not_available = BookingStatus(
+        status='Not available'
     )
 
 
 class DummyBooking:
-    b1 = Booking(
-        id=1,
+    person1_car1_available = Booking(
         car_id=1,
         person_id=1,
         start_time=datetime.now(),

@@ -30,12 +30,14 @@ class Car(db.Model):
     reg_number = db.Column(db.String(6), nullable=False, unique=True)
     car_manufacturer = db.Column(db.Integer,
                                  db.ForeignKey('car_manufacturer.id'), nullable=False)
+    car_colour = db.Column(db.Integer, db.ForeignKey('car_colour.id'), nullable=False)
     car_type = db.Column(db.Integer, db.ForeignKey('car_type.id'), nullable=False)
     seats = db.Column(db.Integer, nullable=False)
     latitude = db.Column(db.String(20))
     longitude = db.Column(db.String(20))
     hour_rate = db.Column(db.DECIMAL(5, 2), nullable=False)
     manufacturer = db.relationship('CarManufacturer', backref='car', lazy=True)
+    color = db.relationship('CarColour', backref='car', lazy=True)
     type = db.relationship('CarType', backref='car', lazy=True)
 
 
