@@ -11,6 +11,12 @@ class DummyPersonType:
         type='Customer'
     )
 
+    @staticmethod
+    def create_random():
+        return PersonType(
+            type=uuid4().__str__()
+        )
+
     pt_customer_no_id_json = json.dumps({
         'type': 'Customer'
     })
@@ -84,11 +90,23 @@ class DummyCarManufacturer:
         manufacturer='BMW'
     )
 
+    @staticmethod
+    def create_random():
+        return CarManufacturer(
+            manufacturer=uuid4().__str__()
+        )
+
 
 class DummyCarType:
     suv = CarType(
         type='Suv'
     )
+
+    @staticmethod
+    def create_random():
+        return CarType(
+            type=uuid4().__str__()
+        )
 
 
 class DummyCarColour:
@@ -96,10 +114,29 @@ class DummyCarColour:
         colour='White'
     )
 
+    @staticmethod
+    def create_random():
+        return CarColour(
+            colour=uuid4().__str__()
+        )
+
 
 class DummyCar:
     bmw_suv_white = Car(
         reg_number='abc123',
+        car_manufacturer=1,
+        car_type=1,
+        car_colour=1,
+        seats=4,
+        latitude='59.9139',
+        longitude='10.7522',
+        hour_rate=20.5,
+    )
+
+    @staticmethod
+    def create_random():
+        return  Car(
+        reg_number=uuid4().__str__(),
         car_manufacturer=1,
         car_type=1,
         car_colour=1,
@@ -119,6 +156,12 @@ class DummyBookingStatus:
         status='Not available'
     )
 
+    @staticmethod
+    def create_random():
+        return BookingStatus(
+            status=uuid4().__str__()
+        )
+
 
 class DummyBooking:
     person1_car1_available = Booking(
@@ -128,6 +171,8 @@ class DummyBooking:
         end_time=datetime.now() + timedelta(hours=5),
         booking_status=1
     )
+
+
 
     b1_json = json.dumps({
         'car_id': 1,

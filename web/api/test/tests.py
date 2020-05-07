@@ -112,7 +112,8 @@ class ModelTest(TestCase):
         with self.app.app_context():
             p1 = add_to_db(DummyPerson.create_random())
             p2 = add_to_db(DummyPerson.create_random())
-            pt1 = add_to_db(DummyPersonType.customer)
+            pt1 = add_to_db(DummyPersonType.create_random())
+
             p1.person_type = pt1.id
             p2.person_type = pt1.id
 
@@ -123,19 +124,52 @@ class ModelTest(TestCase):
 
     def test_car_relationships(self):
         with self.app.app_context():
-            car = add_to_db(DummyCar.bmw_suv_white)
-            car_type = add_to_db(DummyCarType.suv)
-            manufacturer = add_to_db(DummyCarManufacturer.bmw)
+            car = add_to_db(DummyCar.create_random())
+            car_type = add_to_db(DummyCarType.create_random())
+            manufacturer = add_to_db(DummyCarManufacturer.create_random())
 
             # be sure id point to valid type/manufacturer
             car.car_type = car_type.id
             car.car_manufacturer = manufacturer.id
 
             # check references to/from car/carType/carManufacturer
+            self.assertEqual(car.type, car_type)
+            self.assertTrue(car in car.manufacturer.car)
+
             self.assertEqual(Car.query.filter_by(reg_number=car.reg_number).first().type.id, car_type.id)
             self.assertEqual(Car.query.filter_by(reg_number=car.reg_number).first().manufacturer.id, manufacturer.id)
             self.assertTrue(set([car]) <= set(CarManufacturer.query.filter_by(manufacturer=manufacturer.manufacturer).first().car))
             self.assertTrue(set([car]) <= set(CarType.query.filter_by(type=car_type.type).first().car))
+
+    def test_booking_relationships(self):
+        with self.app.app_context():
+            # set up objects and relationships
+            person1 = add_to_db(DummyPerson.create_random())
+            person_type1 = add_to_db(DummyPersonType.create_random())
+            person1.person_type = person_type1.id
+
+            car = add_to_db(DummyCar.create_random())
+            car_type = add_to_db(DummyCarType.create_random())
+            manufacturer = add_to_db(DummyCarManufacturer.create_random())
+            car_colour = add_to_db(DummyCarColour.create_random())
+            car.car_type = car_type.id
+            car.car_manufacturer = manufacturer.id
+            car.car_colour = car_colour.id
+
+            booking = add_to_db(DummyBooking.person1_car1_available)
+            booking_status = add_to_db(DummyBookingStatus.create_random())
+            booking.car_id = car.id
+            booking.person_id = person1.id
+            booking.booking_status = booking_status.id
+
+            self.assertEqual(booking.status, booking_status)
+            self.assertEqual(booking.car_id, car.id)
+            # circle reference works
+            self.assertTrue(booking in booking.person.booking)
+            self.assertTrue(person1 == Booking.query.filter_by(person=person1).first().person)
+            self.assertEqual(booking.person.type, person_type1)
+            # find all car person1 has booked
+            self.assertTrue(car in [b.car for b in person1.booking])
 
 
 class ValidationTest(TestCase):
