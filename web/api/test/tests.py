@@ -43,6 +43,8 @@ class ApiTest(TestCase):
     def setUp(self) -> None:
         self.app = get_test_app()
 
+    # Person tests
+
     def test_add_person_type(self):
         with self.app.test_client() as app:
             response = app.post('/api/person_type', json=DummyPersonType.pt_customer_no_id_json)
@@ -93,12 +95,35 @@ class ApiTest(TestCase):
             # should return same data
             self.assertEqual(response_error.json, person)
 
-
+    # Booking tests
 
     def test_add_booking(self):
-        with self.app.test_client() as app:
-            response_post = app.post('/api/booking', json=DummyBooking.b1_json)
-            self.assertEqual(response_post.status_code, 201)
+        with self.app.app_context():
+            # set up db for booking
+            person1 = add_to_db(DummyPerson.create_random())
+            person_type1 = add_to_db(DummyPersonType.create_random())
+            person1.person_type = person_type1.id
+
+            car = add_to_db(DummyCar.create_random())
+            car_type = add_to_db(DummyCarType.create_random())
+            manufacturer = add_to_db(DummyCarManufacturer.create_random())
+            car_colour = add_to_db(DummyCarColour.create_random())
+            car.car_type = car_type.id
+            car.car_manufacturer = manufacturer.id
+            car.car_colour = car_colour.id
+
+            booking = DummyBooking.person1_car1_available
+            booking_status = add_to_db(DummyBookingStatus.create_random())
+            booking.car_id = car.id
+            booking.person_id = person1.id
+            booking.booking_status = booking_status.id
+
+            with self.app.test_client() as app:
+                # serialize booking to json str
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking))
+
+                response_post = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
+                self.assertEqual(response_post.status_code, 201)
 
     # id is automatically added by the db
     def test_cant_add_booking_with_id(self):
@@ -118,7 +143,6 @@ def add_to_db(thing):
     db.session.add(thing)
     db.session.commit()
     return thing
-
 
 class ModelTest(TestCase):
     def setUp(self) -> None:

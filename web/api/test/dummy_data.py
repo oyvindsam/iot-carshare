@@ -55,7 +55,6 @@ class DummyPerson:
             face=None
         )
 
-
     p1_no_id_json = json.dumps({
         'username': 'test',
         'first_name': 'first',
