@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify, request, abort
-from flask_marshmallow import Schema
 from marshmallow import ValidationError
 
 from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
@@ -7,19 +6,24 @@ from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
 
 api = Blueprint('api', __name__, url_prefix='/api/')
 
+
 # TODO: standarize error handling. https://flask.palletsprojects.com/en/1.1.x/patterns/errorpages/
 @api.errorhandler(404)
 def resource_not_found(e):
     return jsonify(error=str(e)), 404
 
-@api.route('/person', methods=['GET'])
-def get_persons():
-    persons = Person.query.all()
-    result = PersonSchema(many=True).dump(persons)
 
-    return jsonify(result), 200
+@api.errorhandler(400)
+def bad_request(e):
+    return jsonify(error=str(e)), 400
 
 
+@api.errorhandler(409)
+def conflict(e):
+    return jsonify(error=str(e)), 409
+
+
+# authorized
 @api.route('/person/<string:username>', methods=['GET'])
 def get_person(username: str):
     persons = Person.query.filter_by(username=username).first()
@@ -30,36 +34,22 @@ def get_person(username: str):
     return jsonify(result), 200
 
 
-# TODO: update person option? (id already exists in db) -> needs to be authorized
+# add/create user
 @api.route('/person', methods=['POST'])
 def add_person():
-    # should client ever know id?
-    #schema = PersonSchema(exclude=['id'])
-    schema = PersonSchema()
-    data = request.get_json()
+    schema = PersonSchema(exclude=['id'])
     try:
-        person = schema.loads(data)
+        person = schema.loads(request.get_json())
     except ValidationError:
-        return jsonify(data), 400
-    if person.id is not None:
-        return jsonify(data), abort(409)  # db adds id
+        return abort(400, description='Invalid person data')
     if Person.query.filter_by(username=person.username).first() is not None:
-        return jsonify(data), 404
+        return abort(409, description='User exists')
     db.session.add(person)
     db.session.commit()
     return schema.jsonify(person), 201
 
 
-@api.route('/person_type', methods=['POST'])
-def add_person_type():
-    schema = PersonTypeSchema()
-    person_type = schema.loads(request.get_json())
-    db.session.add(person_type)
-    db.session.commit()
-    return schema.jsonify(person_type), 201
-
-
-# needs to be authorized!!
+# authorized
 @api.route('/person/<string:username>/booking', methods=['POST'])
 def add_booking(username: str):
     # bookings can't already have an id
@@ -73,17 +63,33 @@ def add_booking(username: str):
     person = Person.query.get(booking.person_id)
     car = Car.query.get(booking.car_id)
     status = BookingStatus.query.get(booking.status_id)
-    if username != person.username:
+    if person is None or username != person.username:
         return abort(403, description='Booking under wrong person')
     if None in [person, car, status]:
         return abort(400, description='Some booking data not found in db')
+
+    # TODO: check that person does not currently have an active booking,
+    # that car is available, status is available..
 
     db.session.add(booking)
     db.session.commit()
     return schema.jsonify(booking), 201
 
 
-# needs to be authorized!!
+# TODO: Test
+# authorized!!
+@api.route('/person/<string:username>/booking', methods=['GET'])
+def get_bookings(username: str):
+    schema = BookingSchema(many=True)
+    person = Person.query.filter_by(username=username).first()
+    if person is None:
+        return abort(404, 'User not found')
+    booking = person.booking
+
+    return schema.jsonify(booking), 200
+
+
+# authorized!!
 @api.route('/person/<string:username>/booking/<int:id>', methods=['GET'])
 def get_booking(username: str, id: int):
     schema = BookingSchema()
@@ -93,3 +99,20 @@ def get_booking(username: str, id: int):
 
     return schema.jsonify(booking), 200
 
+
+# Admin endpoints, not neccessary for assignemnt 2.
+# adding this data is allows to do manually
+@api.route('/person_type', methods=['POST'])
+def add_person_type():
+    schema = PersonTypeSchema()
+    person_type = schema.loads(request.get_json())
+    db.session.add(person_type)
+    db.session.commit()
+    return schema.jsonify(person_type), 201
+
+
+@api.route('/person', methods=['GET'])
+def get_persons():
+    persons = Person.query.all()
+    result = PersonSchema(many=True).dump(persons)
+    return jsonify(result), 200

@@ -124,6 +124,7 @@ class BookingSchema(ma.SQLAlchemyAutoSchema):
         model = Booking
         include_fk = True
 
+    # TODO: possible to check start_time is before end_time here?
     @post_load
     def make_booking(self, data, **kwargs):
         return Booking(**data)

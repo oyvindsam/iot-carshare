@@ -54,7 +54,7 @@ class ApiTest(TestCase):
     def test_cant_add_person_with_id(self):
         with self.app.test_client() as app:
             response_post = app.post('/api/person', json=DummyPerson.p1_id_json)
-            self.assertEqual(response_post.status_code, 409)
+            self.assertEqual(response_post.status_code, 400)
 
 
     def test_add_get_person(self):
@@ -88,12 +88,7 @@ class ApiTest(TestCase):
             response_valid = app.post('/api/person', json=person)
             response_error = app.post('/api/person', json=person)
             self.assertEqual(response_valid.status_code, 201)
-            self.assertEqual(response_error.status_code, 404)
-
-            # TODO: decide if client should know id
-            #self.assertTrue(response_valid.json['id'] is not None)
-            # should return same data
-            self.assertEqual(response_error.json, person)
+            self.assertEqual(response_error.status_code, 409)
 
     # Booking tests
 
