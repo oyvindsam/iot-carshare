@@ -64,20 +64,36 @@ class ApiTest(TestCase):
             response_get = app.get(f'/api/person/{DummyPerson.person_customer1.username}')
             self.assertEqual(response_get.status_code, 200)
 
+    def test_get_invalid_person(self):
+        with self.app.test_client() as app:
+
+            response_get = app.get('/api/person/userthatdontexist')
+
+            self.assertEqual(response_get.status_code, 404)
+
     def test_add_invalid_person_raises_error(self):
         with self.app.test_client() as app:
             # empty first_name among other missing fields
             invalid_person = json.dumps({'username': 'valid', 'first_name': ''})
-            with self.assertRaises(ValidationError) as cm:
-                app.post('/api/person', json=invalid_person)
-            self.assertTrue('first_name' in cm.exception.messages)
+            response = app.post('/api/person', json=invalid_person)
+            self.assertTrue(response.status_code, 404)
 
-    def test_add_two_persons_with_same_id_raises_error(self):
+    def test_add_two_persons_with_same_username_raises_error(self):
         with self.app.test_client() as app:
-            response_post = app.post('/api/person', json=DummyPerson.p1_no_id_json)
-            self.assertEqual(response_post.status_code, 201)
-            with self.assertRaises(IntegrityError) as cm:
-                response = app.post('/api/person', json=DummyPerson.p1_no_id_json)
+            person = DummyPerson.p1_no_id_json
+
+            person['username']: uuid4().__str__()
+            response_valid = app.post('/api/person', json=person)
+            response_error = app.post('/api/person', json=person)
+            self.assertEqual(response_valid.status_code, 201)
+            self.assertEqual(response_error.status_code, 404)
+
+            # TODO: decide if client should know id
+            #self.assertTrue(response_valid.json['id'] is not None)
+            # should return same data
+            self.assertEqual(response_error.json, person)
+
+
 
     def test_add_booking(self):
         with self.app.test_client() as app:
