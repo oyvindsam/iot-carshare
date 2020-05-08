@@ -116,26 +116,44 @@ class ApiTest(TestCase):
             booking_status = add_to_db(DummyBookingStatus.create_random())
             booking.car_id = car.id
             booking.person_id = person1.id
-            booking.booking_status = booking_status.id
+            booking.status_id = booking_status.id
 
             with self.app.test_client() as app:
                 # serialize booking to json str
                 booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking))
 
-                response_post = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
-                self.assertEqual(response_post.status_code, 201)
+                response_valid = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
+                self.assertEqual(response_valid.status_code, 201)
 
-    # id is automatically added by the db
-    def test_cant_add_booking_with_id(self):
-        with self.app.test_client() as app:
-            response_post = app.post('/api/booking', json=DummyBooking.b1_id_json)
-            self.assertEqual(response_post.status_code, 409)
+                # post to username that does not match booking person username
+                response_wrong_username = app.post(f"/api/person/wrongusername/booking", json=booking_jsonstr)
+                self.assertEqual(response_wrong_username.status_code, 403)
 
-    def test_get_booking(self):
-        with self.app.test_client() as app:
-            response_post = app.post('/api/booking', json=DummyBooking.b1_json)
-            self.assertEqual(response_post.status_code, 201)
-            username = DummyPerson.person_customer1.username
+                # give valid data that does not match db
+                booking.car_id = -1
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking))
+                response_invalid_data = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
+                self.assertEqual(response_invalid_data.status_code, 400)
+
+                # give invalid data (missing car id)
+                booking_jsonstr = json.dumps({
+                    'car_id': '',
+                    'person_id': 1,
+                    'start_time': '2020-05-03T21:2',
+                    'end_time': '2020-05-04T02:2',
+                    'status_id': 1
+                })
+                response_invalid_data = app.post(f"/api/person/{person1.username}/booking",json=booking_jsonstr)
+                self.assertEqual(response_invalid_data.status_code, 400)
+
+                # TODO: test adding with id
+
+                # this pattern might work better than having gigantic test methods
+                def get_booking():
+                    response_get = app.get(f'/api/person/{person1.username}/booking')
+                    self.assertEqual(response_get.status_code, 200)
+                #get_booking()
+
 
 
 # by calling commit 'thing' will be assigned an id
@@ -200,7 +218,7 @@ class ModelTest(TestCase):
             booking_status = add_to_db(DummyBookingStatus.create_random())
             booking.car_id = car.id
             booking.person_id = person1.id
-            booking.booking_status = booking_status.id
+            booking.status_id = booking_status.id
 
             self.assertEqual(booking.status, booking_status)
             self.assertEqual(booking.car_id, car.id)

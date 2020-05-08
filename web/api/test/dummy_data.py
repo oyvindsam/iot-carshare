@@ -168,7 +168,7 @@ class DummyBooking:
         person_id=1,
         start_time=datetime.now(),
         end_time=datetime.now() + timedelta(hours=5),
-        booking_status=1
+        status_id=1
     )
 
 
@@ -178,7 +178,7 @@ class DummyBooking:
         'person_id': 1,
         'start_time': '2020-05-03T21:2',
         'end_time': '2020-05-04T02:2',
-        'booking_status': 1
+        'status_id': 1
     })
 
     b1_id_json = json.dumps({
@@ -187,5 +187,5 @@ class DummyBooking:
         'person_id': 1,
         'start_time': '2020-05-03T21:2',
         'end_time': '2020-05-04T02:2',
-        'booking_status': 1
+        'status_id': 1
     })

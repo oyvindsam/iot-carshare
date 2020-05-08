@@ -62,8 +62,8 @@ class Booking(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
-    booking_status = db.Column(db.Integer, db.ForeignKey('booking_status.id'),
-                               nullable=False)
+    status_id = db.Column(db.Integer, db.ForeignKey('booking_status.id'),
+                          nullable=False)
     car = db.relationship('Car', backref='booking', lazy=True)
     person = db.relationship('Person', backref='booking', lazy=True)
     status = db.relationship('BookingStatus', backref='booking', lazy=True)

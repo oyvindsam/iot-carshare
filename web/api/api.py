@@ -3,7 +3,7 @@ from flask_marshmallow import Schema
 from marshmallow import ValidationError
 
 from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
-    Booking
+    Booking, Car, BookingStatus
 
 api = Blueprint('api', __name__, url_prefix='/api/')
 
@@ -62,26 +62,30 @@ def add_person_type():
 # needs to be authorized!!
 @api.route('/person/<string:username>/booking', methods=['POST'])
 def add_booking(username: str):
-    print("here")
-    req = request
+    # bookings can't already have an id
     schema = BookingSchema(exclude=['id'])
-    data = request.get_json()
     try:
         booking = schema.loads(request.get_json())
     except ValidationError as ve:
         return abort(400, description='Invalid booking data')  # wow generic message
-    if booking.id is not None:
-        return abort(409)
-    booking_person = Person.query.get(booking.person_id)
-    if username != booking_person.username:
+
+    # check that references to data in db is valid
+    person = Person.query.get(booking.person_id)
+    car = Car.query.get(booking.car_id)
+    status = BookingStatus.query.get(booking.status_id)
+    if username != person.username:
         return abort(403, description='Booking under wrong person')
+    if None in [person, car, status]:
+        return abort(400, description='Some booking data not found in db')
+
     db.session.add(booking)
     db.session.commit()
     return schema.jsonify(booking), 201
 
+
 # needs to be authorized!!
 @api.route('/person/<string:username>/booking/<int:id>', methods=['GET'])
-def get_booking(username: str):
+def get_booking(username: str, id: int):
     schema = BookingSchema()
     booking = Booking.query.get(id)
     if booking is None or booking.person.username != username:
