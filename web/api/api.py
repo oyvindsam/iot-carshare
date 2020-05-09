@@ -2,7 +2,9 @@ from flask import Blueprint, jsonify, request, abort
 from marshmallow import ValidationError
 
 from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
-    Booking, Car, BookingStatus, CarSchema
+    Booking, Car, BookingStatus, CarSchema, CarManufacturer, \
+    CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema, \
+    BookingStatusSchema
 
 api = Blueprint('api', __name__, url_prefix='/api/')
 
@@ -104,6 +106,34 @@ def get_booking(username: str, id: int):
 def get_cars():
     cars = Car.query.all()
     result = CarSchema(many=True).dumps(cars)
+    return jsonify(result), 200
+
+
+@api.route('/car-manufacturer', methods=['GET'])
+def get_manufacturers():
+    manufacturers = CarManufacturer.query.all()
+    result = CarManufacturerSchema(many=True).dumps(manufacturers)
+    return jsonify(result), 200
+
+
+@api.route('/car-type', methods=['GET'])
+def get_car_types():
+    types = CarType.query.all()
+    result = CarTypeSchema(many=True).dumps(types)
+    return jsonify(result), 200
+
+
+@api.route('/car-colour', methods=['GET'])
+def get_car_colours():
+    colours = CarColour.query.all()
+    result = CarColourSchema(many=True).dumps(colours)
+    return jsonify(result), 200
+
+
+@api.route('/booking-status', methods=['GET'])
+def get_booking_statuses():
+    statuses = BookingStatus.query.all()
+    result = BookingStatusSchema(many=True).dumps(statuses)
     return jsonify(result), 200
 
 
