@@ -1,6 +1,9 @@
+from datetime import datetime
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from marshmallow import post_load, validate, fields
+from marshmallow import post_load, validate, fields, ValidationError, \
+    validates_schema
 from marshmallow_sqlalchemy import auto_field
 
 db = SQLAlchemy()
@@ -8,6 +11,9 @@ ma = Marshmallow()
 
 
 class Person(db.Model):
+    """
+    Person SQLAlchemy class
+    """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
     first_name = db.Column(db.String(40), nullable=False)
@@ -21,11 +27,17 @@ class Person(db.Model):
 
 
 class PersonType(db.Model):
+    """
+    PersonType SQLAlchemy class
+    """
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(40), nullable=False, unique=True)
 
 
 class Car(db.Model):
+    """
+    Car SQLAlchemy class
+    """
     id = db.Column(db.Integer, primary_key=True)
     reg_number = db.Column(db.String(6), nullable=False, unique=True)
     car_manufacturer = db.Column(db.Integer,
@@ -42,21 +54,33 @@ class Car(db.Model):
 
 
 class CarManufacturer(db.Model):
+    """
+    CarManufacturer SQLAlchemy class
+    """
     id = db.Column(db.Integer, primary_key=True)
     manufacturer = db.Column(db.String(20), nullable=False, unique=True)
 
 
 class CarType(db.Model):
+    """
+    CarType SQLAlchemy class
+    """
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(20), nullable=False, unique=True)
 
 
 class CarColour(db.Model):
+    """
+    CarColour SQLAlchemy class
+    """
     id = db.Column(db.Integer, primary_key=True)
     colour = db.Column(db.String(20), nullable=False, unique=True)
 
 
 class Booking(db.Model):
+    """
+    Booking SQLAlchemy class
+    """
     id = db.Column(db.Integer, primary_key=True)
     car_id = db.Column(db.Integer, db.ForeignKey('car.id'), nullable=False)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
@@ -70,6 +94,9 @@ class Booking(db.Model):
 
 
 class BookingStatus(db.Model):
+    """
+    BookingStatus SQLAlchemy class
+    """
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.String(20), nullable=False, unique=True)
 
@@ -79,14 +106,27 @@ not_blank = validate.Length(min=1, error='Field cannot be blank')
 
 class PersonSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
+        """
+        Attributes:
+            include_fk (bool): When validating we want all foreign keys
+                to be present.
+        """
         model = Person
         include_fk = True
 
     first_name = auto_field(validate=not_blank)
 
-    # return an actual Person instance after loading json data
     @post_load
     def make_person(self, data, **kwargs):
+        """
+        This function runs after Schema().loads (validation code).
+
+        Args:
+            data: Valid data
+
+        Returns: Person
+
+        """
         return Person(**data)
 
 
@@ -96,6 +136,16 @@ class PersonTypeSchema(ma.SQLAlchemyAutoSchema):
 
     @post_load
     def make_person_type(self, data, **kwargs):
+        """
+        This function runs after Schema().loads (validation code).
+
+        Args:
+            data: Valid data
+            **kwargs: args passed automatically
+
+        Returns:
+
+        """
         return PersonType(**data)
 
 
@@ -124,7 +174,11 @@ class BookingSchema(ma.SQLAlchemyAutoSchema):
         model = Booking
         include_fk = True
 
-    # TODO: possible to check start_time is before end_time here?
+    @validates_schema
+    def validate_dates(self, data, **kwargs):
+        if data['end_time'] < data['start_time']:
+            raise ValidationError('end_time can not be before start_time')
+
     @post_load
     def make_booking(self, data, **kwargs):
         return Booking(**data)

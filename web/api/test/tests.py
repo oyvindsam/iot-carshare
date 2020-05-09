@@ -243,6 +243,19 @@ class ValidationTest(TestCase):
             booking = booking_schema.loads(DummyBooking.b1_json)
             self.assertEqual(type(booking), Booking)
 
+    def test_booking_end_date_before_start_date(self):
+        with self.app.app_context():
+            schema = BookingSchema(exclude=['id'])
+            booking = DummyBooking.person1_car1_available
+            booking.start_time = datetime.now() + timedelta(days=100)
+            booking.end_time = datetime.now()
+            booking_jsonstr = json.dumps(schema.dump(booking))
+            with self.assertRaises(ValidationError) as cm:
+                schema.loads(booking_jsonstr)
+            self.assertEqual(['end_time can not be before start_time'], cm.exception.messages['_schema'])
+
+
+
 
 
 
