@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, abort
 from marshmallow import ValidationError
 
 from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
-    Booking, Car, BookingStatus
+    Booking, Car, BookingStatus, CarSchema
 
 api = Blueprint('api', __name__, url_prefix='/api/')
 
@@ -98,6 +98,13 @@ def get_booking(username: str, id: int):
         return abort(404, description='Booking does not exist under this id/username!')
 
     return schema.jsonify(booking), 200
+
+
+@api.route('/car', methods=['GET'])
+def get_cars():
+    cars = Car.query.all()
+    result = CarSchema(many=True).dumps(cars)
+    return jsonify(result), 200
 
 
 # Admin endpoints, not neccessary for assignemnt 2.
