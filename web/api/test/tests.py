@@ -148,14 +148,34 @@ class ApiTest(TestCase):
     def test_add_valid_booking(self):
         with self.app.app_context():
             with self.app.test_client() as app:
-                # serialize booking to json str
-                booking1 = Booking.query.get(self.booking1)
                 person1 = Person.query.get(self.person1)
+                #person2 = add_to_db(duplicate_db_object(PersonSchema, person1))
+                # hacky way to make a new booking
+                booking1 = Booking.query.get(self.booking1)
+                booking2 = duplicate_db_object(BookingSchema, booking1)
 
-                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking1))
+                # add car not currently in a booking
+                booking2.car_id = self.car2
+                #booking2.start_time = datetime.now() + timedelta(hours=1)
+                #booking2.person_id = person2
+
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking2))
 
                 response_valid = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
                 self.assertEqual(response_valid.status_code, 201)
+
+    def test_add_booking_with_car_in_use(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                person1 = Person.query.get(self.person1)
+                # booking1 already has car 1 in use
+                booking2 = duplicate_db_object(BookingSchema, Booking.query.get(self.booking1))
+
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking2))
+
+                # Car is in use, should return error
+                response_error = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
+                self.assertEqual(response_error.status_code, 403)
 
     def test_add_invalid_booking_username_gives_error(self):
         with self.app.app_context():
@@ -273,11 +293,33 @@ class ApiTest(TestCase):
                 self.assertTrue(car3 not in response_cars)
 
 
-# by calling commit 'thing' will be assigned an id
 def add_to_db(thing):
+    """
+    Helper method to add things to db and return object
+    Args:
+        thing: SQLAlchemy object
+
+    Returns: SQLAlchemy object with id generated from db
+
+    """
     db.session.add(thing)
     db.session.commit()
     return thing
+
+
+def duplicate_db_object(schema, db_object):
+    """
+    Helper method to generate a duplicate of a db object, with new id.
+    Args:
+        schema: Marshmallow schema for object
+        db_object: SQLAlchemy object from db
+
+    Returns: New SQLAlchemy object (not added to db -> no id)
+
+    """
+    obj_dict = schema().dump(db_object)
+    del(obj_dict['id'])
+    return schema().load(obj_dict)
 
 
 class ModelTest(TestCase):

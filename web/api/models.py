@@ -93,7 +93,18 @@ class Booking(db.Model):
     person = db.relationship('Person', backref='booking', lazy=True)
     status = db.relationship('BookingStatus', backref='booking', lazy=True)
 
+    @classmethod
+    def filter_by_is_active(cls):
+        time = datetime.now()
+        return Booking.query.filter(
+            Booking.start_time < time,
+            Booking.end_time > time)
 
+    def is_active(self):
+        return self.start_time < datetime.now() < self.end_time
+
+
+# This might be redundant by above code..
 class BookingStatus(db.Model):
     """
     BookingStatus SQLAlchemy class

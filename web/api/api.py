@@ -94,8 +94,9 @@ def add_booking(username: str):
     if None in [person, car, status]:
         return abort(400, description='Some booking data not found in db')
 
-    # TODO: check that person does not currently have an active booking,
-    # that car is available, status is available..
+    # Check that no booking with car is currently active
+    if any([b.car_id == car.id for b in Booking.filter_by_is_active()]):
+        return abort(403, description='A booking with this car is already in session')
 
     db.session.add(booking)
     db.session.commit()
