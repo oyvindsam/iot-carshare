@@ -133,7 +133,7 @@ class ApiTest(TestCase):
             self.booking3 = add_to_db(booking3).id
 
     # Person tests
-
+#
     def test_add_person_type(self):
         with self.app.test_client() as app:
             response = app.post('/api/person_type', json=DummyPersonType.pt_customer_no_id_json)
@@ -153,7 +153,7 @@ class ApiTest(TestCase):
             response_post = app.post('/api/person', json=p1)
             self.assertEqual(response_post.status_code, 201)
 
-            response_get = app.get(f'/api/person/{DummyPerson.person_customer1.username}')
+            response_get = app.get(f'/api/person/{DummyPerson.p1.username}')
             self.assertEqual(response_get.status_code, 200)
 
     def test_get_invalid_person(self):
@@ -172,9 +172,8 @@ class ApiTest(TestCase):
 
     def test_add_two_persons_with_same_username_raises_error(self):
         with self.app.test_client() as app:
-            person = DummyPerson.p1_no_id_json
+            person = DummyPerson.creat_random_json()
 
-            person['username']: uuid4().__str__()
             response_valid = app.post('/api/person', json=person)
             response_error = app.post('/api/person', json=person)
             self.assertEqual(response_valid.status_code, 201)
@@ -227,6 +226,7 @@ class ApiTest(TestCase):
                     f"/api/person/wrongusername/booking", json=booking_jsonstr)
                 self.assertEqual(403, response_wrong_username.status_code)
 
+
     def test_add_booking_invalid_data_gives_error(self):
         with self.app.app_context():
             with self.app.test_client() as app:
@@ -234,14 +234,11 @@ class ApiTest(TestCase):
                 booking1 = Booking.query.get(self.booking1)
                 person1 = Person.query.get(self.person1)
 
-                booking_jsonstr = json.dumps(
-                    BookingSchema(exclude=['id']).dump(booking1))
-
                 # give valid data that does not match db
                 booking1.car_id = -1
                 booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking1))
                 response_invalid_data = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
-                self.assertEqual(400, response_invalid_data.status_code)
+                self.assertEqual(403, response_invalid_data.status_code)
 
                 # give invalid data (missing car id)
                 booking_jsonstr = json.dumps({
@@ -466,7 +463,7 @@ class ValidationTest(TestCase):
     def test_schema_load_data_from_json(self):
         with self.app.app_context():
             person_schema = PersonSchema()
-            person = person_schema.loads(DummyPerson.p2_json_no_id)
+            person = person_schema.loads(DummyPerson.creat_random_json(id=None))
             self.assertEqual(type(person), Person)
 
             booking_schema = BookingSchema()

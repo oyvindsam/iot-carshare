@@ -55,11 +55,10 @@ class DummyPerson:
             face=None
         )
 
-    def creat_random_json(id: int =-1, username=uuid4().__str__()[:20]):
-        if id != -1:
+    def creat_random_json(id: int =None):
+        if id is None:
             return json.dumps({
-                'id': id,
-                'username': username,
+                'username': uuid4().__str__()[:50],
                 'first_name': 'first',
                 'last_name': 'last',
                 'email': 'test@gmail.com',
@@ -68,7 +67,8 @@ class DummyPerson:
             })
 
         return json.dumps({
-            'username': username,
+            'id': id,
+            'username': uuid4().__str__()[:50],
             'first_name': 'first',
             'last_name': 'last',
             'email': 'test@gmail.com',

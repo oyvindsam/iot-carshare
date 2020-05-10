@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, abort
 from marshmallow import ValidationError
-from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError, IntegrityError
 
 from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
     Booking, Car, BookingStatus, CarSchema, CarManufacturer, \
@@ -86,13 +86,15 @@ def add_booking(username: str):
         return abort(400, description='Invalid booking data')  # wow generic message
 
     # check that references to data in db is valid
-    person = Person.query.get(booking.person_id)
-    car = Car.query.get(booking.car_id)
-    status = BookingStatus.query.get(booking.status_id)
-    if person is None or username != person.username:
-        return abort(403, description='Booking under wrong person')
+
+    # FIXME: this does not work when the references are wrong, wrap in try catch?
+    person = Person.query.filter_by(id=booking.person_id).first()
+    car = Car.query.filter_by(id=booking.car_id).first()
+    status = BookingStatus.query.filter_by(id=booking.status_id).first()
     if None in [person, car, status]:
-        return abort(400, description='Some booking data not found in db')
+        return abort(403, description='Booking references invalid id(s)')
+    if username != person.username:
+        return abort(403, description='Booking under wrong person')
 
     # Check that no booking with car is currently active
     if any([b.car_id == car.id for b in Booking.filter_by_is_active()]):
