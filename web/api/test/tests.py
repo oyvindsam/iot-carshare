@@ -5,7 +5,7 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 
 from api.api import api
-from api.models import db, PersonSchema, BookingSchema
+from api.models import db, PersonSchema, BookingSchema, CarSchema
 from api.test.dummy_data import *
 
 
@@ -141,14 +141,83 @@ class ApiTest(TestCase):
                 response_invalid_data = app.post(f"/api/person/{person1.username}/booking",json=booking_jsonstr)
                 self.assertEqual(response_invalid_data.status_code, 400)
 
-                # TODO: test adding with id
-
                 # this pattern might work better than having gigantic test methods
                 def get_booking():
                     response_get = app.get(f'/api/person/{person1.username}/booking')
                     self.assertEqual(response_get.status_code, 200)
                 #get_booking()
 
+    def test_getting_cars(self):
+
+        with self.app.app_context():
+
+
+            type1 = add_to_db(DummyCarType.create_random())
+            type2 = add_to_db(DummyCarType.create_random())
+            manufacturer = add_to_db(DummyCarManufacturer.create_random())
+            manufacturer2 = add_to_db(DummyCarManufacturer.create_random())
+            colour1 = add_to_db(DummyCarColour.create_random())
+            colour2 = add_to_db(DummyCarColour.create_random())
+
+            car1 = DummyCar.create_random()
+            car2 = DummyCar.create_random()
+            car3 = DummyCar.create_random()
+
+            car1.car_type = type1.id
+            car1.car_manufacturer = manufacturer.id
+            car1.car_colour = colour1.id
+            car2.car_type = type1.id
+            car2.car_manufacturer = manufacturer.id
+            car2.car_colour = colour1.id
+
+            car3.car_type = type1.id
+            car3.car_colour = colour2.id  # Different than the others
+            car3.car_manufacturer = manufacturer2.id  # Different than the others
+
+            car1 = add_to_db(car1)
+            car2 = add_to_db(car2)
+            car3 = add_to_db(car3)
+
+            with self.app.test_client() as app:
+
+                def get_all_cars():
+                    response = app.get('/api/car', query_string={})
+                    self.assertEqual(200, response.status_code)
+                    response_cars = CarSchema(many=True).loads(response.get_json())
+                    self.assertTrue(type(Car), type(response_cars[0]))
+
+                def test_valid_filters():
+                    filters = {
+                        'car_colour': colour1.id,
+                        'car_manufacturer': manufacturer.id
+                    }
+                    response = app.get('/api/car', query_string=filters)
+                    self.assertEqual(200, response.status_code)
+
+                    response_cars = CarSchema(many=True).loads(response.get_json())
+                    self.assertTrue(type(Car), type(response_cars[0]))
+                    self.assertTrue(all([car.car_colour == colour1.id for car in response_cars]))
+                    self.assertTrue(car3 not in response_cars)
+
+                def test_invalid_filters():
+                    # cannot filter on 'color', use 'car_colour'
+                    filters = {
+                        'colour': 'White'
+                    }
+                    response = app.get('/api/car', query_string=filters)
+                    self.assertEqual(404, response.status_code)
+
+                    # add invalid query parameters
+                    filters = {
+                        'car_colour': colour1.id,
+                        'invalid': 'invalid'
+                    }
+                    response = app.get('/api/car', query_string=filters)
+                    self.assertEqual(404, response.status_code)
+
+                test_valid_filters()
+                test_invalid_filters()
+                get_all_cars()
 
 
 # by calling commit 'thing' will be assigned an id

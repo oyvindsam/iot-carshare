@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, abort
 from marshmallow import ValidationError
+from sqlalchemy.exc import InvalidRequestError
 
 from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
     Booking, Car, BookingStatus, CarSchema, CarManufacturer, \
@@ -102,9 +103,22 @@ def get_booking(username: str, id: int):
     return schema.jsonify(booking), 200
 
 
-@api.route('/car', methods=['GET'])
+@api.route('/car', methods=['GET', 'POST'])
 def get_cars():
-    cars = Car.query.all()
+    """
+    Get cars based of query GET arguments/form POST arguments (supports both).
+    All arguments must be in the Cars class otherwise a 404 is returned
+
+    Returns: Json string of list of Cars with given arguments
+    """
+    filters = request.values.to_dict()
+    if len(filters) > 0:
+        try:
+            cars = Car.query.filter_by(**filters)
+        except (InvalidRequestError, AttributeError):
+            return abort(404, 'Query parameter(s)) invalid ')
+    else:
+        cars = Car.query.all()
     result = CarSchema(many=True).dumps(cars)
     return jsonify(result), 200
 
