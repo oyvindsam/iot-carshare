@@ -18,6 +18,7 @@ def get_test_app():
     db.init_app(app)
     app.register_blueprint(api)
     with app.app_context():
+        db.drop_all()
         db.create_all()
     return app
 
@@ -51,9 +52,17 @@ class ApiTest(TestCase):
         self.app = get_test_app()
 
         with self.app.app_context():
+
+            # set up persons
+            self.person_type1 = add_to_db(DummyPersonType.create_random()).id
+            person1 = DummyPerson.create_random()
+            person1.person_type = self.person_type1
+
+            self.person1 = add_to_db(person1).id
+
             # Note: self.type1 is the id (int), not a object.
-            self.type1 = add_to_db(DummyCarType.create_random()).id
-            self.type2 = add_to_db(DummyCarType.create_random()).id
+            self.car_type1 = add_to_db(DummyCarType.create_random()).id
+            self.car_type2 = add_to_db(DummyCarType.create_random()).id
             self.manufacturer1 = add_to_db(DummyCarManufacturer.create_random()).id
             self.manufacturer2 = add_to_db(DummyCarManufacturer.create_random()).id
             self.colour1 = add_to_db(DummyCarColour.create_random()).id
@@ -63,14 +72,14 @@ class ApiTest(TestCase):
             car2 = DummyCar.create_random()
             car3 = DummyCar.create_random()
 
-            car1.car_type = self.type1
+            car1.car_type = self.car_type1
             car1.car_manufacturer = self.manufacturer1
             car1.car_colour = self.colour1
-            car2.car_type = self.type1
+            car2.car_type = self.car_type1
             car2.car_manufacturer = self.manufacturer1
             car2.car_colour = self.colour1
 
-            car3.car_type = self.type1  # Same
+            car3.car_type = self.car_type1  # Same
             car3.car_colour = self.colour2  # Different than the others
             car3.car_manufacturer = self.manufacturer2  # Different than the others
 
@@ -78,6 +87,14 @@ class ApiTest(TestCase):
             self.car1 = add_to_db(car1).id
             self.car2 = add_to_db(car2).id
             self.car3 = add_to_db(car3).id
+
+            self.booking_status1 = add_to_db(DummyBookingStatus.create_random()).id
+            booking1 = DummyBooking.create_random()
+            booking1.car_id = self.car1
+            booking1.person_id = self.person1
+            booking1.status_id = self.booking_status1
+
+            self.booking1 = add_to_db(booking1).id
 
     # Person tests
 
@@ -128,41 +145,44 @@ class ApiTest(TestCase):
 
     # Booking tests
 
-    def test_add_booking(self):
+    def test_add_valid_booking(self):
         with self.app.app_context():
-            # set up db for booking
-            person1 = add_to_db(DummyPerson.create_random())
-            person_type1 = add_to_db(DummyPersonType.create_random())
-            person1.person_type = person_type1.id
-
-            car = add_to_db(DummyCar.create_random())
-            car_type = add_to_db(DummyCarType.create_random())
-            manufacturer = add_to_db(DummyCarManufacturer.create_random())
-            car_colour = add_to_db(DummyCarColour.create_random())
-            car.car_type = car_type.id
-            car.car_manufacturer = manufacturer.id
-            car.car_colour = car_colour.id
-
-            booking = DummyBooking.person1_car1_available
-            booking_status = add_to_db(DummyBookingStatus.create_random())
-            booking.car_id = car.id
-            booking.person_id = person1.id
-            booking.status_id = booking_status.id
-
             with self.app.test_client() as app:
                 # serialize booking to json str
-                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking))
+                booking1 = Booking.query.get(self.booking1)
+                person1 = Person.query.get(self.person1)
+
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking1))
 
                 response_valid = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
                 self.assertEqual(response_valid.status_code, 201)
 
+    def test_add_invalid_booking_username_gives_error(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                # serialize booking to json str
+                booking1 = Booking.query.get(self.booking1)
+                person1 = Person.query.get(self.person1)
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking1))
+
                 # post to username that does not match booking person username
-                response_wrong_username = app.post(f"/api/person/wrongusername/booking", json=booking_jsonstr)
+                response_wrong_username = app.post(
+                    f"/api/person/wrongusername/booking", json=booking_jsonstr)
                 self.assertEqual(response_wrong_username.status_code, 403)
 
+    def test_add_booking_invalid_data_gives_error(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                # serialize booking to json str
+                booking1 = Booking.query.get(self.booking1)
+                person1 = Person.query.get(self.person1)
+
+                booking_jsonstr = json.dumps(
+                    BookingSchema(exclude=['id']).dump(booking1))
+
                 # give valid data that does not match db
-                booking.car_id = -1
-                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking))
+                booking1.car_id = -1
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking1))
                 response_invalid_data = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
                 self.assertEqual(response_invalid_data.status_code, 400)
 
@@ -177,11 +197,18 @@ class ApiTest(TestCase):
                 response_invalid_data = app.post(f"/api/person/{person1.username}/booking",json=booking_jsonstr)
                 self.assertEqual(response_invalid_data.status_code, 400)
 
-                # this pattern might work better than having gigantic test methods
-                def get_booking():
-                    response_get = app.get(f'/api/person/{person1.username}/booking')
-                    self.assertEqual(response_get.status_code, 200)
-                #get_booking()
+    def test_get__valid_booking(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                # serialize booking to json str
+                booking1 = Booking.query.get(self.booking1)
+                person1 = Person.query.get(self.person1)
+
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking1))
+
+                response_get = app.get(
+                    f'/api/person/{person1.username}/booking')
+                self.assertEqual(response_get.status_code, 200)
 
     def test_get_all_cars(self):
         with self.app.app_context():

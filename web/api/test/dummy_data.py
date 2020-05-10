@@ -135,15 +135,15 @@ class DummyCar:
     @staticmethod
     def create_random():
         return  Car(
-        reg_number=uuid4().__str__()[:6],
-        car_manufacturer=1,
-        car_type=1,
-        car_colour=1,
-        seats=4,
-        latitude='59.9139',
-        longitude='10.7522',
-        hour_rate=20.5,
-    )
+            reg_number=uuid4().__str__()[:6],
+            car_manufacturer=1,
+            car_type=1,
+            car_colour=1,
+            seats=4,
+            latitude='59.9139',
+            longitude='10.7522',
+            hour_rate=20.5,
+        )
 
 
 class DummyBookingStatus:
@@ -170,6 +170,16 @@ class DummyBooking:
         end_time=datetime.now() + timedelta(hours=5),
         status_id=1
     )
+
+    @staticmethod
+    def create_random():
+        return Booking(
+            car_id=1,
+            person_id=1,
+            start_time=datetime.now(),
+            end_time=datetime.now() + timedelta(hours=5),
+            status_id=1
+        )
 
 
 
