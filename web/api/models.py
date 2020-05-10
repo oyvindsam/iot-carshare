@@ -153,6 +153,21 @@ class PersonTypeSchema(ma.SQLAlchemyAutoSchema):
 class CarSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Car
+        include_fk = True
+
+    @post_load
+    def make_car(self, data, **kwargs):
+        """
+        This function runs after Schema().loads (validation code).
+
+        Args:
+            data: Valid data
+            **kwargs: args passed automatically
+
+        Returns:
+
+        """
+        return Car(**data)
 
 
 class CarManufacturerSchema(ma.SQLAlchemyAutoSchema):
