@@ -5,7 +5,8 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 
 from api.api import api
-from api.models import db, PersonSchema, BookingSchema, CarSchema
+from api.models import db, PersonSchema, BookingSchema, CarSchema, \
+    BookingStatusSchema
 from api.test.dummy_data import *
 
 
@@ -89,12 +90,27 @@ class ApiTest(TestCase):
             self.car3 = add_to_db(car3).id
 
             self.booking_status1 = add_to_db(DummyBookingStatus.create_random()).id
+            # booking1 is now + 5 hours
             booking1 = DummyBooking.create_random()
             booking1.car_id = self.car1
             booking1.person_id = self.person1
             booking1.status_id = self.booking_status1
 
+            # booking 2 is in 1 day
+            booking2 = duplicate_db_object(BookingSchema, booking1)
+            booking2.car_id = car2.id
+            booking2.start_time = datetime.now() + timedelta(days=1)
+            booking2.end_time = datetime.now() + timedelta(days=1, hours=5)
+
+            # booking3 was yesterday
+            booking3 = duplicate_db_object(BookingSchema, booking1)
+            booking3.car_id = car2.id
+            booking3.start_time = datetime.now() - timedelta(days=2)
+            booking3.end_time = datetime.now() - timedelta(days=1, hours=5)
+
             self.booking1 = add_to_db(booking1).id
+            self.booking2 = add_to_db(booking2).id
+            self.booking3 = add_to_db(booking3).id
 
     # Person tests
 
@@ -291,6 +307,37 @@ class ApiTest(TestCase):
                 self.assertTrue(type(Car), type(response_cars[0]))
                 self.assertTrue(all([car.car_colour == self.colour1 for car in response_cars]))
                 self.assertTrue(car3 not in response_cars)
+
+    def test_get_booking_for_person(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                person1 = Person.query.get(self.person1)
+                booking1 = Booking.query.get(self.booking1)
+                response = app.get(f'api/person/{person1.username}/booking/{booking1.id}')
+                self.assertEqual(200, response.status_code)
+                data = response.get_json()
+                booking = BookingSchema().loads(data['booking'])
+                status = BookingStatusSchema().loads(data['status'])
+                person = PersonSchema().loads(data['person'])
+                car = CarSchema().loads(data['car'])
+                self.assertEqual(type(booking1), type(booking))
+
+    def test_get_bookings_for_person(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                person1 = Person.query.get(self.person1)
+                booking1 = Booking.query.get(self.booking1)
+                booking_status1 = BookingStatus.query.get(self.booking_status1)
+                car1 = Car.query.get(self.car1)
+                response = app.get(f'api/person/{person1.username}/booking')
+                self.assertEqual(200, response.status_code)
+                data = response.get_json()
+                self.assertIsNotNone(data)
+                for booking_info in data:
+                    self.assertEqual(type(booking1), type(BookingSchema().loads(booking_info['booking'])))
+                    self.assertEqual(type(booking_status1), type(BookingStatusSchema().loads(booking_info['status'])))
+                    self.assertEqual(type(person1), type(PersonSchema().loads(booking_info['person'])))
+                    self.assertEqual(type(car1), type(CarSchema().loads(booking_info['car'])))
 
 
 def add_to_db(thing):

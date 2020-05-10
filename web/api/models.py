@@ -93,6 +93,8 @@ class Booking(db.Model):
     person = db.relationship('Person', backref='booking', lazy=True)
     status = db.relationship('BookingStatus', backref='booking', lazy=True)
 
+    # Is a car available if it is after end_time, but user has _not_ returned it yet?.. no
+    # Or before end_time and user _has_ returned it. This argues for hard coded statuses
     @classmethod
     def filter_by_is_active(cls):
         time = datetime.now()
@@ -104,7 +106,9 @@ class Booking(db.Model):
         return self.start_time < datetime.now() < self.end_time
 
 
-# This might be redundant by above code..
+# TODO: This might be redundant by above code..
+# FIXME: Only have hardcoded AVAILABLE / UNAVAILABLE statuses?
+# Is a car available if it is after end_time, but user has not returned it yet?.. no
 class BookingStatus(db.Model):
     """
     BookingStatus SQLAlchemy class
@@ -201,16 +205,40 @@ class BookingSchema(ma.SQLAlchemyAutoSchema):
         model = Booking
         include_fk = True
 
+    @post_load
+    def make_booking(self, data, **kwargs):
+        """
+        This function runs after Schema().loads (validation code).
+
+        Args:
+            data: Valid data
+            **kwargs: args passed automatically
+
+        Returns:
+
+        """
+        return Booking(**data)
+
     @validates_schema
     def validate_dates(self, data, **kwargs):
         if data['end_time'] < data['start_time']:
             raise ValidationError('end_time can not be before start_time')
 
-    @post_load
-    def make_booking(self, data, **kwargs):
-        return Booking(**data)
-
 
 class BookingStatusSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = BookingStatus
+
+    @post_load
+    def make_booking_status(self, data, **kwargs):
+        """
+        This function runs after Schema().loads (validation code).
+
+        Args:
+            data: Valid data
+            **kwargs: args passed automatically
+
+        Returns:
+
+        """
+        return BookingStatus(**data)

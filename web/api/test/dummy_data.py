@@ -14,7 +14,7 @@ class DummyPersonType:
     @staticmethod
     def create_random():
         return PersonType(
-            type=uuid4().__str__()
+            type=uuid4().__str__()[:50]
         )
 
     pt_customer_no_id_json = json.dumps({
@@ -46,7 +46,7 @@ class DummyPerson:
     @staticmethod
     def create_random() -> Person:
         return Person(
-            username=uuid4().__str__(),
+            username=uuid4().__str__()[:50],
             first_name='random',
             last_name='random',
             email='random@gmail.com',
@@ -92,7 +92,7 @@ class DummyCarManufacturer:
     @staticmethod
     def create_random():
         return CarManufacturer(
-            manufacturer=uuid4().__str__()
+            manufacturer=uuid4().__str__()[:20]
         )
 
 
@@ -116,7 +116,7 @@ class DummyCarColour:
     @staticmethod
     def create_random():
         return CarColour(
-            colour=uuid4().__str__()
+            colour=uuid4().__str__()[:20]
         )
 
 
@@ -158,7 +158,7 @@ class DummyBookingStatus:
     @staticmethod
     def create_random():
         return BookingStatus(
-            status=uuid4().__str__()
+            status=uuid4().__str__()[:20]
         )
 
 

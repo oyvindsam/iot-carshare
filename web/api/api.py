@@ -98,6 +98,7 @@ def add_booking(username: str):
     if any([b.car_id == car.id for b in Booking.filter_by_is_active()]):
         return abort(403, description='A booking with this car is already in session')
 
+    # TODO: change booking status?
     db.session.add(booking)
     db.session.commit()
     return schema.jsonify(booking), 201
@@ -112,16 +113,40 @@ def get_bookings(username: str):
     Args:
         username: logged in user
 
-    Returns: All bookings for user, or 404
+    Returns: All bookings for user with additional info as json list string, example:
+        [
+            {
+                booking: ...,
+                status: ...,
+                person: ...,
+                car: ...,
+            },
+            {
+                booking: ...,
+                ...,
+            }
+        ]
 
     """
-    schema = BookingSchema(many=True)
+    schema = BookingSchema()
     person = Person.query.filter_by(username=username).first()
     if person is None:
         return abort(404, 'User not found')
-    booking = person.booking
+    bookings = person.booking
 
-    return schema.jsonify(booking), 200
+    status_schema = BookingStatusSchema()
+    person_schema = PersonSchema()
+    car_schema = CarSchema()
+
+    data = [{
+        'booking': schema.dumps(booking),
+        'status': status_schema.dumps(booking.status),
+        'person': person_schema.dumps(booking.person),
+        'car': car_schema.dumps(booking.car)
+    }
+        for booking in bookings]
+
+    return jsonify(data), 200
 
 
 # authorized!!
@@ -142,7 +167,16 @@ def get_booking(username: str, id: int):
     if booking is None or booking.person.username != username:
         return abort(404, description='Booking does not exist under this id/username!')
 
-    return schema.jsonify(booking), 200
+    status_json = BookingStatusSchema().dumps(booking.status)
+    person_json = PersonSchema().dumps(booking.person)
+    car_json = CarSchema().dumps(booking.car)
+
+    return jsonify({
+        'booking': schema.dumps(booking),
+        'status': status_json,
+        'person': person_json,
+        'car': car_json
+    }), 200
 
 
 @api.route('/car', methods=['GET', 'POST'])
