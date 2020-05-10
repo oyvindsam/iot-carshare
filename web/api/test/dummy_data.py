@@ -18,7 +18,7 @@ class DummyPersonType:
         )
 
     pt_customer_no_id_json = json.dumps({
-        'type': 'Customer'
+        'type': uuid4().__str__()[:20]
     })
 
 

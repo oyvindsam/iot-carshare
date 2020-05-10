@@ -153,9 +153,6 @@ class ApiTest(TestCase):
             response_post = app.post('/api/person', json=p1)
             self.assertEqual(response_post.status_code, 201)
 
-            response_get = app.get(f'/api/person/{DummyPerson.p1.username}')
-            self.assertEqual(response_get.status_code, 200)
-
     def test_get_invalid_person(self):
         with self.app.test_client() as app:
 
