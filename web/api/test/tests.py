@@ -227,6 +227,24 @@ class ApiTest(TestCase):
                 response = app.get('/api/car', query_string=filters)
                 self.assertEqual(404, response.status_code)
 
+    def test_form_post_get_filtered_cars(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                colour1 = CarColour.query.get(self.colour1)
+                manufacturer1 = CarManufacturer.query.get(self.manufacturer1)
+                car3 = Car.query.get(self.car3)
+                filters = {
+                    'car_colour': colour1.id,
+                    'car_manufacturer': manufacturer1.id
+                }
+                response = app.post('/api/car', data=filters)  # this simulates a form POST
+                self.assertEqual(200, response.status_code)
+
+                response_cars = CarSchema(many=True).loads(response.get_json())
+                self.assertTrue(type(Car), type(response_cars[0]))
+                self.assertTrue(all([car.car_colour == self.colour1 for car in response_cars]))
+                self.assertTrue(car3 not in response_cars)
+
 
 # by calling commit 'thing' will be assigned an id
 def add_to_db(thing):
