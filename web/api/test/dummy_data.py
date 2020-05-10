@@ -55,33 +55,26 @@ class DummyPerson:
             face=None
         )
 
-    p1_no_id_json = json.dumps({
-        'username': 'test',
-        'first_name': 'first',
-        'last_name': 'last',
-        'email': 'test@gmail.com',
-        'person_type': 1,
-        'password_hashed': 'password',
-    })
+    def creat_random_json(id: int =-1, username=uuid4().__str__()[:20]):
+        if id != -1:
+            return json.dumps({
+                'id': id,
+                'username': username,
+                'first_name': 'first',
+                'last_name': 'last',
+                'email': 'test@gmail.com',
+                'person_type': 1,
+                'password_hashed': 'password',
+            })
 
-    p1_id_json = json.dumps({
-        'id': 1,
-        'username': 'test',
-        'first_name': 'first',
-        'last_name': 'last',
-        'email': 'test@gmail.com',
-        'person_type': 1,
-        'password_hashed': 'password',
-    })
-
-    p2_json_no_id = json.dumps({
-        'username': 'test2',
-        'first_name': 'first2',
-        'last_name': 'last2',
-        'email': 'test2@gmail.com',
-        'person_type': 1,
-        'password_hashed': 'password',
-    })
+        return json.dumps({
+            'username': username,
+            'first_name': 'first',
+            'last_name': 'last',
+            'email': 'test@gmail.com',
+            'person_type': 1,
+            'password_hashed': 'password',
+        })
 
 
 class DummyCarManufacturer:

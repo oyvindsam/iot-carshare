@@ -142,14 +142,15 @@ class ApiTest(TestCase):
     # id is automatically added by the db
     def test_cant_add_person_with_id(self):
         with self.app.test_client() as app:
-            response_post = app.post('/api/person', json=DummyPerson.p1_id_json)
-            self.assertEqual(response_post.status_code, 400)
+            p1 = DummyPerson.creat_random_json(id=11)
+            response_post = app.post('/api/person', json=p1)
+            self.assertEqual(400, response_post.status_code)
 
 
     def test_add_get_person(self):
         with self.app.test_client() as app:
-
-            response_post = app.post('/api/person', json=DummyPerson.p1_no_id_json)
+            p1 = DummyPerson.creat_random_json()
+            response_post = app.post('/api/person', json=p1)
             self.assertEqual(response_post.status_code, 201)
 
             response_get = app.get(f'/api/person/{DummyPerson.person_customer1.username}')
