@@ -41,7 +41,43 @@ class DatabaseTest(TestCase):
 class ApiTest(TestCase):
 
     def setUp(self) -> None:
+        """
+        Testing with SQLAlchemy objects is a mess. What works is instead of
+        saving the reference to the db object in setUp, the id is saved instead.
+        Then in the test method you have to query on the id to get the
+        reference to the db object.
+
+        """
         self.app = get_test_app()
+
+        with self.app.app_context():
+            # Note: self.type1 is the id (int), not a object.
+            self.type1 = add_to_db(DummyCarType.create_random()).id
+            self.type2 = add_to_db(DummyCarType.create_random()).id
+            self.manufacturer1 = add_to_db(DummyCarManufacturer.create_random()).id
+            self.manufacturer2 = add_to_db(DummyCarManufacturer.create_random()).id
+            self.colour1 = add_to_db(DummyCarColour.create_random()).id
+            self.colour2 = add_to_db(DummyCarColour.create_random()).id
+
+            car1 = DummyCar.create_random()
+            car2 = DummyCar.create_random()
+            car3 = DummyCar.create_random()
+
+            car1.car_type = self.type1
+            car1.car_manufacturer = self.manufacturer1
+            car1.car_colour = self.colour1
+            car2.car_type = self.type1
+            car2.car_manufacturer = self.manufacturer1
+            car2.car_colour = self.colour1
+
+            car3.car_type = self.type1  # Same
+            car3.car_colour = self.colour2  # Different than the others
+            car3.car_manufacturer = self.manufacturer2  # Different than the others
+
+            # Finally add cars with correct foreign keys
+            self.car1 = add_to_db(car1).id
+            self.car2 = add_to_db(car2).id
+            self.car3 = add_to_db(car3).id
 
     # Person tests
 
@@ -147,77 +183,49 @@ class ApiTest(TestCase):
                     self.assertEqual(response_get.status_code, 200)
                 #get_booking()
 
-    def test_getting_cars(self):
-
+    def test_get_all_cars(self):
         with self.app.app_context():
-
-
-            type1 = add_to_db(DummyCarType.create_random())
-            type2 = add_to_db(DummyCarType.create_random())
-            manufacturer = add_to_db(DummyCarManufacturer.create_random())
-            manufacturer2 = add_to_db(DummyCarManufacturer.create_random())
-            colour1 = add_to_db(DummyCarColour.create_random())
-            colour2 = add_to_db(DummyCarColour.create_random())
-
-            car1 = DummyCar.create_random()
-            car2 = DummyCar.create_random()
-            car3 = DummyCar.create_random()
-
-            car1.car_type = type1.id
-            car1.car_manufacturer = manufacturer.id
-            car1.car_colour = colour1.id
-            car2.car_type = type1.id
-            car2.car_manufacturer = manufacturer.id
-            car2.car_colour = colour1.id
-
-            car3.car_type = type1.id
-            car3.car_colour = colour2.id  # Different than the others
-            car3.car_manufacturer = manufacturer2.id  # Different than the others
-
-            car1 = add_to_db(car1)
-            car2 = add_to_db(car2)
-            car3 = add_to_db(car3)
-
             with self.app.test_client() as app:
+                response = app.get('/api/car', query_string={})
+                self.assertEqual(200, response.status_code)
+                response_cars = CarSchema(many=True).loads(response.get_json())
+                self.assertTrue(type(Car), type(response_cars[0]))
 
-                def get_all_cars():
-                    response = app.get('/api/car', query_string={})
-                    self.assertEqual(200, response.status_code)
-                    response_cars = CarSchema(many=True).loads(response.get_json())
-                    self.assertTrue(type(Car), type(response_cars[0]))
+    def test_get_filtered_cars(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                colour1 = CarColour.query.get(self.colour1)
+                manufacturer1 = CarManufacturer.query.get(self.manufacturer1)
+                car3 = Car.query.get(self.car3)
+                filters = {
+                    'car_colour': colour1.id,
+                    'car_manufacturer': manufacturer1.id
+                }
+                response = app.get('/api/car', query_string=filters)
+                self.assertEqual(200, response.status_code)
 
-                def test_valid_filters():
-                    filters = {
-                        'car_colour': colour1.id,
-                        'car_manufacturer': manufacturer.id
-                    }
-                    response = app.get('/api/car', query_string=filters)
-                    self.assertEqual(200, response.status_code)
+                response_cars = CarSchema(many=True).loads(response.get_json())
+                self.assertTrue(type(Car), type(response_cars[0]))
+                self.assertTrue(all([car.car_colour == self.colour1 for car in response_cars]))
+                self.assertTrue(self.car3 not in response_cars)
 
-                    response_cars = CarSchema(many=True).loads(response.get_json())
-                    self.assertTrue(type(Car), type(response_cars[0]))
-                    self.assertTrue(all([car.car_colour == colour1.id for car in response_cars]))
-                    self.assertTrue(car3 not in response_cars)
+    def test_get_invalid_filtered_cars(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                # cannot filter on 'color', use 'car_colour'
+                filters = {
+                    'colour': 'White'
+                }
+                response = app.get('/api/car', query_string=filters)
+                self.assertEqual(404, response.status_code)
 
-                def test_invalid_filters():
-                    # cannot filter on 'color', use 'car_colour'
-                    filters = {
-                        'colour': 'White'
-                    }
-                    response = app.get('/api/car', query_string=filters)
-                    self.assertEqual(404, response.status_code)
-
-                    # add invalid query parameters
-                    filters = {
-                        'car_colour': colour1.id,
-                        'invalid': 'invalid'
-                    }
-                    response = app.get('/api/car', query_string=filters)
-                    self.assertEqual(404, response.status_code)
-
-                test_valid_filters()
-                test_invalid_filters()
-                get_all_cars()
+                # add invalid query parameters
+                filters = {
+                    'car_colour': self.colour1,
+                    'invalid': 'invalid'
+                }
+                response = app.get('/api/car', query_string=filters)
+                self.assertEqual(404, response.status_code)
 
 
 # by calling commit 'thing' will be assigned an id
@@ -225,6 +233,7 @@ def add_to_db(thing):
     db.session.add(thing)
     db.session.commit()
     return thing
+
 
 class ModelTest(TestCase):
     def setUp(self) -> None:
