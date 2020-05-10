@@ -8,9 +8,26 @@ from api.api import api
 from api.models import db, PersonSchema, BookingSchema, CarSchema, \
     BookingStatusSchema
 from api.test.dummy_data import *
+from app import create_app
 
+LOCAL = False
+
+def get_production_db_test_app():
+    app = create_app()
+
+    HOST = "35.228.215.119"
+    USER = "root"
+    PASSWORD = "carshare"
+    DATABASE = "carshare_db_test"
+    app.config[
+        "SQLALCHEMY_DATABASE_URI"] = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}"
+
+    return app
 
 def get_test_app():
+    if not LOCAL:
+        return get_production_db_test_app()
+
     app = Flask(__name__)
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:?cache=shared'
@@ -31,13 +48,16 @@ class DatabaseTest(TestCase):
 
     def test_add_person_to_db(self):
         with self.app.app_context():
-            db.session.add(DummyPerson.person_customer1)
-            db.session.add(DummyPerson.person_customer2)
+            p1 = DummyPerson.create_random()
+            p2 = DummyPerson.create_random()
+            db.session.add(p1)
+            db.session.add(p2)
             db.session.commit()
-            p1 = Person.query.filter_by(username=DummyPerson.person_customer1.username).first()
-            p2 = Person.query.filter_by(username=DummyPerson.person_customer2.username).first()
-            self.assertEqual(p1.username, DummyPerson.person_customer1.username)
-            self.assertTrue(p1.id < p2.id)
+
+            p11 = Person.query.filter_by(username=p1.username).first()
+            p22 = Person.query.filter_by(username=p2.username).first()
+            self.assertEqual(p1.username, p11.username)
+            self.assertTrue(p11.id < p22.id)
 
 
 class ApiTest(TestCase):
@@ -191,7 +211,7 @@ class ApiTest(TestCase):
 
                 # Car is in use, should return error
                 response_error = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
-                self.assertEqual(response_error.status_code, 403)
+                self.assertEqual(403, response_error.status_code)
 
     def test_add_invalid_booking_username_gives_error(self):
         with self.app.app_context():
@@ -204,7 +224,7 @@ class ApiTest(TestCase):
                 # post to username that does not match booking person username
                 response_wrong_username = app.post(
                     f"/api/person/wrongusername/booking", json=booking_jsonstr)
-                self.assertEqual(response_wrong_username.status_code, 403)
+                self.assertEqual(403, response_wrong_username.status_code)
 
     def test_add_booking_invalid_data_gives_error(self):
         with self.app.app_context():
@@ -220,7 +240,7 @@ class ApiTest(TestCase):
                 booking1.car_id = -1
                 booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking1))
                 response_invalid_data = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
-                self.assertEqual(response_invalid_data.status_code, 400)
+                self.assertEqual(400, response_invalid_data.status_code)
 
                 # give invalid data (missing car id)
                 booking_jsonstr = json.dumps({
@@ -231,7 +251,7 @@ class ApiTest(TestCase):
                     'status_id': 1
                 })
                 response_invalid_data = app.post(f"/api/person/{person1.username}/booking",json=booking_jsonstr)
-                self.assertEqual(response_invalid_data.status_code, 400)
+                self.assertEqual(400, response_invalid_data.status_code)
 
     def test_get__valid_booking(self):
         with self.app.app_context():

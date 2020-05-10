@@ -104,7 +104,7 @@ class DummyCarType:
     @staticmethod
     def create_random():
         return CarType(
-            type=uuid4().__str__()
+            type=uuid4().__str__()[:20]
         )
 
 
