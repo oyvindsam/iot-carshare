@@ -135,7 +135,7 @@ class DummyCar:
     @staticmethod
     def create_random():
         return  Car(
-        reg_number=uuid4().__str__(),
+        reg_number=uuid4().__str__()[:6],
         car_manufacturer=1,
         car_type=1,
         car_colour=1,
