@@ -137,7 +137,6 @@ def deactivate_booking(username: str, id: int):
         booking.status = BookingStatusEnum.FINISHED
     else:
         booking.status = BookingStatusEnum.CANCELLED
-    db.session.add(booking)
     db.session.commit()
     return 200
 
