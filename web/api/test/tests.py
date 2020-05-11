@@ -2,27 +2,21 @@ from unittest import TestCase
 
 from flask import Flask
 from marshmallow import ValidationError
-from sqlalchemy.exc import IntegrityError
 
 from api.api import api
-from api.models import db, PersonSchema, BookingSchema, CarSchema, \
-    BookingStatusSchema
+from api.models import db, PersonSchema, BookingSchema, CarSchema
 from api.test.dummy_data import *
 from app import create_app
 
-LOCAL = False
+LOCAL = True
+
 
 def get_production_db_test_app():
     app = create_app()
-
-    HOST = "35.228.215.119"
-    USER = "root"
-    PASSWORD = "carshare"
-    DATABASE = "carshare_db_test"
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"] = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}"
-
+    DB_URI = 'mysql://root:carshare@35.228.215.119/carshare_db_test'
+    app.config["SQLALCHEMY_DATABASE_URI"] = DB_URI
     return app
+
 
 def get_test_app():
     if not LOCAL:
@@ -36,7 +30,7 @@ def get_test_app():
     db.init_app(app)
     app.register_blueprint(api)
     with app.app_context():
-    #     db.drop_all()
+         db.drop_all()
          db.create_all()
     return app
 
@@ -109,12 +103,10 @@ class ApiTest(TestCase):
             self.car2 = add_to_db(car2).id
             self.car3 = add_to_db(car3).id
 
-            self.booking_status1 = add_to_db(DummyBookingStatus.create_random()).id
             # booking1 is now + 5 hours
             booking1 = DummyBooking.create_random()
             booking1.car_id = self.car1
             booking1.person_id = self.person1
-            booking1.status_id = self.booking_status1
 
             # booking 2 is in 1 day
             booking2 = duplicate_db_object(BookingSchema, booking1)
@@ -334,7 +326,6 @@ class ApiTest(TestCase):
                 self.assertEqual(200, response.status_code)
                 data = response.get_json()
                 booking = BookingSchema().loads(data['booking'])
-                status = BookingStatusSchema().loads(data['status'])
                 person = PersonSchema().loads(data['person'])
                 car = CarSchema().loads(data['car'])
                 self.assertEqual(type(booking1), type(booking))
@@ -344,7 +335,6 @@ class ApiTest(TestCase):
             with self.app.test_client() as app:
                 person1 = Person.query.get(self.person1)
                 booking1 = Booking.query.get(self.booking1)
-                booking_status1 = BookingStatus.query.get(self.booking_status1)
                 car1 = Car.query.get(self.car1)
                 response = app.get(f'api/person/{person1.username}/booking')
                 self.assertEqual(200, response.status_code)
@@ -352,7 +342,6 @@ class ApiTest(TestCase):
                 self.assertIsNotNone(data)
                 for booking_info in data:
                     self.assertEqual(type(booking1), type(BookingSchema().loads(booking_info['booking'])))
-                    self.assertEqual(type(booking_status1), type(BookingStatusSchema().loads(booking_info['status'])))
                     self.assertEqual(type(person1), type(PersonSchema().loads(booking_info['person'])))
                     self.assertEqual(type(car1), type(CarSchema().loads(booking_info['car'])))
 
@@ -439,12 +428,9 @@ class ModelTest(TestCase):
             car.car_colour = car_colour.id
 
             booking = add_to_db(DummyBooking.person1_car1_available)
-            booking_status = add_to_db(DummyBookingStatus.create_random())
             booking.car_id = car.id
             booking.person_id = person1.id
-            booking.status_id = booking_status.id
 
-            self.assertEqual(booking.status, booking_status)
             self.assertEqual(booking.car_id, car.id)
             # circle reference works
             self.assertTrue(booking in booking.person.booking)

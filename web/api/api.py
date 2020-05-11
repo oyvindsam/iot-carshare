@@ -1,14 +1,12 @@
 from flask import Blueprint, jsonify, request, abort
 from marshmallow import ValidationError
-from sqlalchemy.exc import InvalidRequestError, IntegrityError
+from sqlalchemy.exc import InvalidRequestError
 
 from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
-    Booking, Car, BookingStatus, CarSchema, CarManufacturer, \
-    CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema, \
-    BookingStatusSchema
+    Booking, Car, CarSchema, CarManufacturer, \
+    CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema
 
 api = Blueprint('api', __name__, url_prefix='/api/')
-
 
 # TODO: standarize error handling. https://flask.palletsprojects.com/en/1.1.x/patterns/errorpages/
 @api.errorhandler(404)
@@ -91,8 +89,7 @@ def add_booking(username: str):
     # or change the ORM with less strict references.. For now do not give invalid parameters
     person = Person.query.filter_by(id=booking.person_id).first()
     car = Car.query.filter_by(id=booking.car_id).first()
-    status = BookingStatus.query.filter_by(id=booking.status_id).first()
-    if None in [person, car, status]:
+    if None in [person, car]:
         return abort(403, description='Booking references invalid id(s)')
 
     if username != person.username:
@@ -138,13 +135,11 @@ def get_bookings(username: str):
         return abort(404, 'User not found')
     bookings = person.booking
 
-    status_schema = BookingStatusSchema()
     person_schema = PersonSchema()
     car_schema = CarSchema()
 
     data = [{
         'booking': schema.dumps(booking),
-        'status': status_schema.dumps(booking.status),
         'person': person_schema.dumps(booking.person),
         'car': car_schema.dumps(booking.car)
     }
@@ -171,13 +166,11 @@ def get_booking(username: str, id: int):
     if booking is None or booking.person.username != username:
         return abort(404, description='Booking does not exist under this id/username!')
 
-    status_json = BookingStatusSchema().dumps(booking.status)
     person_json = PersonSchema().dumps(booking.person)
     car_json = CarSchema().dumps(booking.car)
 
     return jsonify({
         'booking': schema.dumps(booking),
-        'status': status_json,
         'person': person_json,
         'car': car_json
     }), 200
@@ -242,19 +235,6 @@ def get_car_colours():
     """
     colours = CarColour.query.all()
     result = CarColourSchema(many=True).dumps(colours)
-    return jsonify(result), 200
-
-
-@api.route('/booking-status', methods=['GET'])
-def get_booking_statuses():
-    """
-    Get all booking statuses
-
-    Returns: All booking statuses as json list string
-
-    """
-    statuses = BookingStatus.query.all()
-    result = BookingStatusSchema(many=True).dumps(statuses)
     return jsonify(result), 200
 
 

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from api.models import PersonType, Person, Car, CarManufacturer, CarType, \
-    CarColour, Booking, BookingStatus
+    CarColour, Booking, BookingStatusEnum
 
 
 class DummyPersonType:
@@ -138,21 +138,21 @@ class DummyCar:
             hour_rate=20.5,
         )
 
-
-class DummyBookingStatus:
-    available = BookingStatus(
-        status='Available'
-    )
-
-    not_available = BookingStatus(
-        status='Not available'
-    )
-
-    @staticmethod
-    def create_random():
-        return BookingStatus(
-            status=uuid4().__str__()[:20]
-        )
+#
+# class DummyBookingStatus:
+#     available = BookingStatus(
+#         status='Available'
+#     )
+#
+#     not_available = BookingStatus(
+#         status='Not available'
+#     )
+#
+#     @staticmethod
+#     def create_random():
+#         return BookingStatus(
+#             status=uuid4().__str__()[:20]
+#         )
 
 
 class DummyBooking:
@@ -161,7 +161,7 @@ class DummyBooking:
         person_id=1,
         start_time=datetime.now(),
         end_time=datetime.now() + timedelta(hours=5),
-        status_id=1
+        status=BookingStatusEnum.ACTIVE
     )
 
     @staticmethod
@@ -171,7 +171,7 @@ class DummyBooking:
             person_id=1,
             start_time=datetime.now(),
             end_time=datetime.now() + timedelta(hours=5),
-            status_id=1
+            status=BookingStatusEnum.ACTIVE
         )
 
 
@@ -181,7 +181,7 @@ class DummyBooking:
         'person_id': 1,
         'start_time': '2020-05-03T21:2',
         'end_time': '2020-05-04T02:2',
-        'status_id': 1
+        'status': 'ACTIVE'
     })
 
     b1_id_json = json.dumps({
@@ -190,5 +190,5 @@ class DummyBooking:
         'person_id': 1,
         'start_time': '2020-05-03T21:2',
         'end_time': '2020-05-04T02:2',
-        'status_id': 1
+        'status': 'ACTIVE'
     })

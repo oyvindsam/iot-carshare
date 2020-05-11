@@ -79,7 +79,8 @@ class CarColour(db.Model):
     colour = db.Column(db.String(20), nullable=False, unique=True)
 
 
-class BookingStatus(Enum):
+# Marshmallow does not support Enum, use String. In future: look at marshmallow-enum
+class BookingStatusEnum:
     ACTIVE = 'Active'
     FINISHED = 'Finished'
     CANCELLED = 'Cancelled'
@@ -96,7 +97,7 @@ class Booking(db.Model):
     end_time = db.Column(db.DateTime, nullable=False)
     car = db.relationship('Car', backref='booking', lazy=True)
     person = db.relationship('Person', backref='booking', lazy=True)
-    status = db.Column(db.String(20), default=BookingStatus.ACTIVE, nullable=False)
+    status = db.Column(db.String(20), default=BookingStatusEnum.ACTIVE, nullable=False)
     #status_id = db.Column(db.Integer, db.ForeignKey('booking_status.id'), nullable=False)
     #status = db.relationship('BookingStatus', backref='booking', lazy=True)
 
@@ -232,20 +233,20 @@ class BookingSchema(ma.SQLAlchemyAutoSchema):
             raise ValidationError('end_time can not be before start_time')
 
 
-class BookingStatusSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = BookingStatus
-
-    @post_load
-    def make_booking_status(self, data, **kwargs):
-        """
-        This function runs after Schema().loads (validation code).
-
-        Args:
-            data: Valid data
-            **kwargs: args passed automatically
-
-        Returns:
-
-        """
-        return BookingStatus(**data)
+# class BookingStatusSchema(ma.SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = BookingStatus
+#
+#     @post_load
+#     def make_booking_status(self, data, **kwargs):
+#         """
+#         This function runs after Schema().loads (validation code).
+#
+#         Args:
+#             data: Valid data
+#             **kwargs: args passed automatically
+#
+#         Returns:
+#
+#         """
+#         return BookingStatus(**data)
