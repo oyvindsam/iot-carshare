@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
@@ -78,6 +79,12 @@ class CarColour(db.Model):
     colour = db.Column(db.String(20), nullable=False, unique=True)
 
 
+class BookingStatus(Enum):
+    ACTIVE = 'Active'
+    FINISHED = 'Finished'
+    CANCELLED = 'Cancelled'
+
+
 class Booking(db.Model):
     """
     Booking SQLAlchemy class
@@ -87,11 +94,11 @@ class Booking(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
-    status_id = db.Column(db.Integer, db.ForeignKey('booking_status.id'),
-                          nullable=False)
     car = db.relationship('Car', backref='booking', lazy=True)
     person = db.relationship('Person', backref='booking', lazy=True)
-    status = db.relationship('BookingStatus', backref='booking', lazy=True)
+    status = db.Column(db.String(20), default=BookingStatus.ACTIVE, nullable=False)
+    #status_id = db.Column(db.Integer, db.ForeignKey('booking_status.id'), nullable=False)
+    #status = db.relationship('BookingStatus', backref='booking', lazy=True)
 
     # Is a car available if it is after end_time, but user has _not_ returned it yet?.. no
     # Or before end_time and user _has_ returned it. This argues for hard coded statuses
@@ -109,12 +116,12 @@ class Booking(db.Model):
 # TODO: This might be redundant by above code..
 # FIXME: Only have hardcoded AVAILABLE / UNAVAILABLE statuses?
 # Is a car available if it is after end_time, but user has not returned it yet?.. no
-class BookingStatus(db.Model):
-    """
-    BookingStatus SQLAlchemy class
-    """
-    id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(20), nullable=False, unique=True)
+# class BookingStatus(db.Model):
+#     """
+#     BookingStatus SQLAlchemy class
+#     """
+#     id = db.Column(db.Integer, primary_key=True)
+#     status = db.Column(db.String(20), nullable=False, unique=True)
 
 
 not_blank = validate.Length(min=1, error='Field cannot be blank')
