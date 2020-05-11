@@ -8,10 +8,15 @@ from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
     BookingStatusEnum
 
 # Url paths follows this pattern:
-# POST /api/person
-# GET /api/person/<username>
-# POST /api/person/<username>/booking
+#
+# POST /api/person (add a user)
+# GET /api/person/<username> (get user details)
+# GET/POST /api/cars (show all the available cars / search a car )
+# POST /api/person/<username>/booking (book a car)
+# GET /api/person/<username>/booking (view the history of my booked cars)
+# PUT/DELETE /api/person/<username>/booking/<id> (finish/cancel a booking)
 # GET /api/person/<username>/booking/<booking_id>
+#
 # All enpoints return a Flask Response object, either with error or success response
 # success response usually have json data
 
