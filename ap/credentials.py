@@ -12,23 +12,26 @@ class Credentials:
     def __init__(self):
         super().__init__()
         self.__user_email = ""
-        self.__user_pass = ""
         self.__user_exists = False
 
-    def getCreds(self):
-        print("\n---Credentials---")
-        if (self.user_exists == False):
-            self.__user_email = input("Enter your email: ")
-            self.__user_pass = input("Enter password: ")
-            hashedPassword = sha256_crypt.hash(self.__user_pass)
-            return { "type": "login-creds", "email": self.__user_email, "hPass": hashedPassword }
-        else:
-            return {"exits" : True}
-
-    def signedIn(self):
+    def signIn(self, email, password):
         if (self.__user_exists == False):
-            self.__user_email = True
+            self.__user_exists = True
+            return self.hashCreds(email, password)
+        else:
+            return {"type" : "exists", "email" : self.__user_email}
 
+    #For now return Hash - Later will have to check with DB
+    def hashCreds(self, email, password):
+        hashedPassword = sha256_crypt.hash(password)
+        self.__user_email = email
+        return { "type": "login-creds", "email": email, "hPass": hashedPassword }
+
+    #Check if a user is already signed in
+    def isSignedIn(self):
+        return self.__user_exists
+
+    #Sign out User
     def signOut(self):
         self.__user_email = ""
         self.__user_pass = ""

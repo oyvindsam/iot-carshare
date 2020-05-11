@@ -5,8 +5,8 @@
 #   03/05/2020
 #   Agent Pi Main Class file
 
-from AP.credentials import Credentials
-from AP.socket.transceiver import Transceiver
+from credentials import Credentials
+from socket.transceiver import Transceiver
 
 class APMain:
 
@@ -26,16 +26,16 @@ class APMain:
             opt = input("Option: ")
             
             if (opt == "1"):
-                userJson = credsClass.signIn()
-                if ("exits" in userJson):
-                    print("User already Logged In")
-                else:
-                    outcome = trans.login(userJson)
-                    if (outcome == True):
-                        credsClass.signedIn()
+                email = input("Enter your email: ")
+                password = input("Enter password: ")
+                userJson = credsClass.signIn(email, password)
+                if ("type" in userJson):
+                    if(userJson['type'] == "exists"):
+                        print("User already Logged In - {}".format(userJson['email']))
                     else:
-                        credsClass.signOut()
-            
+                        print("Welcome {}".format(userJson['email']))
+                else:
+                    print("Credentials Class Error")
             elif (opt == "2"):
                 print("\n---Facial Recognition---")
                 print("Not available - Under Development")
@@ -47,4 +47,5 @@ class APMain:
 
             print("\n")
 
-APMain.main()
+if __name__ == "__main__":
+  APMain.main()

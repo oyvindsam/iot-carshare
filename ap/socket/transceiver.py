@@ -5,8 +5,9 @@
 #   03/05/2020
 #   Agent Pi Transmit and Receive Class file
 
-import socket, json
-import AP.socket.socket_utils as socket_utils
+import socket, json, sys
+sys.path.append('..')
+import socket.socket_utils as socket_utils
 
 class Transceiver:
 
