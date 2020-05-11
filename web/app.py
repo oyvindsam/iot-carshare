@@ -7,7 +7,7 @@ from api.models import db
 def create_app():
     app = Flask(__name__)
 
-    HOST = "35.228.215.119"
+    HOST = "gcloud ip adress" # UPDATE WITH YOUR OWN GCLOUD DB DETAILS
     USER = "root"
     PASSWORD = "carshare"
     DATABASE = "carshare_db"
@@ -25,7 +25,7 @@ def create_app():
 
 def setup_clean_db(TEST_DB=True):
     app = create_app()
-    HOST = "35.228.215.119"
+    HOST = "gcloud ip adress"
     USER = "root"
     PASSWORD = "carshare"
     DATABASE = "carshare_db"

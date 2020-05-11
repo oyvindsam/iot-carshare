@@ -13,7 +13,7 @@ LOCAL = True
 
 def get_production_db_test_app():
     app = create_app()
-    DB_URI = 'mysql://root:carshare@35.228.215.119/carshare_db_test'
+    #DB_URI = 'mysql://root:carshare@gcloud ip adress/carshare_db_test'
     app.config["SQLALCHEMY_DATABASE_URI"] = DB_URI
     return app
 
