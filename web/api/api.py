@@ -117,7 +117,31 @@ def add_booking(username: str):
     return schema.jsonify(booking), 201
 
 
-# TODO: Test
+# Authorized
+@api.route('/person/<string:username>/booking/<int:id>', methods=['PUT', 'DELETE'])
+def deactivate_booking(username: str, id: int):
+    """
+    Deactivate a booking (cancel/finish)
+    Args:
+        username (str): username
+        id (int): booking id
+
+    Returns: Error if booking doesn't exist, or success message
+
+    """
+    booking = Booking.query.get(id)
+
+    if booking is None or username != booking.person.username:
+        return abort(403, description='Booking under wrong person')
+    if request.method == 'PUT':
+        booking.status = BookingStatusEnum.FINISHED
+    else:
+        booking.status = BookingStatusEnum.CANCELLED
+    db.session.add(booking)
+    db.session.commit()
+    return 200
+
+
 # authorized!!
 @api.route('/person/<string:username>/booking', methods=['GET'])
 def get_bookings(username: str):
