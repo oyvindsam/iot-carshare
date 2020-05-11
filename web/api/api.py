@@ -112,6 +112,9 @@ def add_booking(username: str):
                                       f' is already mad in that time period')
 
     booking.status = BookingStatusEnum.ACTIVE
+
+    # TODO: Add Google calendar event
+
     db.session.add(booking)
     db.session.commit()
     return schema.jsonify(booking), 201
@@ -137,6 +140,8 @@ def deactivate_booking(username: str, id: int):
         booking.status = BookingStatusEnum.FINISHED
     else:
         booking.status = BookingStatusEnum.CANCELLED
+        # TODO: Update Google calendar
+
     db.session.commit()
     return 200
 
@@ -214,23 +219,30 @@ def get_booking(username: str, id: int):
 @api.route('/car', methods=['GET', 'POST'])
 def get_cars():
     """
-    Get cars based of query GET arguments/form POST arguments (supports both).
+    Get AVAILABLE cars based of query GET arguments/form POST arguments (supports both).
     All arguments must be in the Cars class otherwise a 404 is returned
     Example:
         GET /api/car?car_colour=1&car_manufacturer=2
         (note the id is used, not the name)
 
-    Returns: Json list string of Cars with given arguments
+    Returns: Json list string of AVAILABLE Cars with given arguments
     """
+    # From assignemnt doc: A car that is booked cannot be booked again until returned.
+    # So a user can only look at cars that is not booked. Does not make sense but whatevs
+    # So even if you want to book that car 50 days from now you are not able to.
+
+    active_bookings = Booking.query.filter_by(status=BookingStatusEnum.ACTIVE)
+    active_car_ids = set([b.car.id for b in active_bookings])
+    available_cars = Car.query.filter(~Car.id.in_(active_car_ids))
+
     filters = request.values.to_dict()
     if len(filters) > 0:
         try:
-            cars = Car.query.filter_by(**filters)
+            available_cars = available_cars.filter_by(**filters)
         except (InvalidRequestError, AttributeError):
             return abort(404, 'Query parameter(s)) invalid ')
-    else:
-        cars = Car.query.all()
-    result = CarSchema(many=True).dumps(cars)
+
+    result = CarSchema(many=True).dumps(available_cars)
     return jsonify(result), 200
 
 

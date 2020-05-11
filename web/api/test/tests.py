@@ -268,7 +268,12 @@ class ApiTest(TestCase):
             with self.app.test_client() as app:
                 colour1 = CarColour.query.get(self.colour1)
                 manufacturer1 = CarManufacturer.query.get(self.manufacturer1)
-                car3 = Car.query.get(self.car3)
+                car1 = Car.query.get(self.car1)
+
+                car4 = DummyCar.create_random()
+                car4.car_colour = self.colour1
+                car4.car_manufacturer = self.manufacturer1
+                add_to_db(car4)
                 filters = {
                     'car_colour': colour1.id,
                     'car_manufacturer': manufacturer1.id
@@ -279,7 +284,8 @@ class ApiTest(TestCase):
                 response_cars = CarSchema(many=True).loads(response.get_json())
                 self.assertTrue(type(Car), type(response_cars[0]))
                 self.assertTrue(all([car.car_colour == self.colour1 for car in response_cars]))
-                self.assertTrue(self.car3 not in response_cars)
+                self.assertFalse(car1 in response_cars)
+                self.assertTrue(car4.id in [c.id for c in response_cars])
 
     def test_get_invalid_filtered_cars(self):
         with self.app.app_context():
@@ -304,18 +310,24 @@ class ApiTest(TestCase):
             with self.app.test_client() as app:
                 colour1 = CarColour.query.get(self.colour1)
                 manufacturer1 = CarManufacturer.query.get(self.manufacturer1)
-                car3 = Car.query.get(self.car3)
+                car1 = Car.query.get(self.car1)
+
+                car4 = DummyCar.create_random()
+                car4.car_colour = self.colour1
+                car4.car_manufacturer = self.manufacturer1
+                add_to_db(car4)
                 filters = {
                     'car_colour': colour1.id,
                     'car_manufacturer': manufacturer1.id
                 }
-                response = app.post('/api/car', data=filters)  # this simulates a form POST
+                response = app.post('/api/car', data=filters)
                 self.assertEqual(200, response.status_code)
 
                 response_cars = CarSchema(many=True).loads(response.get_json())
                 self.assertTrue(type(Car), type(response_cars[0]))
                 self.assertTrue(all([car.car_colour == self.colour1 for car in response_cars]))
-                self.assertTrue(car3 not in response_cars)
+                self.assertFalse(car1 in response_cars)
+                self.assertTrue(car4.id in [c.id for c in response_cars])
 
     def test_get_booking_for_person(self):
         with self.app.app_context():
