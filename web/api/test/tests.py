@@ -30,8 +30,8 @@ def get_test_app():
     db.init_app(app)
     app.register_blueprint(api)
     with app.app_context():
-         db.drop_all()
-         db.create_all()
+        db.drop_all()
+        db.create_all()
     return app
 
 
@@ -125,7 +125,7 @@ class ApiTest(TestCase):
             self.booking3 = add_to_db(booking3).id
 
     # Person tests
-#
+    #
     def test_add_person_type(self):
         with self.app.test_client() as app:
             response = app.post('/api/person_type', json=DummyPersonType.pt_customer_no_id_json)
@@ -184,7 +184,7 @@ class ApiTest(TestCase):
                 #booking2.start_time = datetime.now() + timedelta(hours=1)
                 #booking2.person_id = person2
 
-                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking2))
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id', 'status']).dump(booking2))
 
                 response_valid = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
                 self.assertEqual(response_valid.status_code, 201)
@@ -196,7 +196,7 @@ class ApiTest(TestCase):
                 # booking1 already has car 1 in use
                 booking2 = duplicate_db_object(BookingSchema, Booking.query.get(self.booking1))
 
-                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking2))
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id', 'status']).dump(booking2))
 
                 # Car is in use, should return error
                 response_error = app.post(f"/api/person/{person1.username}/booking", json=booking_jsonstr)
@@ -208,7 +208,7 @@ class ApiTest(TestCase):
                 # serialize booking to json str
                 booking1 = Booking.query.get(self.booking1)
                 person1 = Person.query.get(self.person1)
-                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking1))
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id', 'status']).dump(booking1))
 
                 # post to username that does not match booking person username
                 response_wrong_username = app.post(
@@ -242,14 +242,14 @@ class ApiTest(TestCase):
     #             response_invalid_data = app.post(f"/api/person/{person1.username}/booking",json=booking_jsonstr)
     #             self.assertEqual(400, response_invalid_data.status_code)
 
-    def test_get__valid_booking(self):
+    def test_get_valid_booking(self):
         with self.app.app_context():
             with self.app.test_client() as app:
                 # serialize booking to json str
                 booking1 = Booking.query.get(self.booking1)
                 person1 = Person.query.get(self.person1)
 
-                booking_jsonstr = json.dumps(BookingSchema(exclude=['id']).dump(booking1))
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id', 'status']).dump(booking1))
 
                 response_get = app.get(
                     f'/api/person/{person1.username}/booking')
@@ -379,6 +379,65 @@ class ModelTest(TestCase):
     def setUp(self) -> None:
         self.app = get_test_app()
 
+        with self.app.app_context():
+
+            # set up persons
+            self.person_type1 = add_to_db(DummyPersonType.create_random()).id
+            person1 = DummyPerson.create_random()
+            person1.person_type = self.person_type1
+
+            self.person1 = add_to_db(person1).id
+
+            # Note: self.type1 is the id (int), not a object.
+            self.car_type1 = add_to_db(DummyCarType.create_random()).id
+            self.car_type2 = add_to_db(DummyCarType.create_random()).id
+            self.manufacturer1 = add_to_db(DummyCarManufacturer.create_random()).id
+            self.manufacturer2 = add_to_db(DummyCarManufacturer.create_random()).id
+            self.colour1 = add_to_db(DummyCarColour.create_random()).id
+            self.colour2 = add_to_db(DummyCarColour.create_random()).id
+
+            car1 = DummyCar.create_random()
+            car2 = DummyCar.create_random()
+            car3 = DummyCar.create_random()
+
+            car1.car_type = self.car_type1
+            car1.car_manufacturer = self.manufacturer1
+            car1.car_colour = self.colour1
+            car2.car_type = self.car_type1
+            car2.car_manufacturer = self.manufacturer1
+            car2.car_colour = self.colour1
+
+            car3.car_type = self.car_type1  # Same
+            car3.car_colour = self.colour2  # Different than the others
+            car3.car_manufacturer = self.manufacturer2  # Different than the others
+
+            # Finally add cars with correct foreign keys
+            self.car1 = add_to_db(car1).id
+            self.car2 = add_to_db(car2).id
+            self.car3 = add_to_db(car3).id
+
+            # booking1 is now + 5 hours
+            booking1 = DummyBooking.create_random()
+            booking1.car_id = self.car1
+            booking1.person_id = self.person1
+
+            # booking 2 is in 1 day
+            booking2 = duplicate_db_object(BookingSchema, booking1)
+            booking2.car_id = car2.id
+            booking2.start_time = datetime.now() + timedelta(days=1)
+            booking2.end_time = datetime.now() + timedelta(days=1, hours=5)
+
+            # booking3 was yesterday
+            booking3 = duplicate_db_object(BookingSchema, booking1)
+            booking3.car_id = car2.id
+            booking3.start_time = datetime.now() - timedelta(days=2)
+            booking3.end_time = datetime.now() - timedelta(days=1, hours=5)
+
+            self.booking1 = add_to_db(booking1).id
+            self.booking2 = add_to_db(booking2).id
+            self.booking3 = add_to_db(booking3).id
+
+
     def test_person_type_relationship(self):
         with self.app.app_context():
             p1 = add_to_db(DummyPerson.create_random())
@@ -438,6 +497,33 @@ class ModelTest(TestCase):
             self.assertEqual(booking.person.type, person_type1)
             # find all car person1 has booked
             self.assertTrue(car in [b.car for b in person1.booking])
+
+    def test_is_car_busy(self):
+        with self.app.app_context():
+            b1 = Booking.query.get(self.booking1)
+            b1.start_time = datetime.now() + timedelta(days=50)
+            b1.end_time = datetime.now() + timedelta(days=50, hours=10)
+            b2 = duplicate_db_object(BookingSchema, b1)
+
+            # b2 want to start before b1
+            b2.start_time = b1.start_time - timedelta(hours=1)
+
+            # Car should be busy since b1 will be using it in the requested time
+            self.assertTrue(Booking.is_car_busy(b2.start_time, b2.end_time, b2.car_id))
+
+            # New booking 3
+            b3 = duplicate_db_object(BookingSchema, b1)
+            b3.start_time = b1.start_time + timedelta(days=1)
+            b3.end_time = b1.end_time + timedelta(days=1)
+
+            # Car should _not_ be busy since b1 is outside the requested time
+            self.assertFalse(Booking.is_car_busy(b3.start_time, b3.end_time, b3.car_id))
+
+            # Check booking 2 with updated booking1 status
+            b1.status = BookingStatusEnum.FINISHED
+            # Now it should not be active since b1 finished his booking
+            self.assertFalse(Booking.is_car_busy(b2.start_time, b2.end_time, b2.car_id))
+
 
 
 class ValidationTest(TestCase):

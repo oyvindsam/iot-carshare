@@ -4,8 +4,8 @@ from sqlalchemy.exc import InvalidRequestError
 
 from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
     Booking, Car, CarSchema, CarManufacturer, \
-    CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema
-
+    CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema, \
+    BookingStatusEnum
 
 # Url paths follows this pattern:
 # POST /api/person
@@ -82,13 +82,13 @@ def add_booking(username: str):
     """
     Add a new booking for this user
     Args:
-        username: logged in user
+        username (str): logged in user
 
     Returns: Json string of booking, or error
 
     """
     # bookings can't already have an id
-    schema = BookingSchema(exclude=['id'])
+    schema = BookingSchema(exclude=['id', 'status'])
     try:
         booking = schema.loads(request.get_json())
     except ValidationError as ve:
@@ -107,10 +107,11 @@ def add_booking(username: str):
         return abort(403, description='Booking under wrong person')
 
     # Check that no booking with car is currently active
-    if any([b.car_id == car.id for b in Booking.filter_by_is_active()]):
-        return abort(403, description='A booking with this car is already in session')
+    if Booking.is_car_busy(booking.start_time, booking.end_time, booking.car_id):
+        return abort(403, description=f'A booking with car id {booking.car_id}'
+                                      f' is already mad in that time period')
 
-    # TODO: change booking status?
+    booking.status = BookingStatusEnum.ACTIVE
     db.session.add(booking)
     db.session.commit()
     return schema.jsonify(booking), 201

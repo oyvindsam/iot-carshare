@@ -1,11 +1,11 @@
 from datetime import datetime
-from enum import Enum
 
-from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from marshmallow import post_load, validate, fields, ValidationError, \
+from flask_sqlalchemy import SQLAlchemy
+from marshmallow import post_load, validate, ValidationError, \
     validates_schema
 from marshmallow_sqlalchemy import auto_field
+from sqlalchemy import or_
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -97,7 +97,7 @@ class Booking(db.Model):
     end_time = db.Column(db.DateTime, nullable=False)
     car = db.relationship('Car', backref='booking', lazy=True)
     person = db.relationship('Person', backref='booking', lazy=True)
-    status = db.Column(db.String(20), default=BookingStatusEnum.ACTIVE, nullable=False)
+    status = db.Column(db.String(20), default=BookingStatusEnum.ACTIVE)
     #status_id = db.Column(db.Integer, db.ForeignKey('booking_status.id'), nullable=False)
     #status = db.relationship('BookingStatus', backref='booking', lazy=True)
 
@@ -110,8 +110,30 @@ class Booking(db.Model):
             Booking.start_time < time,
             Booking.end_time > time)
 
-    def is_active(self):
-        return self.start_time < datetime.now() < self.end_time
+    @classmethod
+    def is_car_busy(cls, start_time: datetime, end_time: datetime, car_id: int) -> bool:
+        """
+        Check if an active booking within this time period uses this car
+        Args:
+            start_time (datetime):
+            end_time (datetime):
+            car_id (int):
+
+        Returns: bool if car is in use
+
+        """
+        results = Booking.query\
+            .filter(Booking.car_id == car_id)\
+            .filter((start_time <= Booking.start_time) & (Booking.start_time <= end_time)  |
+                (Booking.start_time < start_time) & (start_time <= Booking.end_time) |
+                (start_time <= Booking.end_time) & (Booking.end_time <= end_time) |
+                (start_time < Booking.start_time) & (Booking.end_time < end_time))\
+            .filter(Booking.status == BookingStatusEnum.ACTIVE).count()
+
+        return results > 0
+
+def is_active(self):
+    return self.start_time < datetime.now() < self.end_time
 
 
 # TODO: This might be redundant by above code..
