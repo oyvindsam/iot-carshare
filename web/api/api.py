@@ -6,7 +6,18 @@ from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
     Booking, Car, CarSchema, CarManufacturer, \
     CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema
 
+
+# Url paths follows this pattern:
+# POST /api/person
+# GET /api/person/<username>
+# POST /api/person/<username>/booking
+# GET /api/person/<username>/booking/<booking_id>
+# All enpoints return a Flask Response object, either with error or success response
+# success response usually have json data
+
 api = Blueprint('api', __name__, url_prefix='/api/')
+
+
 
 # TODO: standarize error handling. https://flask.palletsprojects.com/en/1.1.x/patterns/errorpages/
 @api.errorhandler(404)
@@ -31,9 +42,9 @@ def get_person(username: str):
     Get person data for logged in user
 
     Args:
-        username: logged in user
+        username (str): logged in user
 
-    Returns: Person json string
+    Returns: Response with person json string
 
     """
     persons = Person.query.filter_by(username=username).first()
