@@ -88,11 +88,13 @@ def add_booking(username: str):
     # check that references to data in db is valid
 
     # FIXME: this does not work when the references are wrong, wrap in try catch?
+    # or change the ORM with less strict references.. For now do not give invalid parameters
     person = Person.query.filter_by(id=booking.person_id).first()
     car = Car.query.filter_by(id=booking.car_id).first()
     status = BookingStatus.query.filter_by(id=booking.status_id).first()
     if None in [person, car, status]:
         return abort(403, description='Booking references invalid id(s)')
+
     if username != person.username:
         return abort(403, description='Booking under wrong person')
 
