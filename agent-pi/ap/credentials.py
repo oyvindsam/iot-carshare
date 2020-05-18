@@ -6,6 +6,7 @@
 #   Agent Pi Credentials Class
 
 from passlib.hash import sha256_crypt
+from ap.socket.transceiver import Transceiver
 
 class Credentials:
 
@@ -30,6 +31,9 @@ class Credentials:
     #Check if a user is already signed in
     def isSignedIn(self):
         return self.__user_exists
+
+    def getUserName(self):
+        return self.__user_email
 
     #Sign out User
     def signOut(self):
