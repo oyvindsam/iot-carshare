@@ -16,82 +16,69 @@ class Transceiver:
 
     def __readConfig(self):
         try:
-            with open("agent-pi/ap/socket/connection.json", "r") as file:
+            with open("ap/socket/connection.json", "r") as file:
                 data = json.load(file)
                 self.HOST = data["masterpi_ip"]
                 self.PORT = 63000
                 self.ADDRESS = (self.HOST, self.PORT)
         except IOError:
             print("File not accessible")
+            self.HOST = "127.0.0.1"
+            self.PORT = 63000
+            self.ADDRESS = (self.HOST, self.PORT)
 
-    def login(self, user):
+    def send(self, data):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            print("Connecting to {}...".format(self.ADDRESS))
-            s.connect(self.ADDRESS)
-            print("Connected.")
+            print("\n----- Socket -----\n")
+            print("Connecting to Master Pi...")
+            try:
+                s.connect(self.ADDRESS)
+            except socket.error as e:
+                print("Connection err: %s" %e)
+                return {"error": True, "type": "connection", "msg": "{}".format(e)}
+            print("Connected.\n")
 
-            print("Logging in as {}".format(user["email"]))
-            socket_utils.sendJson(s, user)
+            self.printOut(data)
+            socket_utils.sendJson(s, data)
 
-            print("Waiting for Master Pi Auth...")
+            print("Waiting for Master Pi...\n")
             while(True):
                 object = socket_utils.recvJson(s)
-                if("success" in object):
-                    if(object['success'] == True):
-                        print("User Logged In")
-                        print()
-                        break
+                self.__checkReturn(object)
+                print()
+                return object
 
-    def logout(self, user):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            print("Connecting to {}...".format(self.ADDRESS))
-            s.connect(self.ADDRESS)
-            print("Connected.")
+    def __checkReturn(self, data):
+        if("success" in data):
+            print("Success Received")
+            self.__returnAction(data)
+        elif("error" in data):
+            print("Error from MP - {}".format(data['msg']))
+        else:
+            print("Invalid Data from MP")
+            print(data)
 
-            print("Logging out {}".format(user["email"]))
-            socket_utils.sendJson(s, user)
+    def __returnAction(self, data):
+        if(data['type'] == "login"):
+            print("Unlocking Car")
+        elif(data['type'] == "logout"):
+            print("Locking Car")
+        else:
+            print("Car Update Done")
 
-            print("Waiting for Master Pi Auth...")
-            while(True):
-                object = socket_utils.recvJson(s)
-                if("logout" in object):
-                    if(object['logout'] == True):
-                        print("User Logged Out")
-                        print()
-                        break
-
-    def regCar(self, car):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            print("Connecting to {}...".format(self.ADDRESS))
-            s.connect(self.ADDRESS)
-            print("Connected.")
-
-            print("Logging In Car ID({})".format(car["id"]))
-            socket_utils.sendJson(s, car)
-
-            print("Waiting for Master Pi Auth...")
-            while(True):
-                object = socket_utils.recvJson(s)
-                if("success" in object):
-                    if(object['success'] == True):
-                        print("Car Online")
-                        print()
-                        break
-    
-    def updateLoc(self, car):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            print("Connecting to {}...".format(self.ADDRESS))
-            s.connect(self.ADDRESS)
-            print("Connected.")
-
-            print("Logging In Car ID({})".format(car["id"]))
-            socket_utils.sendJson(s, car)
-
-            print("Waiting for Master Pi Auth...")
-            while(True):
-                object = socket_utils.recvJson(s)
-                if("success" in object):
-                    if(object['success'] == True):
-                        print("Updated Location")
-                        print()
-                        break
+    def printOut(self, data):
+        if('type' in data):
+            if(data['type'] == 'login'):
+                print("Logging in as {}".format(data["username"]))
+            elif(data['type'] == 'logout'):
+                print("Logging out {}".format(data["username"]))
+            elif(data['type'] == 'carReg'):
+                print("Logging In Car ID({})".format(data["car_id"]))
+            elif(data['type'] == 'carLoc'):
+                print("Updating Location - Car ID({})".format(data["car_id"]))
+            elif(data['type'] == 'carOff'):
+                print("Loggin out Car ID({})".format(data["car_id"]))
+            else:
+                print("Invalid Type Data")
+        else:
+            print("Invalid Data Object. No Type Attribute")

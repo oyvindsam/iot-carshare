@@ -5,6 +5,7 @@
 #   03/05/2020
 #   Agent Pi Main Class file
 
+from datetime import datetime
 from ap.credentials import Credentials
 from ap.socket.transceiver import Transceiver
 
@@ -12,74 +13,77 @@ class APMain:
 
     @staticmethod
     def main():
-        exit = False
-        trans = Transceiver()
-        credsClass = Credentials()
+        APMain.exit = False
 
+        APMain.credsClass = Credentials()
+        APMain.trans = Transceiver()
+        
         #Initialise Car and register with system
-        # carId = "1"
-        # trans.regCar({'type': 'car-reg','id': carId, "loc": {"lat": 0, "lng": 0}})
+        APMain.car_id = 1
+        res = APMain.trans.send({'type': 'carReg','car_id': APMain.car_id, "loc": {"lat": 0, "lng": 0}, "dateTime": datetime.now().isoformat()})
+        if("error" in res):
+            print("Seems like Master Pi might be offline")
+            return
 
         print("-----Welcome to the Car Menu-----")
-        while exit==False:
-            state = credsClass.isSignedIn()
+        while APMain.exit==False:
+            state = APMain.credsClass.isSignedIn()
             #No logged in user
             if (state == False):
-                APMain.printMenu()
-                opt = input("Option: ")
-
-                if (opt == "1"):
-                    email = input("Enter your email: ")
-                    password = input("Enter password: ")
-                    userJson = credsClass.signIn(email, password)
-                    if ("type" in userJson):
-                        if(userJson['type'] == "exists"):
-                            print("User already Logged In - {}".format(userJson['email']))
-                        else:
-                            print("Welcome {}".format(userJson['email']))
-                            print("Car Unlocked")
-                            trans.login(userJson)
-                    else:
-                        print("Credentials Class Error")
-                elif (opt == "2"):
-                    print("\n---Facial Recognition---")
-                    print("Not available - Under Development")
-                elif (opt.lower() == "exit"):
-                    print("System shutting down...")
-                    exit = True
-                else:
-                    print("Invalid Option!")
-
+                APMain.mainMenu()
             else:
-                uName = credsClass.getUserName()
-                APMain.printUserMenu(uName)
-                opt = input('Option: ')
-                if (opt == "1"):
-                    print("Logging out user")
-                    trans.logout({'type': 'logout', 'email': uName})
-                    credsClass.signOut()
-                    print("Car Locked")
-                else:
-                    print("Invalid Option!")
-            
-            
+                APMain.userMenu()
 
             print("\n")
 
     @staticmethod
-    def initMenu():
-        print()
-
-    @staticmethod
-    def printMenu():
+    def mainMenu():
         print("Choose method of authentication")
         print("1. Enter Credentials")
         print("2. Facial Recognitiobn")
+        opt = input("Option: ")
+
+        if (opt == "1"):
+            email = input("Enter your email: ")
+            password = input("Enter password: ")
+            user = APMain.credsClass.signIn(email, password, 1)
+            if ("success" in user):
+                if(user['type'] == "login"):
+                    APMain.updateCarLoc()
+                    print("Welcome {}".format(APMain.credsClass.getUserName()))
+            elif("error" in user):
+                print("Login Error - {}".format(user['msg']))
+            else:
+                print("Credentials Object Error")
+        elif (opt == "2"):
+            print("\n---Facial Recognition---")
+            print("Not available - Under Development")
+        elif (opt.lower() == "exit"):
+            APMain.trans.send({'type': 'carOff','car_id': APMain.car_id, "loc": {"lat": 0, "lng": 0}})
+            print("System shutting down...")
+            APMain.exit = True
+        else:
+            print("Invalid Option!")
 
     @staticmethod
-    def printUserMenu(username):
-        print("{} logged in. Choose from below:".format(username))
+    def userMenu():
+        uName = APMain.credsClass.getUserName()
+        print("{} logged in. Choose from below:".format(uName))
         print("1. Return and Logout")
+        opt = input('Option: ')
+        if (opt == "1"):
+            APMain.updateCarLoc()
+            APMain.credsClass.signOut(1)
+        else:
+            print("Invalid Option!")
+
+    @staticmethod
+    def updateCarLoc():
+        res = APMain.trans.send({'type': 'carLoc','car_id': APMain.car_id, "loc": {"lat": 0, "lng": 0}})
+        if("error" in res):
+            if(res['error'] == "connection"):
+                print("Failed to Connect")
+        
 
 if __name__ == "__main__":
   APMain.main()
