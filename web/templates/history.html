@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>History</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/history.css') }}">
+    
+</head>
+
+
+<ul>
+  <li><a href="{{ url_for('site.bookcar') }}"><b>Book Car</b></a></li>
+  <li><a class="active" href="{{ url_for('site.hist') }}"><b>History</b></a></li>
+  <button class="sbutton"> <a href = "{{ url_for('site.index') }}">Logout</a></button>
+</ul>
+
+
+
+<body>
+    <b>this is history</b>
+
+</body>
+
+</html>

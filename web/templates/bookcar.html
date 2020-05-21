@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Book Car</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bookcar.css') }}">
+</head>
+
+
+<ul>
+  <li><a class="active" href="{{ url_for('site.bookcar') }}"><b>Book Car</b></a></li>
+  <li><a href="{{ url_for('site.hist') }}"><b>History</b></a></li>
+  <button class="sbutton"> <a href = "{{ url_for('site.index') }}" id="logButton">Logout</a></button>
+</ul>
+
+
+
+<body>
+
+
+  <h1 class="align">Available Cars</h1>
+
+  <div class="container">
+    <table border="4" width="100%" id="table_format">
+      <tbody>
+        <tr>
+        <th class='skip-filter'>Car ID</th>
+        <th class='skip-filter'>Registration</th>
+        <th>Make</th>
+        <th>Car colour</th>
+        <th>Car type</th>
+        <th>Seats</th>
+        <th>Hour rate</th>
+        <th class='skip-filter'>Actions</th>
+        {%for c in cars%}
+        <tr>
+            <td><b>{{c.id}}</b></td>
+            <td>{{c.reg_number}}</td>
+            <td>{{c.car_manufacturer}}</td>
+            <td>{{c.car_colour}}</td>
+            <td>{{c.car_type}}</td>
+            <td>{{c.seats}}</td>
+            <td>{{c.hour_rate}}</td>
+            <td><form action="{{ url_for('site.booking') }}" method="POST"><button name="book">Book</button><input type="hidden" id="car_id" name="car_id" value={{c.id}}></form></td>
+        </tr>
+  {%endfor%}
+</tbody>
+</table>
+  </div>
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript"  src="{{ url_for('static', filename='js/filter.js') }}"></script> 
+<script>
+jQuery('#table_format').ddTableFilter();
+  </script>
+</body>
+
+</html>

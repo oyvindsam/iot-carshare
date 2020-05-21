@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Book Car</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bookcar.css') }}">
+</head>
+
+
+<ul>
+  <li><a class="active" href="{{ url_for('site.bookcar') }}"><b>Book Car</b></a></li>
+  <li><a href="{{ url_for('site.hist') }}"><b>History</b></a></li>
+  <button class="sbutton"> <a href = "{{ url_for('site.index') }}" id="logButton">Logout</a></button>
+</ul>
+
+
+
+<body>
+
+ 
+    <input class="search" type="text" onkeyup="searchFunction()" placeholder="Search Cars.." name="search" id="filter">
+    <select class="selection" id="searchList" >
+      <option value="0">Car ID</option>
+      <option value="1">Registration</option>
+      <option value="2">Make</option>
+      <option value="3">Car Colour</option>
+      <option value="4">Car Type</option>
+      <option value="5">Seats</option>
+      <option value="6">Hour Rate</option>
+    </select>
+
+    <input class="search" type="text" onkeyup="searchFunction2()" placeholder="Search Cars.." name="search" id="filter2">
+    <select class="selection2" id="searchList2" >
+      <option value="0">Car ID</option>
+      <option value="1">Registration</option>
+      <option value="2">Make</option>
+      <option value="3">Car Colour</option>
+      <option value="4">Car Type</option>
+      <option value="5">Seats</option>
+      <option value="6">Hour Rate</option>
+    </select>
+
+    <input class="search" type="text" onkeyup="searchFunction3()" placeholder="Search Cars.." name="search" id="filter3">
+    <select class="selection3" id="searchList3" >
+      <option value="0">Car ID</option>
+      <option value="1">Registration</option>
+      <option value="2">Make</option>
+      <option value="3">Car Colour</option>
+      <option value="4">Car Type</option>
+      <option value="5">Seats</option>
+      <option value="6">Hour Rate</option>
+    </select>
+ 
+
+  <h1 class="align">Available Cars</h1>
+<table border="4" width="100%" id="cartable">
+  <thead>
+  <tr>
+    <th>Car ID</th>
+    <th>Registration</th>
+    <th>Make</th>
+    <th>Car colour</th>
+    <th>Car type</th>
+    <th>Seats</th>
+    <th>Hour rate</th>
+    <th colspan="3">Actions</th>
+</tr>
+</thead>
+<tbody >
+    {%for c in cars%}
+            <tr>
+                <td>{{c.id}}</td>
+                <td>{{c.reg_number}}</td>
+                <td>{{c.car_manufacturer}}</td>
+                <td>{{c.car_colour}}</td>
+                <td>{{c.car_type}}</td>
+                <td>{{c.seats}}</td>
+                <td>{{c.hour_rate}}</td>
+                <td><form action="{{ url_for('site.booking') }}" method="POST"><button name="book">Book</button><input type="hidden" id="car_id" name="car_id" value={{c.id}}></form></td>
+            </tr>
+        {%endfor%}
+</tbody>
+</table>
+<script>
+  function searchFunction() {
+    var input, filter, table, tr, td, i, txtValue;
+    var num = Number(document.getElementById("searchList").value);
+    input = document.getElementById("filter");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("cartable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[num];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }       
+    }
+  }
+  </script>
+  <script>
+    function searchFunction2() {
+      var input, filter, table, tr, td, i, txtValue;
+      var num = Number(document.getElementById("searchList2").value);
+      input = document.getElementById("filter2");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("cartable");
+      tr = table.getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[num];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }       
+      }
+    }
+    </script>
+     <script>
+      function searchFunction3() {
+        var input, filter, table, tr, td, i, txtValue;
+        var num = Number(document.getElementById("searchList3").value);
+        input = document.getElementById("filter3");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("cartable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+          td = tr[i].getElementsByTagName("td")[num];
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }       
+        }
+      }
+      </script>
+</body>
+
+</html>
