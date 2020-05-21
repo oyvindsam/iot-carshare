@@ -29,7 +29,8 @@ def bookcar():
     # Use REST API.
     response = requests.get("http://127.0.0.1:5000/api/car")
     carData = json.loads(response.json())
-
+    length= len(carData)
+    print(length)
     if carData is None:
         abort(404, description="Resource not found")
 
@@ -60,7 +61,7 @@ def bookcar():
         
         for color in carColorData:
             carColorMap[color['id']] = color['colour']
-
+        index = 1
         #For each car get the values from the hasmap
         for car in carData:
             manuId = car['car_manufacturer']
@@ -71,8 +72,10 @@ def bookcar():
 
             colourId = car['car_colour']
             car['car_colour'] = carColorMap.get(colourId)
+            car['index'] = index
+            index = index + 1
                     
-        return render_template("bookcar.html", cars = carData)
+        return render_template("bookcar.html", cars = carData, leng=length, i = 1)
 
 @site.route("/booking", methods=["POST"])
 def booking():

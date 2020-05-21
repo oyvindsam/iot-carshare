@@ -9,7 +9,6 @@ $.fn.ddTableFilter = function(options) {
       return;
     }
     var table = $(this);
-    var start = new Date();
 
     $('th:visible', table).each(function(index) {
       if($(this).hasClass('skip-filter')) return;
@@ -85,11 +84,7 @@ $.fn.ddTableFilter = function(options) {
       if($.isFunction(options.afterFilter)) {
         options.afterFilter.apply(table);
       }
-
-      
     }
-
-    
   });
 };
 

@@ -115,3 +115,11 @@ ul {
     font-family: sans-serif;
     padding: 4px;
   }
+
+  .loc{
+
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
