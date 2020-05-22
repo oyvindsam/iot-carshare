@@ -15,6 +15,16 @@ class Transceiver:
         self.__readConfig()
 
     def __readConfig(self):
+        """
+        Read Master Pi connection information and initialise socket
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+
         try:
             with open("ap/socket/connection.json", "r") as file:
                 data = json.load(file)
@@ -28,6 +38,18 @@ class Transceiver:
             self.ADDRESS = (self.HOST, self.PORT)
 
     def send(self, data):
+        """
+        Read Master Pi connection information and initialise socket
+
+        Args:
+            data (json): The information to be sent to the Master Pi
+                ex [login]: {"type": 'login', "username": string, "hPass": string, "dateTime": string, "car_id": int}
+
+        Returns:
+            json: Response information from the Master Pi socket
+                ex [login]: {"success": True, "type": string, "msg": string} or {"error": True, "type": string, "msg": string}
+        """
+        
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print("\n----- Socket -----\n")
             print("Connecting to Master Pi...")
@@ -49,6 +71,17 @@ class Transceiver:
                 return object
 
     def __checkReturn(self, data):
+        """
+        Reads the data from the Master Pi and checks for 'success' or 'error' in the data
+
+        Args:
+            data (json): The information to be sent to the Master Pi
+                ex [login]: {"success": True, "type": string, "msg": string} or {"error": True, "type": string, "msg": string}
+
+        Returns:
+            None
+        """
+
         if("success" in data):
             print("Success Received")
             self.__returnAction(data)
@@ -59,6 +92,17 @@ class Transceiver:
             print(data)
 
     def __returnAction(self, data):
+        """
+        Reads the data from the Master Pi and produces an output based on the 'type' data
+
+        Args:
+            data (json): The information to be sent to the Master Pi
+                ex [login]: {"success": True, "type": string, "msg": string} or {"error": True, "type": string, "msg": string}
+
+        Returns:
+            None
+        """
+
         if(data['type'] == "login" or data['type'] == "face-login"):
             print("Unlocking Car")
         elif(data['type'] == "logout"):
@@ -67,6 +111,17 @@ class Transceiver:
             print("Car Update Done")
 
     def printOut(self, data):
+        """
+        Reads the current data and prints out the appropriate message based on the 'type' of data
+
+        Args:
+            data (json): The information to be sent to the Master Pi
+                ex [login]: {"type": 'login', "username": string, "hPass": string, "dateTime": string, "car_id": int}
+
+        Returns:
+            None
+        """
+
         if('type' in data):
             if(data['type'] == 'login'):
                 print("Logging in as {}".format(data["username"]))

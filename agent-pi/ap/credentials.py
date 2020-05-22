@@ -21,6 +21,20 @@ class Credentials:
         self.__facial = Facial()
 
     def signIn(self, username, password, carId):
+        """
+        Sign In fucntion with username/password
+
+        Args:
+            username (string): The entered username
+            password (string): The entered password
+            carId (int): The id of the current car
+
+        Returns:
+            json: Return a json object from the Transciever class with the appropriate result or error based on the entered details
+                ex [login]: {"success": True ,"type" : string, "msg" : string}
+                            {"error": True ,"type" : string, "msg" : string}
+        """
+
         if (self.__user_exists == False):
             self.__user_exists = True
             res = self.__hashCreds(username, password, carId)
@@ -36,6 +50,19 @@ class Credentials:
         return self.__trans.send(data)
 
     def faceSignIn(self, username, carId):
+        """
+        Facial Recognition Sign In fucntion with username/password
+
+        Args:
+            username (string): The entered username
+            carId (int): The id of the current car
+
+        Returns:
+            json: Return a json object from the Transciever class with the appropriate result or error based on the recognised face
+                ex [login]: {"success": True ,"type" : string, "msg" : string}
+                            {"error": True ,"type" : string, "msg" : string}
+        """
+
         if (self.__user_exists == False):
             if not os.path.exists("ap/facial_rec/dataset/{}/".format(username)):
                 return {"unreg": True, "msg": "Not a registered users"}
@@ -52,6 +79,19 @@ class Credentials:
             return {"error": True ,"type" : "face-login", "msg" : "Current Login Already Exists"}
 
     def faceReg(self):
+        """
+        Facial Recognition Registration
+
+        Args:
+            None
+
+        Returns:
+            json: Return a json object from the Facial recognition class with the appropriate result or
+            error based on the outcome of registering a face
+                ex [login]: {"success": True ,"type" : string, "msg" : string}
+                            {"error": True ,"type" : string, "msg" : string}
+        """
+
         if (self.__user_exists == True):
             res = self.__facial.registerFace(self.__user_username)
             if "error" in res:
@@ -72,6 +112,19 @@ class Credentials:
 
     #Sign out User
     def signOut(self, carId):
+        """
+        Sign out of the current account
+
+        Args:
+            None
+
+        Returns:
+            json: Return a json object from the Transciever Class class with the appropriate result or
+            error based on the outcome of logging out a current user
+                ex [login]: {"success": True ,"type" : string, "msg" : string}
+                            {"error": True ,"type" : string, "msg" : string}
+        """
+
         print("Logging out user")
         data = {"type": "logout", "username": self.__user_username, "dateTime": datetime.now().isoformat(), "car_id": carId}
         res = self.__trans.send(data)
