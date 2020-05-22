@@ -59,7 +59,7 @@ class Transceiver:
             print(data)
 
     def __returnAction(self, data):
-        if(data['type'] == "login"):
+        if(data['type'] == "login" or data['type'] == "face-login"):
             print("Unlocking Car")
         elif(data['type'] == "logout"):
             print("Locking Car")
