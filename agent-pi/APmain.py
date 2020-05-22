@@ -8,6 +8,7 @@
 from datetime import datetime
 from ap.credentials import Credentials
 from ap.socket.transceiver import Transceiver
+from ap.facial_rec.facial import Facial
 
 class APMain:
 
@@ -17,7 +18,8 @@ class APMain:
 
         APMain.credsClass = Credentials()
         APMain.trans = Transceiver()
-        
+        APMain.face = Facial()
+
         #Initialise Car and register with system
         APMain.car_id = 1
         res = APMain.trans.send({'type': 'carReg','car_id': APMain.car_id, "loc": {"lat": 0, "lng": 0}, "dateTime": datetime.now().isoformat()})
@@ -40,30 +42,47 @@ class APMain:
     def mainMenu():
         print("Choose method of authentication")
         print("1. Enter Credentials")
-        print("2. Facial Recognitiobn")
+        print("2. Facial Recognition")
         opt = input("Option: ")
 
         if (opt == "1"):
-            email = input("Enter your email: ")
-            password = input("Enter password: ")
-            user = APMain.credsClass.signIn(email, password, 1)
-            if ("success" in user):
-                if(user['type'] == "login"):
-                    APMain.updateCarLoc()
-                    print("Welcome {}".format(APMain.credsClass.getUserName()))
-            elif("error" in user):
-                print("Login Error - {}".format(user['msg']))
-            else:
-                print("Credentials Object Error")
+            APMain.credsMenu()
         elif (opt == "2"):
-            print("\n---Facial Recognition---")
-            print("Not available - Under Development")
+            APMain.faceMenu()
         elif (opt.lower() == "exit"):
             APMain.trans.send({'type': 'carOff','car_id': APMain.car_id, "loc": {"lat": 0, "lng": 0}})
             print("System shutting down...")
             APMain.exit = True
         else:
             print("Invalid Option!")
+
+    @staticmethod
+    def credsMenu():
+        email = input("Enter your email: ")
+        password = input("Enter password: ")
+        user = APMain.credsClass.signIn(email, password, 1)
+        if ("success" in user):
+            if(user['type'] == "login"):
+                APMain.updateCarLoc()
+                print("Welcome {}".format(APMain.credsClass.getUserName()))
+        elif("error" in user):
+            print("Login Error - {}".format(user['msg']))
+        else:
+            print("Credentials Object Error")
+
+    @staticmethod
+    def faceMenu():
+        opt = input("Enter username: ")
+        res = APMain.credsClass.faceSignIn(opt, APMain.car_id)
+        if("error" in res):
+            print(res['msg'])
+        elif("unreg" in res):
+            print(res['msg'])
+            reg = input("Would you like to register? y/n: ")
+            if reg.lower() == "y":
+                print("Please sign in first before registering\n")
+                APMain.credsMenu()
+                APMain.credsClass.faceReg()
 
     @staticmethod
     def userMenu():
