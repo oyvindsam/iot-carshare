@@ -189,14 +189,18 @@ def timeBook():
                 }
     event = service.events().insert(calendarId='primary', body=event).execute()
     google_event_link = event.get('htmlLink')
-    print (google_event_link)
+    initload = ({
+        'car_id': carid,
+        'person_id': 1,
+        'start_time': startDateTime,
+        'end_time': endDateTime,
+    })
+    payload = json.dumps(initload)
+    response = requests.post('http://127.0.0.1:5000/api/person/adi/booking', json=payload)
     return render_template("confirmation.html", invite=google_event_link) 
 
 
     # This next section's code will be here
-
-# @site.route("/mainbooking")
-# def mainbooking():
 
 
 #view previous bookings
