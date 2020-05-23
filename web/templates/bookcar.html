@@ -48,7 +48,6 @@
         {%for c in cars%}
         <tr>
           
-          
             <td>{{c.id}}</td>
             <td id="reg_{{c.index}}">{{c.reg_number}}</td>
             <td id="make_{{c.index}}">{{c.car_manufacturer}}</td>
@@ -58,9 +57,9 @@
             <td id="rate_{{c.index}}">{{c.hour_rate}}</td>
             <td style="display:none" id = "latitude_{{c.index}}">{{c.latitude}}</td>
             <td style="display:none" id = "longitude_{{c.index}}">{{c.longitude}}</td>
-            <td><form action="{{ url_for('site.booking') }}" method="POST"><button name="book">Book</button><input type="hidden" id="car_id" name="car_id" value={{c.id}}></form></td>
+            <td><form action="{{ url_for('site.time', carinfo=c) }}" method="POST"><button name="book">Book</button></form></td>
         </tr> 
-        
+        <!-- <input type="hidden" id="car_id" name="car_id" value={{c.id}}> -->
   {%endfor%}
 </tbody>
 </table>

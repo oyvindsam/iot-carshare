@@ -29,10 +29,10 @@ def create_app():
 
 def setup_clean_db(TEST_DB=True):
     app = create_app()
-    HOST = "35.228.215.119"
+    HOST = "34.71.196.78"
     USER = "root"
-    PASSWORD = "carshare"
-    DATABASE = "carshare_db"
+    PASSWORD = "root1234"
+    DATABASE = "hireCar"
 
     if TEST_DB:
         DATABASE += '_test'

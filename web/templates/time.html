@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Booking</title>
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/booking.css') }}">
+</head>
+
+<body>
+    <h1>Confirm Booking?</h1>
+    <div class="container">
+        <table border="4" width="100%" id="table_format">
+          <tbody>
+            <tr>
+            <th colspan="6">Booking details</th>
+            <th>Time</th>
+            <tr>
+                <td>Car id:{{info.id}}</td>
+                <td>Make:{{info.car_manufacturer}}</td>
+                <td>Registration:{{info.reg_number}}</td>
+                <td>Type:{{info.car_type}}</td>
+                <td>Colour:{{info.car_colour}}</td>
+                <td>Hourly Rate:{{info.hour_rate}}</td>
+            </tr> 
+    </tbody>
+    </table>
+      </div>
+</body>
+</html>
