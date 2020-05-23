@@ -344,6 +344,7 @@ class ApiTest(TestCase):
                 self.assertEqual(200, response.status_code)
                 self.assertEqual(lat, response_car.latitude)
                 self.assertEqual(long, response_car.longitude)
+                self.assertEqual(lat, car.latitude)
 
     def test_update_car_location_with_bad_data_return_error(self):
         with self.app.app_context():

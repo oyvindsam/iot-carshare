@@ -263,7 +263,6 @@ def update_car_location(id: int):
     Returns: updated car
 
     """
-    req = request
     car = Car.query.get(id)
     # Check car exists
     if car is None:
