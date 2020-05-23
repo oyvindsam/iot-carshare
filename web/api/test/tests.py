@@ -329,6 +329,48 @@ class ApiTest(TestCase):
                 self.assertFalse(car1 in response_cars)
                 self.assertTrue(car4.id in [c.id for c in response_cars])
 
+    def test_update_car_location(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                car = Car.query.get(self.car1)
+                lat = '123.321'
+                long = '321.123'
+                data = {
+                    'latitude': lat,
+                    'longitude': long
+                }
+                response = app.put(f'api/car/{car.id}/location', data=data)
+                response_car = CarSchema().loads(response.get_json())
+                self.assertEqual(200, response.status_code)
+                self.assertEqual(lat, response_car.latitude)
+                self.assertEqual(long, response_car.longitude)
+
+    def test_update_car_location_with_bad_data_return_error(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                car = Car.query.get(self.car1)
+                lat = 'this is not a float string'
+                long = '321.123'
+                data = {
+                    'latitude': lat,
+                    'longitude': long
+                }
+                response = app.put(f'api/car/{car.id}/location', data=data)
+                self.assertEqual(400, response.status_code)
+
+    def test_update_missing_car(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                car = Car.query.get(self.car1)
+                lat = '123.321'
+                long = '321.123'
+                data = {
+                    'latitude': lat,
+                    'longitude': long
+                }
+                response = app.put(f'api/car/948483/location', data=data)
+                self.assertEqual(404, response.status_code)
+
     def test_get_booking_for_person(self):
         with self.app.app_context():
             with self.app.test_client() as app:

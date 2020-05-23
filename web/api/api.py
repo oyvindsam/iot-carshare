@@ -251,6 +251,41 @@ def get_cars():
     return jsonify(result), 200
 
 
+@api.route('/car/<int:id>/location', methods=['PUT'])
+def update_car_location(id: int):
+    """
+    Updates car in db (mainly for location).
+
+    Args:
+        id: car id
+        json data contains 'latitude' and 'longitude' in float format
+
+    Returns: updated car
+
+    """
+    req = request
+    car = Car.query.get(id)
+    # Check car exists
+    if car is None:
+        return abort(404, description='Car not found')
+    # Check location data is correct
+    data = request.values.to_dict()
+    if 'latitude' not in data or 'longitude' not in data:
+        return abort(400, description='Missing location data')
+    latitude = data['latitude'][:20]
+    longitude = data['longitude'][:20]
+    try:
+        float(latitude)
+        float(longitude)
+    except ValueError:
+        return abort(400, description='Invalid location data')
+    car.latitude = latitude
+    car.longitude = longitude
+    db.session.commit()
+    result = CarSchema().dumps(car)
+    return jsonify(result), 200
+
+
 @api.route('/car-manufacturer', methods=['GET'])
 def get_manufacturers():
     """
