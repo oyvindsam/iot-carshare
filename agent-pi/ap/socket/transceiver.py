@@ -125,6 +125,8 @@ class Transceiver:
         if('type' in data):
             if(data['type'] == 'login'):
                 print("Logging in as {}".format(data["username"]))
+            elif(data['type'] == 'face-login'):
+                print("Logging in as {}".format(data["username"]))
             elif(data['type'] == 'logout'):
                 print("Logging out {}".format(data["username"]))
             elif(data['type'] == 'carReg'):
