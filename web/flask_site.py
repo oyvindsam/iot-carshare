@@ -20,6 +20,8 @@ from google.auth.transport.requests import Request
 
 site = Blueprint("site", __name__)
 
+# hardcoding username to be used with the entire web page as working separately from the login/register page
+usr = "adi"
 
 # Client Landing webpage.
 @site.route("/")
@@ -145,7 +147,7 @@ def timeBook():
         event = {
                     'summary': 'Novo Car share booking',
                     'location': location,
-                    'description': 'Your car booking with Novoshare with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
+                    'description': 'Your car booking with Novoshare booked by user '+ usr +' with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
                     'start': {
                         'dateTime': startDateTime,
                         'timeZone': "Australia/Melbourne",
@@ -175,8 +177,9 @@ def timeBook():
             'end_time': endDateTime,
         })
 
+        #prepping the payload for a POST request
         payload = json.dumps(initload)
-        url = requests.post('http://127.0.0.1:5000/api/person/adi/booking', json=payload)
+        url = requests.post('http://127.0.0.1:5000/api/person/{}/booking'.format(usr), json=payload)
 
         return render_template("confirmation.html", invite=google_event_link)
 
@@ -189,6 +192,8 @@ def timeBook():
 def hist():
  response_book = requests.get("http://127.0.0.1:5000/api/person/adi/booking")
  responder = json.loads(response_book.text)
+
+ # preprocess the string object 
 
  for bookings in responder:
   bookings['booking'] = json.loads(bookings['booking'])
