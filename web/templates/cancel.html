@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Cancel Booking</title>
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/time.css') }}">
+</head>
+
+<body>
+    <h1>Cancel Booking?</h1>
+    <div class="container">
+      <table border="4" width="100%" id="table_format">
+        <tbody>
+          <tr>
+          <th>Booking id</th>
+          <th >Car id</th>
+          <th>Username</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Status</th>
+          <th >Actions</th>
+          
+         
+          <tr>
+              <td>{{info.booking.id}}</td>
+              <td>{{info.car.id}}</td>
+              <td>{{info.person.username}}</td>
+              <td>{{info.booking.start_time}}</td>
+              <td>{{info.booking.end_time}}</td>
+              <td>{{info.booking.status}}</td>
+              <td><form><button name="cancel">Cancel booking</button></form></td>
+          </tr> 
+        
+  </tbody>
+  </table>
+    </div>
+</body>
+</html>

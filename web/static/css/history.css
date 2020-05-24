@@ -55,3 +55,9 @@ li a.active{
   cursor: pointer;
 
 }
+
+.align{
+
+  text-align: center;
+  margin-left: 180px;
+}

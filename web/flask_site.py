@@ -40,6 +40,7 @@ def page_not_found(e):
 def bookcar():
     # Use REST API.
     response = requests.get("http://127.0.0.1:5000/api/car")
+    print(response)
     carData = json.loads(response.json())
     print(carData)
     length= len(carData)
@@ -90,26 +91,7 @@ def bookcar():
                     
         return render_template("bookcar.html", cars = carData, leng=length)
 
-#method that redirects to the booking page
-# @site.route("/book", methods=["GET", "POST"])
-# def book():
-#     if request.method == 'POST':
-#         return redirect(url_for('site.time'))
-    #   if request.method == 'POST':
-    #     car_id = request.form['car_id']
-    #     # hard coded value, must be able to get user id from user
-    #     user_id = 1
-    #     user_name = 'adi'
-    #     print('car_id',car_id)
-    #     print('user_id',user_id)
-    #     dataToSend = {'car_id':1,'person_id':1}
-    #     post_url = 'http://127.0.0.1:5000/api/person/'+user_name+'/booking'
-    #     print('url',post_url)
-    #     header = {'content-type':'application/json'}
-    #     response = requests.post(post_url, headers = header, json=dataToSend)
-    #     print ('response from server', response.text)
-    #     data = response.text
-    #   return render_template("bookingConfirm.html", resp = data)
+
 
 # method after a car has been selected to be booked
 @site.route("/time/<carinfo>", methods=["GET", "POST"])
@@ -204,10 +186,32 @@ def timeBook():
 
 
 #view previous bookings
-@site.route("/history")
+@site.route("/history", methods=["GET", "POST"])
 def hist():
-    # Use REST API.
-    return render_template("history.html")
+ response_book = requests.get("http://127.0.0.1:5000/api/person/adi/booking")
+ responder = json.loads(response_book.text)
+
+ for bookings in responder:
+  bookings['booking'] = json.loads(bookings['booking'])
+  bookings['car'] = json.loads(bookings['car'])
+  bookings['person'] = json.loads(bookings['person'])
+
+ return render_template("history.html", bookings = responder)
+
+@site.route("/cancel/<bookinfo>", methods=["GET", "POST"])
+def cancel(bookinfo):
+     if request.method == 'POST':
+      print(bookinfo)
+      print(type(bookinfo))
+      decodeitagain=ast.literal_eval(bookinfo)
+      return render_template("cancel.html", info=decodeitagain)
+ 
+
+ 
+
+
+
+ 
 
    
 
