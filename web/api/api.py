@@ -1,7 +1,7 @@
-from flask import Blueprint, jsonify, request, abort
+from flask import Blueprint, jsonify, request, abort, render_template,redirect
 from marshmallow import ValidationError
 from sqlalchemy.exc import InvalidRequestError
-
+import json
 from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
     Booking, Car, CarSchema, CarManufacturer, \
     CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema, \
@@ -60,25 +60,7 @@ def get_person(username: str):
     return jsonify(result), 200
 
 
-# add/create user
-@api.route('/person', methods=['POST'])
-def add_person():
-    """
-    Add a new person to db, or error if username already taken
 
-    Returns: Json string of added user
-
-    """
-    schema = PersonSchema(exclude=['id'])
-    try:
-        person = schema.loads(request.get_json())
-    except ValidationError:
-        return abort(400, description='Invalid person data')
-    if Person.query.filter_by(username=person.username).first() is not None:
-        return abort(409, description='User exists')
-    db.session.add(person)
-    db.session.commit()
-    return schema.jsonify(person), 201
 
 
 # authorized
@@ -318,3 +300,54 @@ def get_persons():
     persons = Person.query.all()
     result = PersonSchema(many=True).dump(persons)
     return jsonify(result), 200
+
+
+# Authorized
+@api.route('/registration', methods=['POST'])
+def add_person():
+    """
+    Add a new person to db, or error if username already taken
+
+    Returns: Json string of added user
+
+    """
+    schema = PersonSchema(exclude=['id'])
+    booking = json.loads(schema.dumps(request.form))
+    person = Person(
+    booking['first_name'],
+    booking['last_name'],
+    booking['email'],
+    booking['username'],
+    1,
+    booking['password_hashed']
+    )
+
+    try :
+        db.session.add(person)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return abort(400, 'User Name should be unique')
+
+    return render_template("bookcar.html")
+
+
+
+# add/create user
+@api.route('/loginUser', methods=['POST'])
+def loginUser():
+    """
+    Add a new person to db, or error if username already taken
+    Returns: Json string of added user
+    """
+    schema = PersonSchema(exclude=['id'])
+    booking = json.loads(schema.dumps(request.form))
+
+    userName= booking['username'],
+    passWord= booking['password_hashed']
+    active_users = Person.query.filter_by(username=userName ,password_hashed=passWord).first()
+    if active_users is None:
+        error='username or password is incorrect'
+        return redirect("/") 
+
+    return render_template("bookcar.html")

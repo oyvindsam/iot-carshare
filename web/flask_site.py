@@ -18,6 +18,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 
+
 site = Blueprint("site", __name__)
 
 
@@ -122,6 +123,7 @@ def time(carinfo):
 # method after to add booking to google calendar
 @site.route("/timeBook", methods=["GET", "POST"])
 def timeBook():
+    print("timeBook")
     carid = request.form['car_id']
     make = request.form['make']
     cartype = request.form['type']
@@ -207,9 +209,55 @@ def timeBook():
 @site.route("/history")
 def hist():
     # Use REST API.
+    print("history")
     return render_template("history.html")
 
    
+#register webpage
+@site.route("/reg", methods=['GET' , 'POST'])
+def reg():
+    print("registration")
+    username = request.form['username']
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    email = request.form['email']
+    person_type = 1
+    password_hashed = request.form['password']
+    
+    print(username)
+    print(first_name)
+    print(last_name)
+    initload = {
+        'username': username,
+        'first_name': first_name,
+        'last_name': last_name,
+        'email': email,
+        'person_type': person_type,
+        'password_hashed': password_hashed,
+        'face': None
+    }
+    payload = json.dumps(initload)
+    response = requests.post('http://127.0.0.1:5000/api/person', json=payload)
+    print(response)
+    return render_template("bookcar.html")
 
+@site.route("/login", methods=['GET' , 'POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+    print(username)
+    print(password)
+    response = requests.get("http://127.0.0.1:5000/api/person/{}".format(username))
+    user = None
+    if user is None:
+        print("Failed Login - No User Registered under username")
+        return {"error": True}
+    else:
+        if sha256_crypt.verify(password, user['password_hashed']):
+            print("Successful Login")
+            return {"success": True}
+        else:
+            print("Failed Login - Incorrect Password")
+            return {"error": True}
 
 
