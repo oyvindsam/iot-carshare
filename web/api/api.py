@@ -148,7 +148,7 @@ def deactivate_booking(username: str, id: int):
         # TODO: Update Google calendar
 
     db.session.commit()
-    return 200
+    return '', 200
 
 
 # authorized!!

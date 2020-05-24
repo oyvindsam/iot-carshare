@@ -12,14 +12,13 @@
         <tbody>
           <tr>
           <th>Booking id</th>
-          <th >Car id</th>
+          <th>Car id</th>
           <th>Username</th>
           <th>Start Time</th>
           <th>End Time</th>
           <th>Status</th>
-          <th >Actions</th>
+          <th colspan="1">Actions</th>
           
-         
           <tr>
               <td>{{info.booking.id}}</td>
               <td>{{info.car.id}}</td>
@@ -27,11 +26,16 @@
               <td>{{info.booking.start_time}}</td>
               <td>{{info.booking.end_time}}</td>
               <td>{{info.booking.status}}</td>
-              <td><form><button name="cancel">Cancel booking</button></form></td>
+              <td><form action="{{ url_for('site.cancelbook') }}" method="POST">
+                <input type="hidden" id="bookingId" name="bookingId" value={{info.booking.id}}>
+                <input type="hidden" id="username" name="username" value={{info.person.username}}>
+                <input type="submit" value="Cancel Booking">
+              </form>
+            </td>
           </tr> 
         
-  </tbody>
-  </table>
-    </div>
+      </tbody>
+      </table>
+  </div>
 </body>
 </html>

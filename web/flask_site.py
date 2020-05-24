@@ -35,16 +35,13 @@ def index():
 def page_not_found(e):
     return render_template("404.html")
 
-#booking webpage
+# method for the webpage through which the user can book cars
 @site.route("/bookcar", methods=["GET", "POST"])
 def bookcar():
     # Use REST API.
     response = requests.get("http://127.0.0.1:5000/api/car")
-    print(response)
     carData = json.loads(response.json())
-    print(carData)
     length= len(carData)
-    print(length)
     if carData is None:
         abort(404, description="Resource not found")
 
@@ -104,6 +101,7 @@ def time(carinfo):
 # method after to add booking to google calendar
 @site.route("/timeBook", methods=["GET", "POST"])
 def timeBook():
+
     carid = request.form['car_id']
     make = request.form['make']
     cartype = request.form['type']
@@ -116,76 +114,77 @@ def timeBook():
     endDateTime = request.form['bookingendtime']
     startDateTime = startDateTime + ':00+10:00'
     endDateTime = endDateTime + ':00+10:00'
-    print(startDateTime)
-    print(endDateTime)
-    print(carid)
-    SCOPES = ["https://www.googleapis.com/auth/calendar"]
-    store = file.Storage('token.json')
-    creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
 
-    service = build('calendar', 'v3', credentials=creds)
+    if startDateTime < endDateTime :
 
-    event = {
-                'summary': 'Novo Car share booking',
-                'location': location,
-                'description': 'Your car booking with Novoshare with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
-                'start': {
-                    'dateTime': startDateTime,
-                    'timeZone': "Australia/Melbourne",
-                },
-                'end': {
-                    'dateTime': endDateTime,
-                    'timeZone': "Australia/Melbourne",
-                },
-                'recurrence': [
-                    'RRULE:FREQ=DAILY;COUNT=2'
-                ],
-                'attendees': [
-                    {'email': 'lpage@example.com'},
-                    {'email': 'sbrin@example.com'},
-                ],
-                'reminders': {
-                    'useDefault': False,
-                    'overrides': [
-                    {'method': 'email', 'minutes': 24 * 60},
-                    {'method': 'popup', 'minutes': 10},
+        SCOPES = ["https://www.googleapis.com/auth/calendar"]
+        store = file.Storage('token.json')
+        creds = None
+
+        # The file token.pickle stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+
+        if os.path.exists('token.pickle'):
+            with open('token.pickle', 'rb') as token:
+                creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    'credentials.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open('token.pickle', 'wb') as token:
+                pickle.dump(creds, token)
+
+        service = build('calendar', 'v3', credentials=creds)
+
+        event = {
+                    'summary': 'Novo Car share booking',
+                    'location': location,
+                    'description': 'Your car booking with Novoshare with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
+                    'start': {
+                        'dateTime': startDateTime,
+                        'timeZone': "Australia/Melbourne",
+                    },
+                    'end': {
+                        'dateTime': endDateTime,
+                        'timeZone': "Australia/Melbourne",
+                    },
+                    'recurrence': [
+                        'RRULE:FREQ=DAILY;COUNT=2'
                     ],
-                },
-                }
-    event = service.events().insert(calendarId='primary', body=event).execute()
-    google_event_link = event.get('htmlLink')
-    initload = ({
-        'car_id': carid,
-        'person_id': 1,
-        'start_time': startDateTime,
-        'end_time': endDateTime,
-    })
-    payload = json.dumps(initload)
-    response = requests.post('http://127.0.0.1:5000/api/person/adi/booking', json=payload)
-    return render_template("confirmation.html", invite=google_event_link) 
+                    'reminders': {
+                        'useDefault': False,
+                        'overrides': [
+                        {'method': 'email', 'minutes': 24 * 60},
+                        {'method': 'popup', 'minutes': 10},
+                        ],
+                    },
+                    }
+        event = service.events().insert(calendarId='primary', body=event).execute()
+        google_event_link = event.get('htmlLink')
+
+        initload = ({
+            'car_id': carid,
+            'person_id': 1,
+            'start_time': startDateTime,
+            'end_time': endDateTime,
+        })
+
+        payload = json.dumps(initload)
+        url = requests.post('http://127.0.0.1:5000/api/person/adi/booking', json=payload)
+
+        return render_template("confirmation.html", invite=google_event_link)
+
+    else :
+        return render_template("timerror.html")
 
 
-    # This next section's code will be here
-
-
-#view previous bookings
+# method for webpage to view previous bookings
 @site.route("/history", methods=["GET", "POST"])
 def hist():
  response_book = requests.get("http://127.0.0.1:5000/api/person/adi/booking")
@@ -198,13 +197,27 @@ def hist():
 
  return render_template("history.html", bookings = responder)
 
+# method after selction of booking to be canceled is selected
 @site.route("/cancel/<bookinfo>", methods=["GET", "POST"])
 def cancel(bookinfo):
      if request.method == 'POST':
-      print(bookinfo)
-      print(type(bookinfo))
       decodeitagain=ast.literal_eval(bookinfo)
+
       return render_template("cancel.html", info=decodeitagain)
+
+# method with which booking is canceled
+@site.route("/cancelbook", methods=["POST", "PUT", "DELETE"])
+def cancelbook():
+    bookingID = request.form['bookingId']
+    usrName = request.form['username']
+    str(bookingID)
+    url = 'http://127.0.0.1:5000/api/person/{}/booking/{}'.format(usrName,bookingID)
+    response = requests.delete(url)
+    return render_template("cancelled.html")
+
+
+
+
  
 
  
