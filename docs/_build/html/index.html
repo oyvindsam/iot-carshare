@@ -54,6 +54,13 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="web.api.api.add_person2">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">add_person2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.add_person2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new person to db, or error if username already taken</p>
+<p>Returns: Json string of added user</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="web.api.api.add_person_type">
 <code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">add_person_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.add_person_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add person type. For admins.</p>
@@ -89,30 +96,13 @@
 <dl class="py function">
 <dt id="web.api.api.get_bookings">
 <code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">get_bookings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.get_bookings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get all bookings for this user
-:param username: logged in user
-:type username: str</p>
-<dl>
-<dt>Returns: All bookings for user with additional info as json list string, example:</dt><dd><dl>
-<dt>[</dt><dd><dl class="simple">
-<dt>{</dt><dd><p>booking: …,
-status: …,
-person: …,
-car: …,</p>
+<dd><p>Get all bookings for this user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – logged in user</p>
 </dd>
 </dl>
-<p>},
-{</p>
-<blockquote>
-<div><p>booking: …,
-…,</p>
-</div></blockquote>
-<p>}</p>
-</dd>
-</dl>
-<p>]</p>
-</dd>
-</dl>
+<p>Returns: All bookings for user with additional info as json list string, example:</p>
 </dd></dl>
 
 <dl class="py function">
@@ -164,6 +154,13 @@ All arguments must be in the Cars class otherwise a 404 is returned
 <code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">get_persons</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.get_persons" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all persons. For admins.</p>
 <p>Returns: All persons as json list string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.loginUser">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">loginUser</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.loginUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new person to db, or error if username already taken
+Returns: Json string of added user</p>
 </dd></dl>
 
 <dl class="py function">
@@ -482,14 +479,14 @@ ex [login]:
 </dd></dl>
 
 </div>
-<div class="section" id="module-ap.credentials">
-<span id="car-share-agent-pi-credentials"></span><h1>Car Share Agent Pi Credentials<a class="headerlink" href="#module-ap.credentials" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="car-share-agent-pi-credentials">
+<h1>Car Share Agent Pi Credentials<a class="headerlink" href="#car-share-agent-pi-credentials" title="Permalink to this headline">¶</a></h1>
 </div>
 <div class="section" id="module-ap.socket.transceiver">
 <span id="car-share-agent-pi-socket"></span><h1>Car Share Agent Pi Socket<a class="headerlink" href="#module-ap.socket.transceiver" title="Permalink to this headline">¶</a></h1>
 </div>
-<div class="section" id="module-ap.facialRec.facial">
-<span id="car-share-agent-pi-facial-recognition"></span><h1>Car Share Agent Pi Facial Recognition<a class="headerlink" href="#module-ap.facialRec.facial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="car-share-agent-pi-facial-recognition">
+<h1>Car Share Agent Pi Facial Recognition<a class="headerlink" href="#car-share-agent-pi-facial-recognition" title="Permalink to this headline">¶</a></h1>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
