@@ -1,7 +1,9 @@
-from flask import Blueprint, jsonify, request, abort, render_template,redirect
+import json
+
+from flask import Blueprint, jsonify, request, abort, render_template, redirect
 from marshmallow import ValidationError
 from sqlalchemy.exc import InvalidRequestError
-import json
+
 from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
     Booking, Car, CarSchema, CarManufacturer, \
     CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema, \
@@ -60,7 +62,25 @@ def get_person(username: str):
     return jsonify(result), 200
 
 
+# add/create user
+@api.route('/person', methods=['POST'])
+def add_person():
+    """
+    Add a new person to db, or error if username already taken
 
+    Returns: Json string of added user
+
+    """
+    schema = PersonSchema(exclude=['id'])
+    try:
+        person = schema.loads(request.get_json())
+    except ValidationError:
+        return abort(400, description='Invalid person data')
+    if Person.query.filter_by(username=person.username).first() is not None:
+        return abort(409, description='User exists')
+    db.session.add(person)
+    db.session.commit()
+    return schema.jsonify(person), 201
 
 
 # authorized
@@ -138,24 +158,14 @@ def deactivate_booking(username: str, id: int):
 def get_bookings(username: str):
     """
     Get all bookings for this user
+
     Args:
         username (str): logged in user
 
     Returns: All bookings for user with additional info as json list string, example:
-        [
-            {
-                booking: ...,
-                status: ...,
-                person: ...,
-                car: ...,
-            },
-            {
-                booking: ...,
-                ...,
-            }
-        ]
 
     """
+
     schema = BookingSchema()
     person = Person.query.filter_by(username=username).first()
     if person is None:
@@ -382,6 +392,6 @@ def loginUser():
     active_users = Person.query.filter_by(username=userName ,password_hashed=passWord).first()
     if active_users is None:
         error='username or password is incorrect'
-        return redirect("/") 
+        return redirect("/")
 
     return render_template("bookcar.html")

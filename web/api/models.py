@@ -23,20 +23,9 @@ class Person(db.Model):
     person_type = db.Column(db.Integer, db.ForeignKey('person_type.id'),
                             nullable=False)
     password_hashed = db.Column(db.String(80), nullable=False)
-
+    face = db.Column(db.BLOB)
     type = db.relationship('PersonType', backref='person', lazy=True)
-    
-    
-    def __init__(self, first_name, last_name, email, username, person_type,password_hashed):
-        
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.username = username
-        self.person_type = person_type
-        self.password_hashed = password_hashed
 
-    
 
 class PersonType(db.Model):
     """

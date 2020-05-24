@@ -20,11 +20,25 @@ Car Share API Models
 .. automodule:: web.api.models
    :members:
 
-Car Share Website
+Car Share Agent Pi Credentials
 ====================
-.. automodule:: web.flask_site
+.. automodule:: agent-pi.ap.credentials
    :members:
 
+Car Share Agent Pi Socket
+====================
+.. automodule:: agent-pi.ap.socket.transceiver
+   :members:
+
+Car Share Agent Pi Facial Recognition
+====================
+.. automodule:: agent-pi.ap.facial_rec.facial
+   :members:
+
+Car Share Master Pi Socket
+====================
+.. automodule:: master-pi-socket.master
+   :members:
 
 Indices and tables
 ==================

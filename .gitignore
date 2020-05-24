@@ -1,0 +1,7 @@
+.DS_Store
+*.sh
+*.jpg
+
+/.vscode/
+/.idea/
+/venv/

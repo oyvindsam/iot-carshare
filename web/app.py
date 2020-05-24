@@ -1,19 +1,16 @@
-from flask import Flask, request, jsonify, render_template
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-import os, requests, json
+from flask import Flask
+
 from api.api import api
 from api.models import db
-from flask_site import site
 
 
 def create_app():
     app = Flask(__name__)
 
-    HOST = "34.71.196.78"
+    HOST = "gcloud ip adress" # UPDATE WITH YOUR OWN GCLOUD DB DETAILS
     USER = "root"
-    PASSWORD = "root1234"
-    DATABASE = "hireCar"
+    PASSWORD = "carshare"
+    DATABASE = "carshare_db"
 
     app.config[
         "SQLALCHEMY_DATABASE_URI"] = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}"
@@ -21,7 +18,6 @@ def create_app():
 
     db.init_app(app)
     app.register_blueprint(api)
-    app.register_blueprint(site)
 
     return app
 
@@ -29,10 +25,10 @@ def create_app():
 
 def setup_clean_db(TEST_DB=True):
     app = create_app()
-    HOST = "34.71.196.78"
+    HOST = "gcloud ip adress"
     USER = "root"
-    PASSWORD = "root1234"
-    DATABASE = "hireCar"
+    PASSWORD = "carshare"
+    DATABASE = "carshare_db"
 
     if TEST_DB:
         DATABASE += '_test'
