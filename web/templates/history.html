@@ -17,7 +17,34 @@
 
 
 <body>
-    <b>this is history</b>
+  <h1 class="align">Current Bookings</h1>
+
+  <div class="container">
+    <table border="4" width="100%" id="table_format">
+      <tbody>
+        <tr>
+        <th>Booking id</th>
+        <th class='skip-filter'>Car id</th>
+        <th class='skip-filter'>Person Username</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Status</th>
+        <th class='skip-filter'>Actions</th>
+        
+        {%for b in bookings%}
+        <tr>
+            <td>{{b.booking.id}}</td>
+            <td>{{b.car.car_manufacturer}}</td>
+            <td>{{b.person.username}}</td>
+            <td>{{b.booking.start_time}}</td>
+            <td>{{b.booking.end_time}}</td>
+            <td>{{b.booking.status}}</td>
+            <td><form action="{{ url_for('site.cancel', bookinfo=b)}}" method="POST"><button name="cancelled">Cancel</button></form></td>
+        </tr> 
+        {%endfor%}
+</tbody>
+</table>
+  </div>
 
 </body>
 
