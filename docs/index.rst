@@ -21,23 +21,23 @@ Car Share API Models
    :members:
 
 Car Share Agent Pi Credentials
-====================
-.. automodule:: agent-pi.ap.credentials
+==============================
+.. automodule:: ap.credentials
    :members:
 
 Car Share Agent Pi Socket
-====================
-.. automodule:: agent-pi.ap.socket.transceiver
+=========================
+.. automodule:: ap.socket.transceiver
    :members:
 
 Car Share Agent Pi Facial Recognition
-====================
-.. automodule:: agent-pi.ap.facial_rec.facial
+=====================================
+.. automodule:: ap.facialRec.facial
    :members:
 
 Car Share Master Pi Socket
-====================
-.. automodule:: master-pi-socket.master
+==========================
+.. automodule:: master
    :members:
 
 Indices and tables

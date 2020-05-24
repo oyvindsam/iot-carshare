@@ -620,9 +620,3 @@ class ValidationTest(TestCase):
                 schema.loads(booking_jsonstr)
             self.assertEqual(['end_time can not be before start_time'], cm.exception.messages['_schema'])
 
-
-
-
-
-
-
