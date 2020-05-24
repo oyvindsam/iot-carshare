@@ -10,6 +10,9 @@ Welcome to iot-carshare's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   ../web/api/api
+   ../web/api/models
+
 
 
 Indices and tables
