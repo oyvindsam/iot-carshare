@@ -8,7 +8,7 @@
 import os
 from datetime import datetime
 from ap.socket.transceiver import Transceiver
-from ap.facial_rec.facial import Facial
+from ap.facialRec.facial import Facial
 
 class Credentials:
 
@@ -31,8 +31,9 @@ class Credentials:
 
         Returns:
             json: Return a json object from the Transciever class with the appropriate result or error based on the entered details
-                ex [login]: {"success": True ,"type" : string, "msg" : string}
-                            {"error": True ,"type" : string, "msg" : string}
+            ex [login]:
+            {"success": True ,"type" : string, "msg" : string}
+            {"error": True ,"type" : string, "msg" : string}
         """
 
         if (self.__user_exists == False):
@@ -60,8 +61,9 @@ class Credentials:
 
         Returns:
             json: Return a json object from the Transciever class with the appropriate result or error based on the recognised face
-                ex [login]: {"success": True ,"type" : string, "msg" : string}
-                            {"error": True ,"type" : string, "msg" : string}
+            ex [login]:
+            {"success": True ,"type" : string, "msg" : string}
+            {"error": True ,"type" : string, "msg" : string}
         """
 
         if (self.__user_exists == False):
@@ -92,8 +94,9 @@ class Credentials:
         Returns:
             json: Return a json object from the Facial recognition class with the appropriate result or
             error based on the outcome of registering a face
-                ex [login]: {"success": True ,"type" : string, "msg" : string}
-                            {"error": True ,"type" : string, "msg" : string}
+            ex [login]:
+            {"success": True ,"type" : string, "msg" : string}
+            {"error": True ,"type" : string, "msg" : string}
         """
 
         if (self.__user_exists == True):
@@ -124,8 +127,9 @@ class Credentials:
         Returns:
             json: Return a json object from the Transciever Class class with the appropriate result or
             error based on the outcome of logging out a current user
-                ex [login]: {"success": True ,"type" : string, "msg" : string}
-                            {"error": True ,"type" : string, "msg" : string}
+            ex [login]:
+            {"success": True ,"type" : string, "msg" : string}
+            {"error": True ,"type" : string, "msg" : string}
         """
 
         if self.__user_exists == True:

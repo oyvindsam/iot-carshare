@@ -98,8 +98,9 @@ def Login(username, password, carId):
 
     Returns:
         json: Return a json object based on valdation checks for the username and password
-            ex [login]: {"success": True ,"type" : string, "msg" : string}
-                        {"error": True ,"type" : string, "msg" : string}
+        ex [login]:
+        {"success": True ,"type" : string, "msg" : string}
+        {"error": True ,"type" : string, "msg" : string}
     """
 
     response = requests.get("http://{}:5000/api/person/{}".format(IPADD, username))
@@ -131,8 +132,9 @@ def FaceLogin(username, carId):
 
     Returns:
         json: Return a json object based on valdation checks for the username and password
-            ex [login]: {"success": True ,"type" : string, "msg" : string}
-                        {"error": True ,"type" : string, "msg" : string}
+        ex [login]:
+        {"success": True ,"type" : string, "msg" : string}
+        {"error": True ,"type" : string, "msg" : string}
     """
 
     response = requests.get("http://{}:5000/api/person/{}".format(IPADD, username))
@@ -163,8 +165,9 @@ def Logout(username, carId, bId):
 
     Returns:
         json: Return a json object based on valdation checks for the username and password
-            ex [login]: {"success": True}
-                        {"error": True}
+        ex [login]:
+        {"success": True}
+        {"error": True}
     """
 
     response = requests.put("http://{}:5000/api/person/{}/booking/{}".format(IPADD, username, str(bId)))
@@ -185,8 +188,9 @@ def confirmBooking(username, carId):
 
     Returns:
         json: Return a json object based on valdation checks for the username and password
-            ex [login]: {"success": True ,"bId" : int}
-                        {"error": True}
+        ex [login]:
+        {"success": True ,"bId" : int}
+        {"error": True}
     """
 
     response = requests.get("http://{}:5000/api/person/{}/booking".format(IPADD, username))
@@ -216,8 +220,9 @@ def updateLocation(carId, lat, lng):
 
     Returns:
         json: Return a json object based on valdation checks for the update response
-            ex [login]: {"success": True}
-                        {"error": True}
+        ex [login]:
+        {"success": True}
+        {"error": True}
     """
 
     initPayload = ({'latitude': lat, 'longitude': lng})

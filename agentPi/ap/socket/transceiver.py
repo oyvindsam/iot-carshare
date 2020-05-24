@@ -16,13 +16,13 @@ class Transceiver:
 
     def __readConfig(self):
         """
-        Read Master Pi connection information and initialise socket
+            Read Master Pi connection information and initialise socket
 
-        Args:
-            None
+            Args:
+                None
 
-        Returns:
-            None
+            Returns:
+                None
         """
 
         try:
@@ -43,11 +43,11 @@ class Transceiver:
 
         Args:
             data (json): The information to be sent to the Master Pi
-                ex [login]: {"type": 'login', "username": string, "hPass": string, "dateTime": string, "car_id": int}
+            ex [login]: {"type": 'login', "username": string, "hPass": string, "dateTime": string, "car_id": int}
 
         Returns:
             json: Response information from the Master Pi socket
-                ex [login]: {"success": True, "type": string, "msg": string} or {"error": True, "type": string, "msg": string}
+            ex [login]: {"success": True, "type": string, "msg": string} or {"error": True, "type": string, "msg": string}
         """
         
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -76,7 +76,7 @@ class Transceiver:
 
         Args:
             data (json): The information to be sent to the Master Pi
-                ex [login]: {"success": True, "type": string, "msg": string} or {"error": True, "type": string, "msg": string}
+            ex [login]: {"success": True, "type": string, "msg": string} or {"error": True, "type": string, "msg": string}
 
         Returns:
             None
@@ -97,7 +97,7 @@ class Transceiver:
 
         Args:
             data (json): The information to be sent to the Master Pi
-                ex [login]: {"success": True, "type": string, "msg": string} or {"error": True, "type": string, "msg": string}
+            ex [login]: {"success": True, "type": string, "msg": string} or {"error": True, "type": string, "msg": string}
 
         Returns:
             None
@@ -116,7 +116,7 @@ class Transceiver:
 
         Args:
             data (json): The information to be sent to the Master Pi
-                ex [login]: {"type": 'login', "username": string, "hPass": string, "dateTime": string, "car_id": int}
+            ex [login]: {"type": 'login', "username": string, "hPass": string, "dateTime": string, "car_id": int}
 
         Returns:
             None

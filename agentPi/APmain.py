@@ -8,7 +8,7 @@
 from datetime import datetime
 from ap.credentials import Credentials
 from ap.socket.transceiver import Transceiver
-from ap.facial_rec.facial import Facial
+from ap.facialRec.facial import Facial
 
 class APMain:
 
