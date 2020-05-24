@@ -22,6 +22,8 @@ site = Blueprint("site", __name__)
 
 # hardcoding username to be used with the entire web page as working separately from the login/register page
 usr = "adi"
+# hardcoding person id to do the post request
+personid = 1
 
 # Client Landing webpage.
 @site.route("/")
@@ -172,7 +174,7 @@ def timeBook():
 
         initload = ({
             'car_id': carid,
-            'person_id': 1,
+            'person_id': personid,
             'start_time': startDateTime,
             'end_time': endDateTime,
         })
@@ -211,7 +213,7 @@ def cancel(bookinfo):
       return render_template("cancel.html", info=decodeitagain)
 
 # method with which booking is canceled
-@site.route("/cancelbook", methods=["POST", "PUT", "DELETE"])
+@site.route("/cancelbook", methods=["POST", "DELETE"])
 def cancelbook():
     bookingID = request.form['bookingId']
     usrName = request.form['username']
