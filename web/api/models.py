@@ -98,8 +98,7 @@ class Booking(db.Model):
     car = db.relationship('Car', backref='booking', lazy=True)
     person = db.relationship('Person', backref='booking', lazy=True)
     status = db.Column(db.String(20), default=BookingStatusEnum.ACTIVE)
-    #status_id = db.Column(db.Integer, db.ForeignKey('booking_status.id'), nullable=False)
-    #status = db.relationship('BookingStatus', backref='booking', lazy=True)
+    google_calendar_id = db.Column(db.String(200), nullable=True)
 
     # Is a car available if it is after end_time, but user has _not_ returned it yet?.. no
     # Or before end_time and user _has_ returned it. This argues for hard coded statuses
