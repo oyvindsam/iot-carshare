@@ -9,15 +9,9 @@ verify_ssl = true
 flask-sqlalchemy = "*"
 flask-marshmallow = "*"
 flask = "*"
-<<<<<<< Updated upstream
-mysqldb = "*"
-flask-mysqldb = "*"
-flask-mysql = "*"
-=======
 flask-mysqldb = "*"
 flask-mysql = "*"
 sphinxcontrib-napoleon = "*"
->>>>>>> Stashed changes
 
 [requires]
 python_version = "3.8"
