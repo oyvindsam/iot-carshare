@@ -35,23 +35,461 @@
 <div class="toctree-wrapper compound">
 </div>
 </div>
-<div class="section" id="car-share-api">
-<h1>Car Share API<a class="headerlink" href="#car-share-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-web.api.api">
+<span id="car-share-api"></span><h1>Car Share API<a class="headerlink" href="#module-web.api.api" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="web.api.api.add_booking">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">add_booking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.add_booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new booking for this user
+:param username: logged in user
+:type username: str</p>
+<p>Returns: Json string of booking, or error</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.add_person">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">add_person</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.add_person" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new person to db, or error if username already taken</p>
+<p>Returns: Json string of added user</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.add_person_type">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">add_person_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.add_person_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add person type. For admins.</p>
+<p>Returns: Added person type as json string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.deactivate_booking">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">deactivate_booking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.deactivate_booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deactivate a booking (cancel/finish)
+:param username: username
+:type username: str
+:param id: booking id
+:type id: int</p>
+<p>Returns: Error if booking doesn’t exist, or success message</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.get_booking">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">get_booking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.get_booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get booking for given user and booking id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> – (str) logged in user</p></li>
+<li><p><strong>id</strong> (<em>int</em>) – booking id</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: One booking if exists, else 404</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.get_bookings">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">get_bookings</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.get_bookings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all bookings for this user
+:param username: logged in user
+:type username: str</p>
+<dl>
+<dt>Returns: All bookings for user with additional info as json list string, example:</dt><dd><dl>
+<dt>[</dt><dd><dl class="simple">
+<dt>{</dt><dd><p>booking: …,
+status: …,
+person: …,
+car: …,</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>booking: …,
+…,</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.get_car_colours">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">get_car_colours</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.get_car_colours" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all car colours.</p>
+<p>Returns: All car colours as json list string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.get_car_types">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">get_car_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.get_car_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all car types</p>
+<p>Returns: All car types as json list string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.get_cars">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">get_cars</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.get_cars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get AVAILABLE cars based of query GET arguments/form POST arguments (supports both).
+All arguments must be in the Cars class otherwise a 404 is returned
+.. rubric:: Example</p>
+<p>GET /api/car?car_colour=1&amp;car_manufacturer=2
+(note the id is used, not the name)</p>
+<p>Returns: Json list string of AVAILABLE Cars with given arguments</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.get_manufacturers">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">get_manufacturers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.get_manufacturers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all manufacturers</p>
+<p>Returns: All manufacturers as json list string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.get_person">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">get_person</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.get_person" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get person data for logged in user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – logged in user</p>
+</dd>
+</dl>
+<p>Returns: Response with person json string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.get_persons">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">get_persons</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.get_persons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all persons. For admins.</p>
+<p>Returns: All persons as json list string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="web.api.api.update_car_location">
+<code class="sig-prename descclassname">web.api.api.</code><code class="sig-name descname">update_car_location</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.api.update_car_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates car in db (mainly for location).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>int</em>) – car id</p></li>
+<li><p><strong>data contains 'latitude' and 'longitude' in float format</strong> (<em>json</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: updated car</p>
+</dd></dl>
+
 </div>
-<div class="section" id="car-share-api-models">
-<h1>Car Share API Models<a class="headerlink" href="#car-share-api-models" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-web.api.models">
+<span id="car-share-api-models"></span><h1>Car Share API Models<a class="headerlink" href="#module-web.api.models" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="web.api.models.Booking">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">Booking</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.Booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Booking SQLAlchemy class</p>
+<dl class="py method">
+<dt id="web.api.models.Booking.is_car_busy">
+<em class="property">classmethod </em><code class="sig-name descname">is_car_busy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_time</span><span class="p">:</span> <span class="n">datetime.datetime</span></em>, <em class="sig-param"><span class="n">end_time</span><span class="p">:</span> <span class="n">datetime.datetime</span></em>, <em class="sig-param"><span class="n">car_id</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#web.api.models.Booking.is_car_busy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if an active booking within this time period uses this car
+:param start_time:
+:type start_time: datetime
+:param end_time:
+:type end_time: datetime
+:param car_id:
+:type car_id: int</p>
+<p>Returns: bool if car is in use</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.BookingSchema">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">BookingSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.BookingSchema" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="web.api.models.BookingSchema.make_booking">
+<code class="sig-name descname">make_booking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.BookingSchema.make_booking" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function runs after Schema().loads (validation code).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Valid data</p></li>
+<li><p><strong>**kwargs</strong> – args passed automatically</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.Car">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">Car</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.Car" title="Permalink to this definition">¶</a></dt>
+<dd><p>Car SQLAlchemy class</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.CarColour">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">CarColour</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.CarColour" title="Permalink to this definition">¶</a></dt>
+<dd><p>CarColour SQLAlchemy class</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.CarColourSchema">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">CarColourSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.CarColourSchema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.CarManufacturer">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">CarManufacturer</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.CarManufacturer" title="Permalink to this definition">¶</a></dt>
+<dd><p>CarManufacturer SQLAlchemy class</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.CarManufacturerSchema">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">CarManufacturerSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.CarManufacturerSchema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.CarSchema">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">CarSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.CarSchema" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="web.api.models.CarSchema.make_car">
+<code class="sig-name descname">make_car</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.CarSchema.make_car" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function runs after Schema().loads (validation code).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Valid data</p></li>
+<li><p><strong>**kwargs</strong> – args passed automatically</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.CarType">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">CarType</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.CarType" title="Permalink to this definition">¶</a></dt>
+<dd><p>CarType SQLAlchemy class</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.CarTypeSchema">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">CarTypeSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.CarTypeSchema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.Person">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">Person</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.Person" title="Permalink to this definition">¶</a></dt>
+<dd><p>Person SQLAlchemy class</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.PersonSchema">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">PersonSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.PersonSchema" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py class">
+<dt id="web.api.models.PersonSchema.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#web.api.models.PersonSchema.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="web.api.models.PersonSchema.Meta.include_fk">
+<code class="sig-name descname">include_fk</code><a class="headerlink" href="#web.api.models.PersonSchema.Meta.include_fk" title="Permalink to this definition">¶</a></dt>
+<dd><p>When validating we want all foreign keys
+to be present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="web.api.models.PersonSchema.Meta.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#web.api.models.PersonSchema.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#web.api.models.Person" title="web.api.models.Person"><code class="xref py py-class docutils literal notranslate"><span class="pre">Person</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt id="web.api.models.PersonSchema.make_person">
+<code class="sig-name descname">make_person</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.PersonSchema.make_person" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function runs after Schema().loads (validation code).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – Valid data</p>
+</dd>
+</dl>
+<p>Returns: Person</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.PersonType">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">PersonType</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.PersonType" title="Permalink to this definition">¶</a></dt>
+<dd><p>PersonType SQLAlchemy class</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="web.api.models.PersonTypeSchema">
+<em class="property">class </em><code class="sig-prename descclassname">web.api.models.</code><code class="sig-name descname">PersonTypeSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.PersonTypeSchema" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="web.api.models.PersonTypeSchema.make_person_type">
+<code class="sig-name descname">make_person_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#web.api.models.PersonTypeSchema.make_person_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function runs after Schema().loads (validation code).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Valid data</p></li>
+<li><p><strong>**kwargs</strong> – args passed automatically</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="car-share-agent-pi-credentials">
-<h1>Car Share Agent Pi Credentials<a class="headerlink" href="#car-share-agent-pi-credentials" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-master">
+<span id="car-share-master-pi-socket"></span><h1>Car Share Master Pi Socket<a class="headerlink" href="#module-master" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="master.FaceLogin">
+<code class="sig-prename descclassname">master.</code><code class="sig-name descname">FaceLogin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">carId</span></em><span class="sig-paren">)</span><a class="headerlink" href="#master.FaceLogin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sign In fucntion with username from facial recognition and carId.
+Performs GET request to /api/person/&lt;string:username&gt; and does validation checks
+Then calls confirmBooking()</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>string</em>) – The entered username</p></li>
+<li><p><strong>carId</strong> (<em>int</em>) – The id of the current car</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Return a json object based on valdation checks for the username and password
+ex [login]:
+{“success”: True ,”type” : string, “msg” : string}
+{“error”: True ,”type” : string, “msg” : string}</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="master.Login">
+<code class="sig-prename descclassname">master.</code><code class="sig-name descname">Login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">password</span></em>, <em class="sig-param"><span class="n">carId</span></em><span class="sig-paren">)</span><a class="headerlink" href="#master.Login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sign In fucntion with username/password and carId.
+Performs GET request to /api/person/&lt;string:username&gt; and does validation checks
+Then calls confirmBooking()</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>string</em>) – The entered username</p></li>
+<li><p><strong>password</strong> (<em>string</em>) – The entered password</p></li>
+<li><p><strong>carId</strong> (<em>int</em>) – The id of the current car</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Return a json object based on valdation checks for the username and password
+ex [login]:
+{“success”: True ,”type” : string, “msg” : string}
+{“error”: True ,”type” : string, “msg” : string}</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="master.Logout">
+<code class="sig-prename descclassname">master.</code><code class="sig-name descname">Logout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">carId</span></em>, <em class="sig-param"><span class="n">bId</span></em><span class="sig-paren">)</span><a class="headerlink" href="#master.Logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sign out method for user. Takes in the Username, CarId and Booking up
+Updates the booking as finished if it exists</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>string</em>) – The entered username</p></li>
+<li><p><strong>password</strong> (<em>string</em>) – The entered password</p></li>
+<li><p><strong>carId</strong> (<em>int</em>) – The id of the current car</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Return a json object based on valdation checks for the username and password
+ex [login]:
+{“success”: True}
+{“error”: True}</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="master.confirmBooking">
+<code class="sig-prename descclassname">master.</code><code class="sig-name descname">confirmBooking</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">carId</span></em><span class="sig-paren">)</span><a class="headerlink" href="#master.confirmBooking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm booking by iterating over users bookings and
+filter for active bookings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>string</em>) – The entered username</p></li>
+<li><p><strong>carId</strong> (<em>int</em>) – The id of the current car</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Return a json object based on valdation checks for the username and password
+ex [login]:
+{“success”: True ,”bId” : int}
+{“error”: True}</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="master.updateLocation">
+<code class="sig-prename descclassname">master.</code><code class="sig-name descname">updateLocation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">carId</span></em>, <em class="sig-param"><span class="n">lat</span></em>, <em class="sig-param"><span class="n">lng</span></em><span class="sig-paren">)</span><a class="headerlink" href="#master.updateLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update Car location method call</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>carId</strong> (<em>int</em>) – The id of the current car</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – The current latitude</p></li>
+<li><p><strong>lng</strong> (<em>float</em>) – The current longitude</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Return a json object based on valdation checks for the update response
+ex [login]:
+{“success”: True}
+{“error”: True}</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
-<div class="section" id="car-share-agent-pi-socket">
-<h1>Car Share Agent Pi Socket<a class="headerlink" href="#car-share-agent-pi-socket" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-ap.credentials">
+<span id="car-share-agent-pi-credentials"></span><h1>Car Share Agent Pi Credentials<a class="headerlink" href="#module-ap.credentials" title="Permalink to this headline">¶</a></h1>
 </div>
-<div class="section" id="car-share-agent-pi-facial-recognition">
-<h1>Car Share Agent Pi Facial Recognition<a class="headerlink" href="#car-share-agent-pi-facial-recognition" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-ap.socket.transceiver">
+<span id="car-share-agent-pi-socket"></span><h1>Car Share Agent Pi Socket<a class="headerlink" href="#module-ap.socket.transceiver" title="Permalink to this headline">¶</a></h1>
 </div>
-<div class="section" id="car-share-master-pi-socket">
-<h1>Car Share Master Pi Socket<a class="headerlink" href="#car-share-master-pi-socket" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-ap.facialRec.facial">
+<span id="car-share-agent-pi-facial-recognition"></span><h1>Car Share Agent Pi Facial Recognition<a class="headerlink" href="#module-ap.facialRec.facial" title="Permalink to this headline">¶</a></h1>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
