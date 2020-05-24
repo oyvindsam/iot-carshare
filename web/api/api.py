@@ -348,7 +348,7 @@ def get_persons():
 
 # Authorized
 @api.route('/registration', methods=['POST'])
-def add_person():
+def add_person2():
     """
     Add a new person to db, or error if username already taken
 
