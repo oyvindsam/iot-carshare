@@ -8,7 +8,7 @@
 
 Contribution :
 
-Adithya Raj 
+Aditya Raj 
 (MP) Client Side Website - 1
  - Intialisation of server
  - Designed the website(booking, cancel booking etc)
