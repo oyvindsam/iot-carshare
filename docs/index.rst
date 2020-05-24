@@ -7,7 +7,7 @@ Welcome to iot-carshare's documentation!
 ========================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    :caption: Contents:
 
 Car Share API
@@ -18,6 +18,11 @@ Car Share API
 Car Share API Models
 ====================
 .. automodule:: web.api.models
+   :members:
+
+Car Share Master Pi Socket
+==========================
+.. automodule:: master
    :members:
 
 Car Share Agent Pi Credentials
@@ -33,11 +38,6 @@ Car Share Agent Pi Socket
 Car Share Agent Pi Facial Recognition
 =====================================
 .. automodule:: ap.facialRec.facial
-   :members:
-
-Car Share Master Pi Socket
-==========================
-.. automodule:: master
    :members:
 
 Indices and tables
