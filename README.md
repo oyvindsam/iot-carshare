@@ -6,7 +6,7 @@
 ###   Sagar Chandrakant Pardikar (s3715199)
 
 
-conttribution :
+Contribution :
 
 Adithya Raj 
 (MP) Client Side Website - 1
