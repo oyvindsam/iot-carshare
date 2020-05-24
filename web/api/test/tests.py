@@ -400,6 +400,16 @@ class ApiTest(TestCase):
                     self.assertEqual(type(person1), type(PersonSchema().loads(booking_info['person'])))
                     self.assertEqual(type(car1), type(CarSchema().loads(booking_info['car'])))
 
+    def test_deactivate_booking(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                person = Person.query.get(self.person1)
+                booking = duplicate_db_object(BookingSchema, Booking.query.get(self.booking1))
+                booking.car_id = self.car3
+                add_to_db(booking)
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id', 'status']).dump(booking))
+                response = app.put(f"/api/person/{person.username}/booking/{booking.id}", json=booking_jsonstr)
+                self.assertEqual(200, response.status_code)
 
 def add_to_db(thing):
     """
