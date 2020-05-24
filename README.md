@@ -21,7 +21,7 @@ Oyvind Samuelsen
  - Implement Appropriate restful function calls
  - Tests
  
- Samit Sharama
+ Samit Sharam
  
  - (AP) Facial Recognition
  - (MP) Socket
