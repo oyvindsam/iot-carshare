@@ -6,22 +6,6 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-<<<<<<< HEAD
-flask-sqlalchemy = "*"
-flask-marshmallow = "*"
-flask = "*"
-flask-mysqldb = "*"
-flask-mysql = "*"
-sphinxcontrib-napoleon = "*"
-face-recognition = "*"
-dlib = "*"
-imutils = "*"
-numpy = "*"
-passlib = "*"
-marshmallow-sqlalchemy = "*"
-sphinx = "*"
-opencv-python = "*"
-=======
 alabaster = "==0.7.12"
 certifi = "==2020.4.5.1"
 chardet = "==3.0.4"
@@ -60,7 +44,6 @@ Pygments = "==2.6.1"
 PyMySQL = "==0.9.3"
 Sphinx = "==3.0.3"
 Werkzeug = "==1.0.1"
->>>>>>> dev
 
 [requires]
 python_version = "3.8"
