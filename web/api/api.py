@@ -148,7 +148,7 @@ def deactivate_booking(username: str, id: int):
         # TODO: Update Google calendar
 
     db.session.commit()
-    return 200
+    return '', 200
 
 
 # authorized!!
@@ -157,7 +157,7 @@ def get_bookings(username: str):
     """
     Get all bookings for this user
     Args:
-        username: logged in user
+        username (str): logged in user
 
     Returns: All bookings for user with additional info as json list string, example:
         [
@@ -200,8 +200,8 @@ def get_booking(username: str, id: int):
     Get booking for given user and booking id
 
     Args:
-        username: logged in user
-        id: booking id
+        username: (str) logged in user
+        id (int): booking id
 
     Returns: One booking if exists, else 404
 
@@ -248,6 +248,40 @@ def get_cars():
             return abort(404, 'Query parameter(s)) invalid ')
 
     result = CarSchema(many=True).dumps(available_cars)
+    return jsonify(result), 200
+
+
+@api.route('/car/<int:id>/location', methods=['PUT'])
+def update_car_location(id: int):
+    """
+    Updates car in db (mainly for location).
+
+    Args:
+        id (int): car id
+        json data contains 'latitude' and 'longitude' in float format
+
+    Returns: updated car
+
+    """
+    car = Car.query.get(id)
+    # Check car exists
+    if car is None:
+        return abort(404, description='Car not found')
+    # Check location data is correct
+    data = request.values.to_dict()
+    if 'latitude' not in data or 'longitude' not in data:
+        return abort(400, description='Missing location data')
+    latitude = data['latitude'][:20]
+    longitude = data['longitude'][:20]
+    try:
+        float(latitude)
+        float(longitude)
+    except ValueError:
+        return abort(400, description='Invalid location data')
+    car.latitude = latitude
+    car.longitude = longitude
+    db.session.commit()
+    result = CarSchema().dumps(car)
     return jsonify(result), 200
 
 
