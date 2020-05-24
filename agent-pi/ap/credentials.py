@@ -7,7 +7,6 @@
 
 import os
 from datetime import datetime
-from passlib.hash import sha256_crypt
 from ap.socket.transceiver import Transceiver
 from ap.facial_rec.facial import Facial
 
@@ -17,6 +16,7 @@ class Credentials:
         super().__init__()
         self.__user_username = ""
         self.__user_exists = False
+        self.__bookingId = 0
         self.__trans = Transceiver()
         self.__facial = Facial()
 
@@ -36,17 +36,18 @@ class Credentials:
         """
 
         if (self.__user_exists == False):
-            self.__user_exists = True
-            res = self.__hashCreds(username, password, carId)
+            res = self.__sendCreds(username, password, carId)
+            if("success" in res):
+                self.__user_exists = True
+                self.__bookingId = res['bId']
             return res
         else:
             return {"error": True ,"type" : "login", "msg" : "Current Login Already Exists"}
 
     #For now return Hash - Later will have to check with DB
-    def __hashCreds(self, username, password, carId):
-        hashedPassword = sha256_crypt.hash(password)
+    def __sendCreds(self, username, password, carId):
         self.__user_username = username
-        data = {"type": "login", "username": username, "hPass": hashedPassword, "dateTime": datetime.now().isoformat(), "car_id": carId}
+        data = {"type": "login", "username": username, "pass": password, "dateTime": datetime.now().isoformat(), "car_id": carId}
         return self.__trans.send(data)
 
     def faceSignIn(self, username, carId):
@@ -69,10 +70,13 @@ class Credentials:
             res = self.__facial.recognize()
             if "success" in res:
                 if(res['name'] == username):
-                    self.__user_exists = True
-                    self.__user_username = username
                     data = {"type": "face-login", "username": username, "dateTime": datetime.now().isoformat(), "car_id": carId}
-                    return self.__trans.send(data)
+                    res2 = self.__trans.send(data)
+                    if "success" in res2:
+                        self.__user_exists = True
+                        self.__user_username = username
+                        self.__bookingId = res2['bId']
+                    return res2
             elif "error" in res:
                 return res
         else:
@@ -110,7 +114,6 @@ class Credentials:
     def getUserName(self):
         return self.__user_username
 
-    #Sign out User
     def signOut(self, carId):
         """
         Sign out of the current account
@@ -125,10 +128,13 @@ class Credentials:
                             {"error": True ,"type" : string, "msg" : string}
         """
 
-        print("Logging out user")
-        data = {"type": "logout", "username": self.__user_username, "dateTime": datetime.now().isoformat(), "car_id": carId}
-        res = self.__trans.send(data)
-        if("success" in res):
-            self.__user_username = ""
-            self.__user_exists = False
-        return res
+        if self.__user_exists == True:
+            print("Logging out user")
+            data = {"type": "logout", "username": self.__user_username, "dateTime": datetime.now().isoformat(), "car_id": carId, "bId": self.__bookingId}
+            res = self.__trans.send(data)
+            if("success" in res):
+                self.__user_username = ""
+                self.__user_exists = False
+            return res
+        else:
+            return {"error": True, "type": "logout", "msg": "User logged in"}

@@ -22,8 +22,8 @@ class APMain:
 
         #Initialise Car and register with system
         APMain.car_id = 1
-        res = APMain.trans.send({'type': 'carReg','car_id': APMain.car_id, "loc": {"lat": 0, "lng": 0}, "dateTime": datetime.now().isoformat()})
-        if("error" in res):
+        res = APMain.trans.send({'type': 'carReg','car_id': APMain.car_id, "lat": -37.8102361, "lng": 144.9627652, "dateTime": datetime.now().isoformat()})
+        if "error" in res:
             print("Seems like Master Pi might be offline")
             return
 
@@ -50,7 +50,7 @@ class APMain:
         elif (opt == "2"):
             APMain.faceMenu()
         elif (opt.lower() == "exit"):
-            APMain.trans.send({'type': 'carOff','car_id': APMain.car_id, "loc": {"lat": 0, "lng": 0}})
+            APMain.trans.send({'type': 'carOff','car_id': APMain.car_id, "lat": -37.8102361, "lng": 144.9627652})
             print("System shutting down...")
             APMain.exit = True
         else:
@@ -58,7 +58,7 @@ class APMain:
 
     @staticmethod
     def credsMenu():
-        email = input("Enter your email: ")
+        email = input("Enter your username: ")
         password = input("Enter password: ")
         user = APMain.credsClass.signIn(email, password, 1)
         if ("success" in user):
@@ -74,6 +74,7 @@ class APMain:
     def faceMenu():
         opt = input("Enter username: ")
         res = APMain.credsClass.faceSignIn(opt, APMain.car_id)
+        APMain.updateCarLoc()
         if("error" in res):
             print(res['msg'])
         elif("unreg" in res):
@@ -98,7 +99,7 @@ class APMain:
 
     @staticmethod
     def updateCarLoc():
-        res = APMain.trans.send({'type': 'carLoc','car_id': APMain.car_id, "loc": {"lat": 0, "lng": 0}})
+        res = APMain.trans.send({'type': 'carLoc','car_id': APMain.car_id, "lat": -37.8075801, "lng": 144.9567837})
         if("error" in res):
             if(res['error'] == "connection"):
                 print("Failed to Connect")
