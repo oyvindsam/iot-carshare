@@ -11,8 +11,9 @@ conttribution :
 Adithya Raj 
 (MP) Client Side Website - 1
  - Intialisation of server
- - Add Menu Features (Designing Website)
- - Setup apache server
+ - Designed the website(booking, cancel booking etc)
+ - Google calendar integration
+
 
 Oyvind Samuelsen
 (MP) Client Side Website - API
