@@ -13,7 +13,7 @@ LOCAL = True
 
 def get_production_db_test_app():
     app = create_app()
-    DB_URI = 'mysql://root:carshare@35.228.215.119/carshare_db_test'
+    #DB_URI = 'mysql://root:carshare@gcloud ip adress/carshare_db_test'
     app.config["SQLALCHEMY_DATABASE_URI"] = DB_URI
     return app
 
@@ -329,6 +329,49 @@ class ApiTest(TestCase):
                 self.assertFalse(car1 in response_cars)
                 self.assertTrue(car4.id in [c.id for c in response_cars])
 
+    def test_update_car_location(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                car = Car.query.get(self.car1)
+                lat = '123.321'
+                long = '321.123'
+                data = {
+                    'latitude': lat,
+                    'longitude': long
+                }
+                response = app.put(f'api/car/{car.id}/location', data=data)
+                response_car = CarSchema().loads(response.get_json())
+                self.assertEqual(200, response.status_code)
+                self.assertEqual(lat, response_car.latitude)
+                self.assertEqual(long, response_car.longitude)
+                self.assertEqual(lat, car.latitude)
+
+    def test_update_car_location_with_bad_data_return_error(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                car = Car.query.get(self.car1)
+                lat = 'this is not a float string'
+                long = '321.123'
+                data = {
+                    'latitude': lat,
+                    'longitude': long
+                }
+                response = app.put(f'api/car/{car.id}/location', data=data)
+                self.assertEqual(400, response.status_code)
+
+    def test_update_missing_car(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                car = Car.query.get(self.car1)
+                lat = '123.321'
+                long = '321.123'
+                data = {
+                    'latitude': lat,
+                    'longitude': long
+                }
+                response = app.put(f'api/car/948483/location', data=data)
+                self.assertEqual(404, response.status_code)
+
     def test_get_booking_for_person(self):
         with self.app.app_context():
             with self.app.test_client() as app:
@@ -357,6 +400,16 @@ class ApiTest(TestCase):
                     self.assertEqual(type(person1), type(PersonSchema().loads(booking_info['person'])))
                     self.assertEqual(type(car1), type(CarSchema().loads(booking_info['car'])))
 
+    def test_deactivate_booking(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                person = Person.query.get(self.person1)
+                booking = duplicate_db_object(BookingSchema, Booking.query.get(self.booking1))
+                booking.car_id = self.car3
+                add_to_db(booking)
+                booking_jsonstr = json.dumps(BookingSchema(exclude=['id', 'status']).dump(booking))
+                response = app.put(f"/api/person/{person.username}/booking/{booking.id}", json=booking_jsonstr)
+                self.assertEqual(200, response.status_code)
 
 def add_to_db(thing):
     """

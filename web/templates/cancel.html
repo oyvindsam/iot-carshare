@@ -29,6 +29,7 @@
               <td><form action="{{ url_for('site.cancelbook') }}" method="POST">
                 <input type="hidden" id="bookingId" name="bookingId" value={{info.booking.id}}>
                 <input type="hidden" id="username" name="username" value={{info.person.username}}>
+                <input type="hidden" id="googleid" name="googleid" value={{info.booking.google_calendar_id}}>
                 <input type="submit" value="Cancel Booking">
               </form>
             </td>

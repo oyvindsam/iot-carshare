@@ -64,6 +64,7 @@ class DummyPerson:
                 'email': 'test@gmail.com',
                 'person_type': 1,
                 'password_hashed': 'password',
+                'face': None
             })
 
         return json.dumps({

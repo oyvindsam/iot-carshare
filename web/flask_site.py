@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint, request, jsonify, render_template, url_for, abort, redirect
 from wtforms import Form, StringField, SelectField
 from flask_sqlalchemy import SQLAlchemy
-from urllib.parse import unquote, urlparse
+from urllib.parse import unquote, urlparse, parse_qs
 from flask_marshmallow import Marshmallow
 from flask_wtf import FlaskForm
 from googleapiclient.discovery import build
@@ -16,6 +16,7 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+import base64
 
 
 site = Blueprint("site", __name__)
@@ -191,11 +192,15 @@ def timeBook():
         event = service.events().insert(calendarId='primary', body=event).execute()
         google_event_link = event.get('htmlLink')
 
+        parsed = urlparse(google_event_link)
+        google_event_id = parse_qs(parsed.query)['eid'][0]
+        print(google_event_id)
         initload = ({
             'car_id': carid,
             'person_id': personid,
             'start_time': startDateTime,
             'end_time': endDateTime,
+            'google_calendar_id': google_event_id,
         })
 
         #prepping the payload for a POST request
@@ -249,10 +254,39 @@ def cancelbook():
     Passing parameters such as the booking ID of a particular booking and the user name
     of the user to do a DELETE request which updates the bookings with the booking which was cancelled
     """
-
+    calID = request.form['googleid']
     bookingID = request.form['bookingId']
     usrName = request.form['username']
+    decoder = base64.b64decode(calID+'=').decode('utf-8')
+    decoder = decoder.split()
+    calID = decoder[0]
     str(bookingID)
+    SCOPES = ["https://www.googleapis.com/auth/calendar"]
+    store = file.Storage('token.json')
+    creds = None
+
+        # The file token.pickle stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+
+    service = build('calendar', 'v3', credentials=creds)
+    response = service.events().delete(calendarId='primary', eventId = calID).execute()
+    print(response)
     url = 'http://127.0.0.1:5000/api/person/{}/booking/{}'.format(usrName,bookingID)
     response = requests.delete(url)
     return render_template("cancelled.html")
