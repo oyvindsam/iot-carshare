@@ -156,24 +156,14 @@ def deactivate_booking(username: str, id: int):
 def get_bookings(username: str):
     """
     Get all bookings for this user
+
     Args:
         username (str): logged in user
 
     Returns: All bookings for user with additional info as json list string, example:
-        [
-            {
-                booking: ...,
-                status: ...,
-                person: ...,
-                car: ...,
-            },
-            {
-                booking: ...,
-                ...,
-            }
-        ]
 
     """
+
     schema = BookingSchema()
     person = Person.query.filter_by(username=username).first()
     if person is None:
