@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+	<title>Novo CarShare</title>
+</head>
+<body>
+	<div class="align">
+		<img class="logo" src="static/img/logo.svg">
+		<div class="card">
+			<div class="head">
+				<div></div>
+				<a id="login" class="selected" href="/login">Login</a>
+				<a id="register" href="#register">Register</a>
+				<div></div>
+			</div>
+			<div class="tabs">
+				<form name="myform" id="myform" action="{{url_for('site.login')}}" method="POST">
+					<div class="inputs">
+						<div class="input">
+							<input placeholder="Username" type="text"  name="username">
+							<img src="static/img/user.svg">
+						</div>
+						<div class="input">
+							<input placeholder="Password" type="password"  name="password">
+							<img src="static/img/pass.svg">
+						</div>
+					</div>
+					<button  id="logButton"> Login</a></button>
+					
+				</form>
+				<form name="myform" id="myform" action="{{url_for('site.reg')}}" method="POST">
+					<div class="inputs">
+						<div class="input">
+							<input placeholder="First Name" type="text" name="first_name">
+							<img src="static/img/user.svg">
+						</div>
+						
+							<div class="input">
+								<input placeholder="Last Name" type="text" name="last_name">
+								<img src="static/img/user.svg">
+							</div>
+					
+						<div class="input">
+							<input placeholder="Email" type="text" name="email">
+							<img src="static/img/mail.svg">
+						</div>
+						<div class="input">
+							<input placeholder="Username" type="text" name="username">
+							<img src="static/img/user.svg">
+						</div>
+						<div class="input">
+							<input placeholder="Password" type="password" name="password">
+							<img src="static/img/pass.svg">
+						</div>
+					</div>
+					<button id="regButton">REGISTER</a></button>
+					
+				</form>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript"  src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script> 
+	<script type="text/javascript"  src="{{ url_for('static', filename='js/index.js') }}"></script> 
+	<script>
+		$(document).ready(function () {
+			$("#regButton").click(function (e) {
+				var MyForm = JSON.stringify($("#myform").serializeJSON());
+				console.log(MyForm);
+				$.ajax(
+					{
+						url: "<your url>",
+						type: "POST",
+						data: MyForm,
+					});
+				e.preventDefault(); //STOP default action
+			});
+		});
+		</script>
+</body>
+</html>

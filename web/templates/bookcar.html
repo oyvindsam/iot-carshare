@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Book Car</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bookcar.css') }}">
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0SdraTz1IKRkfy7m_Vr1QeZ-IgyYn6jM&callback=initMap"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.9/jquery-ui.js" type="text/javascript"></script>
+  <link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.9/themes/blitzer/jquery-ui.css" rel="stylesheet" type="text/css" />
+</head>
+
+<ul>
+  <li><a class="active" href="{{ url_for('site.bookcar') }}"><b>Book Car</b></a></li>
+  <li><a href="{{ url_for('site.hist') }}"><b>History</b></a></li>
+  <button class="sbutton"> <a href = "{{ url_for('site.index') }}" id="logButton">Logout</a></button>
+</ul>
+
+<body>
+
+
+  <h1 class="align">Available Cars</h1>
+  <input id = "btnShow" class="loc" type="button" value="Car Locations"/>
+  <div id="dialog" style="display: none">
+  <div id="map" style="height: 700px; width: 900px;">
+  </div>
+  </div>
+  
+  <input type="hidden" id="list_size" name="car_id" value={{leng}}>
+  <div class="container">
+    <table border="4" width="100%" id="table_format">
+      <tbody>
+        <tr>
+        <th class='skip-filter'>Car ID</th>
+        <th class='skip-filter'>Registration</th>
+        <th>Make</th>
+        <th>Car colour</th>
+        <th>Car type</th>
+        <th>Seats</th>
+        <th>Hour rate</th>
+        <th class='skip-filter'>Actions</th>
+        
+        {%for c in cars%}
+        <tr>
+          
+            <td>{{c.id}}</td>
+            <td id="reg_{{c.index}}">{{c.reg_number}}</td>
+            <td id="make_{{c.index}}">{{c.car_manufacturer}}</td>
+            <td id="colour_{{c.index}}">{{c.car_colour}}</td>
+            <td id="type_{{c.index}}">{{c.car_type}}</td>
+            <td id="seats_{{c.index}}">{{c.seats}}</td>
+            <td id="rate_{{c.index}}">{{c.hour_rate}}</td>
+            <td style="display:none" id = "latitude_{{c.index}}">{{c.latitude}}</td>
+            <td style="display:none" id = "longitude_{{c.index}}">{{c.longitude}}</td>
+            <td><form action="{{ url_for('site.time', carinfo=c) }}" method="POST"><button name="book">Book</button></form></td>
+        </tr> 
+      
+          {%endfor%}
+</tbody>
+</table>
+  </div>
+
+<!-- <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script> -->
+
+<script type="text/javascript"  src="{{ url_for('static', filename='js/filter.js') }}"></script> 
+<script>
+jQuery('#table_format').ddTableFilter();
+  </script>
+<script type="text/javascript"  src="{{ url_for('static', filename='js/googleMaps.js') }}"></script> 
+ 
+</body>
+</html>
