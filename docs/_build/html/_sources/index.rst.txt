@@ -7,7 +7,7 @@ Welcome to iot-carshare's documentation!
 ========================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
 Car Share API
