@@ -7,7 +7,7 @@
 
 
 
-## Docuemntation
+## Documentation
 See docs/html/index.html
 To generate html docs, run ```make html```
 in docs/ folder. 
