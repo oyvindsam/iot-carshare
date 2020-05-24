@@ -157,7 +157,7 @@ def get_bookings(username: str):
     """
     Get all bookings for this user
     Args:
-        username: logged in user
+        username (str): logged in user
 
     Returns: All bookings for user with additional info as json list string, example:
         [
@@ -200,8 +200,8 @@ def get_booking(username: str, id: int):
     Get booking for given user and booking id
 
     Args:
-        username: logged in user
-        id: booking id
+        username: (str) logged in user
+        id (int): booking id
 
     Returns: One booking if exists, else 404
 
@@ -257,7 +257,7 @@ def update_car_location(id: int):
     Updates car in db (mainly for location).
 
     Args:
-        id: car id
+        id (int): car id
         json data contains 'latitude' and 'longitude' in float format
 
     Returns: updated car
