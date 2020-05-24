@@ -10,9 +10,15 @@ Welcome to iot-carshare's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   ../web/api/api
-   ../web/api/models
+Car Share API
+===================
+.. automodule:: web.api.api
+   :members:
 
+Car Share API Models
+====================
+.. automodule:: web.api.models
+   :members:
 
 
 Indices and tables
