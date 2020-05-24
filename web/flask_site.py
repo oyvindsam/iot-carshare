@@ -20,10 +20,14 @@ from google.auth.transport.requests import Request
 
 site = Blueprint("site", __name__)
 
-# hardcoding username to be used with the entire web page as working separately from the login/register page
+
+# hardcoding username, email and personid to be used with the entire web page as working 
+# separately from the login/register page
 usr = "adi"
 # hardcoding person id to do the post request
+email = "raj@gmail.com"
 personid = 1
+
 
 # Client Landing webpage.
 @site.route("/")
@@ -37,12 +41,19 @@ def index():
 
 @site.errorhandler(404)
 def page_not_found(e):
+    """
+        Implementation of error handler in case wrong page is enterer along the url
+        for example: http://127.0.0.1:5000/pagedoesnotexist
+    """
     return render_template("404.html")
 
 # method for the webpage through which the user can book cars
 @site.route("/bookcar", methods=["GET", "POST"])
 def bookcar():
     # Use REST API.
+    """
+        Displaying all the available cars from the database
+    """
     response = requests.get("http://127.0.0.1:5000/api/car")
     carData = json.loads(response.json())
     length= len(carData)
@@ -77,6 +88,7 @@ def bookcar():
         for color in carColorData:
             carColorMap[color['id']] = color['colour']
         index = 1
+        
         #For each car get the values from the hasmap
         for car in carData:
             manuId = car['car_manufacturer']
@@ -97,6 +109,10 @@ def bookcar():
 # method after a car has been selected to be booked
 @site.route("/time/<carinfo>", methods=["GET", "POST"])
 def time(carinfo):
+     """
+        Parsing the json string which is retrieved from the available cars page
+        and decoding it using: urllib.parse.unquote, to convert it into a parsable string so that it can be read 
+    """
      if request.method == 'POST':
          decoded_query = urllib.parse.unquote(carinfo)
          decode1=ast.literal_eval(decoded_query)
@@ -106,6 +122,9 @@ def time(carinfo):
 @site.route("/timeBook", methods=["GET", "POST"])
 def timeBook():
 
+    """
+        Adding the google calendar event and updating the new booking to the database
+    """
     carid = request.form['car_id']
     make = request.form['make']
     cartype = request.form['type']
@@ -149,7 +168,7 @@ def timeBook():
         event = {
                     'summary': 'Novo Car share booking',
                     'location': location,
-                    'description': 'Your car booking with Novoshare booked by user '+ usr +' with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
+                    'description': 'Your car booking with Novoshare booked by user '+ usr +' with email '+ email +' with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
                     'start': {
                         'dateTime': startDateTime,
                         'timeZone': "Australia/Melbourne",
@@ -192,22 +211,32 @@ def timeBook():
 # method for webpage to view previous bookings
 @site.route("/history", methods=["GET", "POST"])
 def hist():
- response_book = requests.get("http://127.0.0.1:5000/api/person/adi/booking")
- responder = json.loads(response_book.text)
+    """
+        Retrieval of all the past and current bookings from the database, 
+        shows the person username, car id and for what duration it was booked
+    """
+    response_book = requests.get("http://127.0.0.1:5000/api/person/adi/booking")
+    responder = json.loads(response_book.text)
 
- # preprocess the string object 
+    # preprocess the string object 
 
- for bookings in responder:
-  bookings['booking'] = json.loads(bookings['booking'])
-  bookings['car'] = json.loads(bookings['car'])
-  bookings['person'] = json.loads(bookings['person'])
+    for bookings in responder:
+        bookings['booking'] = json.loads(bookings['booking'])
+        bookings['car'] = json.loads(bookings['car'])
+        bookings['person'] = json.loads(bookings['person'])
 
- return render_template("history.html", bookings = responder)
+    return render_template("history.html", bookings = responder)
 
 # method after selction of booking to be canceled is selected
 @site.route("/cancel/<bookinfo>", methods=["GET", "POST"])
 def cancel(bookinfo):
-     if request.method == 'POST':
+
+    """
+    Conversion of the bookinfo json string which is retrieved from the history page,
+    using ast so that it can be passed into the next page
+    """
+
+    if request.method == 'POST':
       decodeitagain=ast.literal_eval(bookinfo)
 
       return render_template("cancel.html", info=decodeitagain)
@@ -215,6 +244,12 @@ def cancel(bookinfo):
 # method with which booking is canceled
 @site.route("/cancelbook", methods=["POST", "DELETE"])
 def cancelbook():
+
+    """
+    Passing parameters such as the booking ID of a particular booking and the user name
+    of the user to do a DELETE request which updates the bookings with the booking which was cancelled
+    """
+
     bookingID = request.form['bookingId']
     usrName = request.form['username']
     str(bookingID)
