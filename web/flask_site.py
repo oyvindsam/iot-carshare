@@ -57,7 +57,7 @@ def bookcar():
     """
     response = requests.get("http://127.0.0.1:5000/api/car")
     carData = json.loads(response.json())
-    length= len(carData)
+    length = len(carData)
     if carData is None:
         abort(404, description="Resource not found")
 
