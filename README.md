@@ -1,5 +1,5 @@
 # Assignment 2 for Programming of Internet of Things (COSC2755)
-### Members
+### Members:
 ###   Samit Sharma (s3752136)
 ###   Aditya Raj (s3730562)
 ###   Oyvind Samuelsen (s3801950)
