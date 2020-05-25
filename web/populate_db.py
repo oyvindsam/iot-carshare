@@ -44,10 +44,10 @@ cc3 = CarColour(
 def setup_clean_db():
     print('Updating db...')
     app = Flask(__name__)
-    HOST = "35.228.215.119"
+    HOST = "34.71.196.78"
     USER = "root"
-    PASSWORD = "carshare"
-    DATABASE = "carshare_db"
+    PASSWORD = "root1234"
+    DATABASE = "hireCar"
 
     app.config[
         "SQLALCHEMY_DATABASE_URI"] = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}"
