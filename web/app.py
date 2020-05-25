@@ -1,7 +1,5 @@
-from flask import Flask, request, jsonify, render_template
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-import os, requests, json
+from flask import Flask
+
 from api.api import api
 from api.models import db
 from flask_site import site

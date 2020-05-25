@@ -1,23 +1,18 @@
-from flask import Flask, Blueprint, request, jsonify, render_template, url_for, abort, redirect
-from wtforms import Form, StringField, SelectField
-from flask_sqlalchemy import SQLAlchemy
-from urllib.parse import unquote, urlparse, parse_qs
-from flask_marshmallow import Marshmallow
-from flask_wtf import FlaskForm
-from googleapiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file, client, tools
-from datetime import datetime
-import os, requests, json
-import urllib
 import ast
-import pickle
-import os.path
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 import base64
+import json
+import os
+import os.path
+import pickle
+import requests
+import urllib
+from urllib.parse import unquote, urlparse, parse_qs
 
+from flask import Blueprint, request, jsonify, render_template, abort
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from oauth2client import file
 
 site = Blueprint("site", __name__)
 
