@@ -3,6 +3,7 @@
 <head>
    <title>Booking</title>
    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/time.css') }}">
+   <script type="text/javascript"  src="{{ url_for('static', filename='js/checkdate.js') }}"></script> 
 </head>
 
 <body>
@@ -35,7 +36,7 @@
             </tr>
 
 
-           <td> <form action="{{ url_for('site.timeBook') }}" method="POST">
+           <td> <form action="{{ url_for('site.timeBook') }}" onsubmit = 'return checkDate()' method="POST">
                 <label>Booking (Start date and time):</label>
                 <input type="datetime-local" id="bookingstarttime" name="bookingstarttime">
                 <label>Booking ( End date and time):</label>
