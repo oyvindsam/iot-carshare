@@ -271,7 +271,7 @@ c20 = Car(
 
 def setup_clean_db():
     app = create_app()
-    HOST = "gcloud ip adress"
+    HOST = "35.228.215.119"
     USER = "root"
     PASSWORD = "carshare"
     DATABASE = "carshare_db"
