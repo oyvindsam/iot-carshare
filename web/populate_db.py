@@ -1,6 +1,7 @@
+from flask import Flask
+
 from api.models import Person, CarManufacturer, CarType, CarColour, Car, db, \
     PersonType
-from app import create_app
 
 pt1 = PersonType(
     type='Customer'
@@ -270,7 +271,8 @@ c20 = Car(
 
 
 def setup_clean_db():
-    app = create_app()
+    print('Updating db...')
+    app = Flask(__name__)
     HOST = "35.228.215.119"
     USER = "root"
     PASSWORD = "carshare"
@@ -278,8 +280,13 @@ def setup_clean_db():
 
     app.config[
         "SQLALCHEMY_DATABASE_URI"] = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}"
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    db.init_app(app)
+
     with app.app_context():
         db.drop_all()
+        print('db dropped')
         db.create_all()
         db.session.add_all([
             pt1,
@@ -313,6 +320,6 @@ def setup_clean_db():
             c19,
             c20
         ])
-
+print('___')
 
 setup_clean_db()
