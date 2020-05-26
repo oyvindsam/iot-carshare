@@ -78,7 +78,7 @@ def setup_clean_db():
             last_name='Lastname',
             email='raj@gmail.com',
             person_type=pt1.id,
-            password_hashed='password',
+            password_hashed='$5$rounds=535000$PMY9ZLpI5VgtQcUs$0XqCn3u7tZaLTDvoYCHoYtAq5TBRprNQwEwndUZS/M3',
             face=None
         )
 
