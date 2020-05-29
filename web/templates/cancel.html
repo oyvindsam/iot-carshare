@@ -20,16 +20,16 @@
           <th colspan="1">Actions</th>
           
           <tr>
-              <td>{{info.booking.id}}</td>
-              <td>{{info.car.id}}</td>
-              <td>{{info.person.username}}</td>
-              <td>{{info.booking.start_time}}</td>
-              <td>{{info.booking.end_time}}</td>
-              <td>{{info.booking.status}}</td>
-              <td><form action="{{ url_for('site.cancelbook') }}" method="POST">
-                <input type="hidden" id="bookingId" name="bookingId" value={{info.booking.id}}>
-                <input type="hidden" id="username" name="username" value={{info.person.username}}>
-                <input type="hidden" id="googleid" name="googleid" value={{info.booking.google_calendar_id}}>
+              <td>{{info.bookingID}}</td>
+              <td>{{info.cid}}</td>
+              <td>{{info.username}}</td>
+              <td>{{info.start_time}}</td>
+              <td>{{info.end_time}}</td>
+              <td>{{info.status}}</td>
+              <td><form action="{{ url_for('site.cancelled')}}" method="POST">
+                <input type="hidden" id="bookingId" name="bookingId" value={{info.bookingID}}>
+                <input type="hidden" id="username" name="username" value={{info.username}}>
+                <input type="hidden" id="googleid" name="googleid" value={{info.googleID}}>
                 <input type="submit" value="Cancel Booking">
               </form>
             </td>

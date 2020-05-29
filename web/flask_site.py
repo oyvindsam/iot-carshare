@@ -24,7 +24,7 @@ usr = "adi"
 email = "raj@gmail.com"
 personid = 1
 ipaddress = 'http://192.168.1.11'
-
+ipaddress = 'http://127.0.0.1'
 
 # Client Landing webpage.
 @site.route("/")
@@ -211,7 +211,7 @@ def timeBook():
 
 # method for webpage to view previous bookings
 @site.route("/history", methods=["GET", "POST"])
-def hist():
+def history():
     """
         Retrieval of all the past and current bookings from the database, 
         shows the person username, car id and for what duration it was booked
@@ -229,21 +229,23 @@ def hist():
     return render_template("history.html", bookings = responder)
 
 # method after selction of booking to be canceled is selected
-@site.route("/cancel/<bookinfo>", methods=["GET", "POST"])
-def cancel(bookinfo):
+@site.route("/cancel", methods=["POST"])
+def cancel():
 
     """
     Conversion of the bookinfo json string which is retrieved from the history page,
     using ast so that it can be passed into the next page
     """
-
-    if request.method == 'POST':
-      decodeitagain=ast.literal_eval(bookinfo)
-
-      return render_template("cancel.html", info=decodeitagain)
+    cancel = {}
+    cancel['bookingID'] = request.form['bookingId']
+    cancel["googleID"] = request.form['gid']
+    cancel["cid"] = request.form['cid']
+    cancel["start_time"] = request.form['starttime']
+    cancel["end_time"] = request.form['endtime']
+    cancel["status"] = request.form['bstatus']
+    return render_template("cancel.html", info=cancel)
 
 # method with which booking is canceled
-@site.route("/cancelbook", methods=["POST", "DELETE"])
 def cancelbook():
 
     """

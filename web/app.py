@@ -41,4 +41,3 @@ def setup_clean_db(TEST_DB=True):
         db.create_all()
 
 
-setup_clean_db(False)
