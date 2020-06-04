@@ -5,6 +5,13 @@
 ###   Oyvind Samuelsen (s3801950)
 ###   Sagar Chandrakant Pardikar (s3715199)
 
+
+## Documentation
+See docs/html/index.html
+To generate html docs, run ```make html```
+in docs/ folder. 
+
+
 ## Environment Setup:
 
 ### 1. To download and install pipenv :
@@ -70,5 +77,3 @@ python3 APmain.py
 
     - (MP) Authentication / Authorization
 
- 
- 

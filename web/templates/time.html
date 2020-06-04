@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Booking</title>
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/time.css') }}">
+   <script type="text/javascript"  src="{{ url_for('static', filename='js/checkdate.js') }}"></script> 
+</head>
+
+<body>
+    <h1>Confirm Booking?</h1>
+    <div class="mycon">
+        <table border="4" width="85%" id="table_format">
+          <tbody>
+            <tr>
+            <th>Booking details</th>
+            <th>Actions</th>
+           
+            </tr>
+            <tr>
+                <td>Car id:{{info.id}}</td> 
+            </tr>
+            <tr>
+                <td>Make:{{info.car_manufacturer}}</td>
+            </tr>
+            <tr>
+                <td>Registration:{{info.reg_number}}</td>
+            </tr>
+            <tr>
+                <td>Type:{{info.car_type}}</td>
+            </tr>
+            <tr>
+                <td>Colour:{{info.car_colour}}</td>
+            </tr>
+            <tr>
+                <td>Hourly Rate:{{info.hour_rate}}</td>
+            </tr>
+
+
+           <td> <form action="{{ url_for('site.timeBook') }}" onsubmit = 'return checkDate()' method="POST">
+                <label>Booking (Start date and time):</label>
+                <input type="datetime-local" id="bookingstarttime" name="bookingstarttime">
+                <label>Booking ( End date and time):</label>
+                <input type="datetime-local" id="bookingendtime" name="bookingendtime">
+                <input type="hidden" id="car_id" name="car_id" value={{info.id}}>
+                <input type="hidden" id="make" name="make" value={{info.car_manufacturer}}>
+                <input type="hidden" id="type" name="type" value={{info.car_type}}>
+                <input type="hidden" id="reg" name="reg" value={{info.reg_number}}>
+                <input type="hidden" id="rate" name="rate" value={{info.hour_rate}}>
+                <input type="hidden" id="longitude" name="longitude" value={{info.longitude}}>
+                <input type="hidden" id="latitude" name="latitude" value={{info.latitude}}>
+                <td><input type="submit" value="Confirm Booking and add to google calendar"></td>
+              </form>
+            </td>
+            
+               
+               
+    </tbody>
+    </table>
+      </div>
+</body>
+</html>
