@@ -23,8 +23,9 @@ usr = "adi"
 # hardcoding person id to do the post request
 email = "raj@gmail.com"
 personid = 1
-ipaddress = 'http://192.168.1.11'
-ipaddress = 'http://127.0.0.1'
+
+
+api_address = 'http://127.0.0.1:5000'
 
 # Client Landing webpage.
 @site.route("/")
@@ -51,7 +52,7 @@ def bookcar():
     """
         Displaying all the available cars from the database
     """
-    response = requests.get(f"{ipaddress}:5000/api/car")
+    response = requests.get(f"{ipaddress}/api/car")
     carData = json.loads(response.json())
     length = len(carData)
     if carData is None:
@@ -61,13 +62,13 @@ def bookcar():
     
     else :
 
-        response1 = requests.get(f"{ipaddress}:5000/api/car-manufacturer")
+        response1 = requests.get(f"{ipaddress}/api/car-manufacturer")
         carManuData = json.loads(response1.json())
 
-        response2 = requests.get(f"{ipaddress}:5000/api/car-type")
+        response2 = requests.get(f"{ipaddress}/api/car-type")
         carTypeData = json.loads(response2.json())
 
-        response3 = requests.get(f"{ipaddress}:5000/api/car-colour")
+        response3 = requests.get(f"{ipaddress}/api/car-colour")
         carColorData = json.loads(response3.json())
 
         #preprocess using hashmap
@@ -201,7 +202,7 @@ def timeBook():
 
         #prepping the payload for a POST request
         payload = json.dumps(initload)
-        url = requests.post(f"{ipaddress}:5000/api/person/{usr}/booking", json=payload)
+        url = requests.post(f"{ipaddress}/api/person/{usr}/booking", json=payload)
 
         return render_template("confirmation.html", invite=google_event_link)
 
@@ -216,7 +217,7 @@ def history():
         Retrieval of all the past and current bookings from the database, 
         shows the person username, car id and for what duration it was booked
     """
-    response_book = requests.get(f"{ipaddress}:5000/api/person/adi/booking")
+    response_book = requests.get(f"{ipaddress}/api/person/adi/booking")
     responder = json.loads(response_book.text)
 
     # preprocess the string object 
@@ -285,7 +286,7 @@ def cancelbook():
     service = build('calendar', 'v3', credentials=creds)
     response = service.events().delete(calendarId='primary', eventId = calID).execute()
     print(response)
-    url = f"{ipaddress}:5000/api/person/{usrName}/booking/{bookingID}"
+    url = f"{ipaddress}/api/person/{usrName}/booking/{bookingID}"
     response = requests.delete(url)
     return render_template("cancelled.html")
 
