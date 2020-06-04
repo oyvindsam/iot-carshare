@@ -1,23 +1,18 @@
-from flask import Flask, Blueprint, request, jsonify, render_template, url_for, abort, redirect
-from wtforms import Form, StringField, SelectField
-from flask_sqlalchemy import SQLAlchemy
-from urllib.parse import unquote, urlparse, parse_qs
-from flask_marshmallow import Marshmallow
-from flask_wtf import FlaskForm
-from googleapiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file, client, tools
-from datetime import datetime
-import os, requests, json
-import urllib
 import ast
-import pickle
-import os.path
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 import base64
+import json
+import os
+import os.path
+import pickle
+import requests
+import urllib
+from urllib.parse import unquote, urlparse, parse_qs
 
+from flask import Blueprint, request, jsonify, render_template, abort
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from oauth2client import file
 
 site = Blueprint("site", __name__)
 
@@ -28,7 +23,8 @@ usr = "adi"
 # hardcoding person id to do the post request
 email = "raj@gmail.com"
 personid = 1
-
+ipaddress = 'http://192.168.1.11'
+ipaddress = 'http://127.0.0.1'
 
 # Client Landing webpage.
 @site.route("/")
@@ -55,9 +51,9 @@ def bookcar():
     """
         Displaying all the available cars from the database
     """
-    response = requests.get("http://127.0.0.1:5000/api/car")
+    response = requests.get(f"{ipaddress}:5000/api/car")
     carData = json.loads(response.json())
-    length= len(carData)
+    length = len(carData)
     if carData is None:
         abort(404, description="Resource not found")
 
@@ -65,13 +61,13 @@ def bookcar():
     
     else :
 
-        response1 = requests.get("http://127.0.0.1:5000/api/car-manufacturer")
+        response1 = requests.get(f"{ipaddress}:5000/api/car-manufacturer")
         carManuData = json.loads(response1.json())
 
-        response2 = requests.get("http://127.0.0.1:5000/api/car-type")
+        response2 = requests.get(f"{ipaddress}:5000/api/car-type")
         carTypeData = json.loads(response2.json())
 
-        response3 = requests.get("http://127.0.0.1:5000/api/car-colour")
+        response3 = requests.get(f"{ipaddress}:5000/api/car-colour")
         carColorData = json.loads(response3.json())
 
         #preprocess using hashmap
@@ -205,7 +201,7 @@ def timeBook():
 
         #prepping the payload for a POST request
         payload = json.dumps(initload)
-        url = requests.post('http://127.0.0.1:5000/api/person/{}/booking'.format(usr), json=payload)
+        url = requests.post(f"{ipaddress}:5000/api/person/{usr}/booking", json=payload)
 
         return render_template("confirmation.html", invite=google_event_link)
 
@@ -215,12 +211,12 @@ def timeBook():
 
 # method for webpage to view previous bookings
 @site.route("/history", methods=["GET", "POST"])
-def hist():
+def history():
     """
         Retrieval of all the past and current bookings from the database, 
         shows the person username, car id and for what duration it was booked
     """
-    response_book = requests.get("http://127.0.0.1:5000/api/person/adi/booking")
+    response_book = requests.get(f"{ipaddress}:5000/api/person/adi/booking")
     responder = json.loads(response_book.text)
 
     # preprocess the string object 
@@ -233,21 +229,23 @@ def hist():
     return render_template("history.html", bookings = responder)
 
 # method after selction of booking to be canceled is selected
-@site.route("/cancel/<bookinfo>", methods=["GET", "POST"])
-def cancel(bookinfo):
+@site.route("/cancel", methods=["POST"])
+def cancel():
 
     """
     Conversion of the bookinfo json string which is retrieved from the history page,
     using ast so that it can be passed into the next page
     """
-
-    if request.method == 'POST':
-      decodeitagain=ast.literal_eval(bookinfo)
-
-      return render_template("cancel.html", info=decodeitagain)
+    cancel = {}
+    cancel['bookingID'] = request.form['bookingId']
+    cancel["googleID"] = request.form['gid']
+    cancel["cid"] = request.form['cid']
+    cancel["start_time"] = request.form['starttime']
+    cancel["end_time"] = request.form['endtime']
+    cancel["status"] = request.form['bstatus']
+    return render_template("cancel.html", info=cancel)
 
 # method with which booking is canceled
-@site.route("/cancelbook", methods=["POST", "DELETE"])
 def cancelbook():
 
     """
@@ -287,7 +285,7 @@ def cancelbook():
     service = build('calendar', 'v3', credentials=creds)
     response = service.events().delete(calendarId='primary', eventId = calID).execute()
     print(response)
-    url = 'http://127.0.0.1:5000/api/person/{}/booking/{}'.format(usrName,bookingID)
+    url = f"{ipaddress}:5000/api/person/{usrName}/booking/{bookingID}"
     response = requests.delete(url)
     return render_template("cancelled.html")
 

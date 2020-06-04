@@ -2,15 +2,16 @@ from flask import Flask
 
 from api.api import api
 from api.models import db
+from flask_site import site
 
 
 def create_app():
     app = Flask(__name__)
 
-    HOST = "gcloud ip adress" # UPDATE WITH YOUR OWN GCLOUD DB DETAILS
+    HOST = "34.71.196.78"
     USER = "root"
-    PASSWORD = "carshare"
-    DATABASE = "carshare_db"
+    PASSWORD = "root1234"
+    DATABASE = "hireCar"
 
     app.config[
         "SQLALCHEMY_DATABASE_URI"] = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}"
@@ -18,6 +19,7 @@ def create_app():
 
     db.init_app(app)
     app.register_blueprint(api)
+    app.register_blueprint(site)
 
     return app
 
@@ -25,10 +27,10 @@ def create_app():
 
 def setup_clean_db(TEST_DB=True):
     app = create_app()
-    HOST = "gcloud ip adress"
+    HOST = "34.71.196.78"
     USER = "root"
-    PASSWORD = "carshare"
-    DATABASE = "carshare_db"
+    PASSWORD = "root1234"
+    DATABASE = "hireCar"
 
     if TEST_DB:
         DATABASE += '_test'
@@ -39,4 +41,3 @@ def setup_clean_db(TEST_DB=True):
         db.create_all()
 
 
-#setup_clean_db()
