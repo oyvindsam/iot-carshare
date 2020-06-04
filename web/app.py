@@ -1,5 +1,4 @@
 from flask import Flask
-from werkzeug.utils import import_string
 
 import carshare_config
 from api.api import api
