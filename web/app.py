@@ -4,6 +4,7 @@ from werkzeug.utils import import_string
 import carshare_config
 from api.api import api
 from api.models import db
+from api.test.populate_db import populate_db
 from flask_site import site
 
 
@@ -47,4 +48,7 @@ def setup_clean_db(PRODUCTION_DB=False):
         db.create_all()
 
 
-setup_clean_db(PRODUCTION_DB=False)
+#setup_clean_db(PRODUCTION_DB=False)
+
+# pass in a valid app context
+populate_db(create_app(carshare_config.DevelopmentConfig))

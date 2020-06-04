@@ -41,23 +41,14 @@ cc3 = CarColour(
 )
 
 
-def setup_clean_db():
-    print('Updating db...')
-    app = Flask(__name__)
-    HOST = "34.71.196.78"
-    USER = "root"
-    PASSWORD = "root1234"
-    DATABASE = "hireCar"
-
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"] = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-    db.init_app(app)
+# takes in app context
+def populate_db(app):
 
     with app.app_context():
+        print('Connecting to db..')
         db.drop_all()
-        print('db dropped')
+        print('Connection successful!')
+        print('db dropped..')
         db.create_all()
         db.session.add_all([
             pt1,
@@ -71,7 +62,7 @@ def setup_clean_db():
             cc3,
         ])
         db.session.commit()
-
+        print("Required foreign key rows commited..")
         p1 = Person(
             username='adi',
             first_name='Adi',
@@ -326,6 +317,6 @@ def setup_clean_db():
             c20
         ])
         db.session.commit()
-print('___')
+        print('All data commited!')
+    print('Finished!')
 
-setup_clean_db()
