@@ -1,16 +1,31 @@
 from flask import Flask
+from werkzeug.utils import import_string
 
-import config
+import carshare_config
 from api.api import api
 from api.models import db
 from flask_site import site
 
 
-def create_app():
+def create_app(config=None):
+    """
+
+    Args:
+        config: configuration object, specifying application variables
+        such as database uri.
+
+    Returns: instanciated Flask app
+
+    """
+
     app = Flask(__name__)
 
-    # Load configuration from external file
-    app.config.from_object(config.Config)
+    # Load configuration from external file, or use production config
+    if config is None:
+        app.config.from_object(carshare_config.ProductionConfig)
+    else:
+        app.config.from_object(config)
+
     db.init_app(app)
     app.register_blueprint(api)
     app.register_blueprint(site)
@@ -21,12 +36,11 @@ def create_app():
 # Method to drop db.
 # Specify what configuration you want to use (development or production db)
 def setup_clean_db(PRODUCTION_DB=False):
-    app = create_app()
 
     if PRODUCTION_DB:
-        app.config.from_object(config.ProductionConfig)
+        app = create_app(carshare_config.ProductionConfig)
     else:
-        app.config.from_object(config.DevelopmentConfig)
+        app = create_app(carshare_config.DevelopmentConfig)
 
     with app.app_context():
         db.drop_all()

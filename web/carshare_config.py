@@ -3,10 +3,10 @@ class Config(object):
 
 
 class DevelopmentConfig(Config):
-    HOST = "34.71.196.78"
+    HOST = "35.228.215.119"
     USER = "root"
-    PASSWORD = "root1234"
-    DATABASE = "hireCar"
+    PASSWORD = "carshare"
+    DATABASE = "carshare_db"
     SQLALCHEMY_DATABASE_URI = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}" + '_test'
 
 
