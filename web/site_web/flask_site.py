@@ -27,26 +27,30 @@ api_address = 'http://127.0.0.1:5000'
 # Client Landing webpage.
 @site_blueprint.route("/")
 def index():
-    site_blueprint.register_error_handler(404, page_not_found)
-    return render_template("index.html")
+    return render_template('index.html')
 
 
 @site_blueprint.route('/login', methods=['POST'])
 def login():
     print('in login')
-    data = request.get_json()
-    print(data)
+    data = request.form
+    response = requests.post(f"{api_address}/api/auth/login", data=data)
+    print(response)
+    if response.status_code == 200:
+        return render_template('bookcar.html')
+    else:
+        return render_template('login.html')
 
 
 @site_blueprint.route('/register', methods=['POST'])
 def register():
-    print('in register')
-    data = request.form
-    print(data)
 
-# @site_blueprint.errorhandler(404)
-# def invalid_data(e):
-#     return '<h1> No data to </h1>', 404
+    response = requests.post(f"{api_address}/api/auth/register", json=request.form)
+    if response.status_code == 201:
+        return render_template('index.html')
+    else:
+        return render_template('index.html', error='Could not create user!')
+
 
 @site_blueprint.errorhandler(404)
 def page_not_found(e):

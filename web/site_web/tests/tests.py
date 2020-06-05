@@ -16,5 +16,10 @@ class LoginTest(TestCase):
     def test_login(self):
         with self.app.app_context():
             with self.app.test_client() as app:
-                response = app.post('login', data={'username': '1'})
+                data = {
+                    'username': 'username',
+                    'password': 'password'
+                }
+                response = app.post('/login', data=data)
+
 
