@@ -7,7 +7,9 @@ from marshmallow import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from api import api_blueprint, jwt
-from api.models import Person, PersonSchema, db
+from api.booking import is_valid_user
+from api.models import Person, PersonSchema, db, PersonType
+
 
 # Read up on how to create token with user id and roles
 # https://flask-jwt-extended.readthedocs.io/en/stable/tokens_from_complex_object/
@@ -93,10 +95,3 @@ def login_user():
     access_token = create_access_token(identity=person, expires_delta=False)
     return jsonify(access_token=access_token), 200
 
-
-@api_blueprint.route('auth/protected', methods=['GET'])
-@role_required(['CUSTOMER'])
-def protected_endpoint():
-    req = request
-    username = get_jwt_identity()
-    return jsonify('valid role')
