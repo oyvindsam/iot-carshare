@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_jwt_extended import JWTManager
 
 import carshare_config
 from api.api import api_blueprint
@@ -28,6 +29,7 @@ def create_app(config=None):
 
     db.init_app(app)
     app.register_blueprint(api_blueprint)
+    jwt = JWTManager(app)
     app.register_blueprint(site)
 
     return app
@@ -50,4 +52,4 @@ def setup_clean_db(PRODUCTION_DB=False):
 #setup_clean_db(PRODUCTION_DB=False)
 
 # pass in a valid app context
-populate_db(create_app(carshare_config.DevelopmentConfig))
+#populate_db(create_app(carshare_config.DevelopmentConfig))

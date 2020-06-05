@@ -3,7 +3,7 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import InvalidRequestError
 
 from api import api_blueprint
-from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
+from .models import db, Person, PersonSchema, BookingSchema, \
     Booking, Car, CarSchema, CarManufacturer, \
     CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema, \
     BookingStatusEnum
@@ -311,23 +311,6 @@ def get_car_colours():
     colours = CarColour.query.all()
     result = CarColourSchema(many=True).dumps(colours)
     return jsonify(result), 200
-
-
-# Admin endpoints, not neccessary for assignemnt 2.
-# adding this data is allows to do manually
-@api_blueprint.route('/person_type', methods=['POST'])
-def add_person_type():
-    """
-    Add person type. For admins.
-
-    Returns: Added person type as json string.
-
-    """
-    schema = PersonTypeSchema()
-    person_type = schema.loads(request.get_json())
-    db.session.add(person_type)
-    db.session.commit()
-    return schema.jsonify(person_type), 201
 
 
 @api_blueprint.route('/person', methods=['GET'])

@@ -53,6 +53,11 @@ class DatabaseTest(TestCase):
             self.assertEqual(p1.username, p11.username)
             self.assertTrue(p11.id < p22.id)
 
+    def test_get_invalid_person(self):
+        with self.app.app_context():
+            p1 = Person.query.filter_by(username='notvalid').first()
+            self.assertEqual(p1, None)
+
 
 class ApiTest(TestCase):
 
