@@ -129,7 +129,6 @@ def deactivate_booking(username: str, id: int):
     return '', 200
 
 
-# authorized!!
 @api_blueprint.route('/person/<string:username>/booking', methods=['GET'])
 def get_bookings(username: str):
     """

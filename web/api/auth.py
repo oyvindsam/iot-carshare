@@ -57,7 +57,28 @@ def role_required(roles):
     return check_role
 
 
-@api_blueprint.route('login', methods=['POST'])
+
+@api_blueprint.route('/auth/register', methods=['POST'])
+def register_user():
+    data = request.get_json()
+    schema = PersonSchema(exclude=['id', 'person_type'])
+    try:
+        person = schema.loads(request.get_json())
+    except ValidationError:
+        return abort(400, description='Invalid person data')
+    if Person.query.filter_by(username=person.username).first() is not None:
+        return abort(409, description='User exists')
+
+    # the passed password is not hashed, hash it.
+    person.password_hashed = generate_password_hash(person.password_hashed)
+
+    db.session.add(person)
+    db.session.commit()
+
+    return jsonify('User created!'), 201
+
+
+@api_blueprint.route('/auth/login', methods=['POST'])
 def login_user():
     data = request.get_json()
     username, password = data.get('username', None), data.get('password', None)

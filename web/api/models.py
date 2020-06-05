@@ -27,7 +27,7 @@ class Person(db.Model):
     first_name = db.Column(db.String(40), nullable=False)
     last_name = db.Column(db.String(40), nullable=False)
     email = db.Column(db.String(40), nullable=False)
-    person_type = db.Column(db.String, nullable=False, default=PersonType.CUSTOMER)
+    person_type = db.Column(db.String(20), nullable=False, default=PersonType.CUSTOMER)
     password_hashed = db.Column(db.String(200), nullable=False)
     face = db.Column(db.BLOB)
 

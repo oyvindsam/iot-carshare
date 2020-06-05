@@ -39,7 +39,7 @@ class DummyPerson:
             face=None
         )
 
-    def creat_random_json(id: int =None):
+    def create_random_json(id: int =None):
         if id is None:
             return json.dumps({
                 'username': uuid4().__str__()[:50],
