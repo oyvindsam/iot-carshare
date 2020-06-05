@@ -8,7 +8,7 @@ import urllib
 from urllib.parse import unquote, urlparse, parse_qs
 
 import requests
-from flask import request, jsonify, render_template, abort
+from flask import request, jsonify, render_template, abort, g
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
@@ -34,6 +34,7 @@ def index():
 def login():
     response = requests.post(f"{api_address}/api/auth/login", json=request.form)
     if response.status_code == 200:
+        g.auth = 'Authorization: Bearer ' + response.json().get('access_token')
         return render_template('bookcar.html')
     else:
         return render_template('index.html', error='Could not login user!')
