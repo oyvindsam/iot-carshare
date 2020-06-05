@@ -1,10 +1,8 @@
 from flask import Flask
-from flask_jwt_extended import JWTManager
 
 import carshare_config
-from api.api import api_blueprint
+from api import jwt, api_blueprint
 from api.models import db
-from api.test.populate_db import populate_db
 from flask_site import site
 
 
@@ -28,8 +26,8 @@ def create_app(config=None):
         app.config.from_object(config)
 
     db.init_app(app)
-    app.register_blueprint(api_blueprint)
-    jwt = JWTManager(app)
+    app.register_blueprint(api_blueprint, url_prefix='/api')
+    jwt.init_app(app)
     app.register_blueprint(site)
 
     return app
