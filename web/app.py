@@ -18,7 +18,9 @@ def create_app(config=None):
 
     """
 
-    app = Flask(__name__, template_folder='site_web/templates')
+    app = Flask(__name__,
+                template_folder='site_web/templates',
+                static_folder='site_web/static')
 
     # Load configuration from external file, or use production config
     if config is None:
@@ -36,6 +38,9 @@ def create_app(config=None):
 
 if __name__ == '__main__':
     app = create_app(carshare_config_local.DevelopmentConfig)
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
     app.run(host='127.0.0.1')
 
 # Method to drop db.
