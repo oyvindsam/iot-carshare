@@ -1,12 +1,14 @@
 from flask import jsonify, request, abort
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from marshmallow import ValidationError
 from sqlalchemy.exc import InvalidRequestError
 
 from api import api_blueprint
+from .auth import role_required
 from .models import db, Person, PersonSchema, BookingSchema, \
     Booking, Car, CarSchema, CarManufacturer, \
     CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema, \
-    BookingStatusEnum
+    BookingStatusEnum, PersonType
 
 
 # Url paths follows this pattern:
@@ -24,14 +26,19 @@ from .models import db, Person, PersonSchema, BookingSchema, \
 
 
 # TODO: standarize error handling. https://flask.palletsprojects.com/en/1.1.x/patterns/errorpages/
-@api_blueprint.errorhandler(404)
-def resource_not_found(e):
-    return jsonify(error=str(e)), 404
-
-
 @api_blueprint.errorhandler(400)
 def bad_request(e):
     return jsonify(error=str(e)), 400
+
+
+@api_blueprint.errorhandler(403)
+def bad_request(e):
+    return jsonify(error=str(e)), 403
+
+
+@api_blueprint.errorhandler(404)
+def resource_not_found(e):
+    return jsonify(error=str(e)), 404
 
 
 @api_blueprint.errorhandler(409)
@@ -39,7 +46,7 @@ def conflict(e):
     return jsonify(error=str(e)), 409
 
 
-# authorized
+@role_required([PersonType.CUSTOMER, PersonType.ADMIN])
 @api_blueprint.route('/person/<string:username>', methods=['GET'])
 def get_person(username: str):
     """
@@ -59,7 +66,7 @@ def get_person(username: str):
     return jsonify(result), 200
 
 
-# authorized
+@jwt_required
 @api_blueprint.route('/person/<string:username>/booking', methods=['POST'])
 def add_booking(username: str):
     """
@@ -70,30 +77,32 @@ def add_booking(username: str):
     Returns: Json string of booking, or error
 
     """
-    # bookings can't already have an id
-    schema = BookingSchema(exclude=['id', 'status'])
+    jwt_username = get_jwt_identity()
+    jwt_person = Person.query.filter_by(username=jwt_username).first()
+    # check if user making request is customer, and if same as path user
+    if jwt_person.person_type is PersonType.CUSTOMER:
+        # this case happens if a customer tries to access another customer
+        if jwt_username != username:
+            return abort(403, description='Identity does not match url path')
+
+    schema = BookingSchema(exclude=['id', 'status', 'person'])
     try:
         booking = schema.loads(request.get_json())
     except ValidationError as ve:
         return abort(400, description='Invalid booking data')  # wow generic message
 
     # check that references to data in db is valid
-
-    # FIXME: this does not work when the references are wrong, wrap in try catch?
-    # or change the ORM with less strict references.. For now do not give invalid parameters
-    person = Person.query.filter_by(id=booking.person_id).first()
+    person = Person.query.filter_by(username=username).first()
     car = Car.query.filter_by(id=booking.car_id).first()
     if None in [person, car]:
         return abort(403, description='Booking references invalid id(s)')
-
-    if username != person.username:
-        return abort(403, description='Booking under wrong person')
 
     # Check that no booking with car is currently active
     if Booking.is_car_busy(booking.start_time, booking.end_time, booking.car_id):
         return abort(403, description=f'A booking with car id {booking.car_id}'
                                       f' is already mad in that time period')
 
+    booking.person_id = person.id
     booking.status = BookingStatusEnum.ACTIVE
 
     # TODO: Add Google calendar event

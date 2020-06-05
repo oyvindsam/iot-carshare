@@ -17,6 +17,13 @@ class PersonType:
     MANAGER = 'MANAGER'
     ENGINEER = 'ENGINEER'
 
+    ALL = [
+        CUSTOMER,
+        ADMIN,
+        MANAGER,
+        ENGINEER,
+    ]
+
 
 class Person(db.Model):
     """
@@ -118,29 +125,18 @@ class Booking(db.Model):
         Returns: bool if car is in use
 
         """
-        results = Booking.query\
-            .filter(Booking.car_id == car_id)\
+        results = Booking.query \
+            .filter(Booking.car_id == car_id) \
             .filter((start_time <= Booking.start_time) & (Booking.start_time <= end_time)  |
-                (Booking.start_time < start_time) & (start_time <= Booking.end_time) |
-                (start_time <= Booking.end_time) & (Booking.end_time <= end_time) |
-                (start_time < Booking.start_time) & (Booking.end_time < end_time))\
+                    (Booking.start_time < start_time) & (start_time <= Booking.end_time) |
+                    (start_time <= Booking.end_time) & (Booking.end_time <= end_time) |
+                    (start_time < Booking.start_time) & (Booking.end_time < end_time)) \
             .filter(Booking.status == BookingStatusEnum.ACTIVE).count()
 
         return results > 0
 
 def is_active(self):
     return self.start_time < datetime.now() < self.end_time
-
-
-# TODO: This might be redundant by above code..
-# FIXME: Only have hardcoded AVAILABLE / UNAVAILABLE statuses?
-# Is a car available if it is after end_time, but user has not returned it yet?.. no
-# class BookingStatus(db.Model):
-#     """
-#     BookingStatus SQLAlchemy class
-#     """
-#     id = db.Column(db.Integer, primary_key=True)
-#     status = db.Column(db.String(20), nullable=False, unique=True)
 
 
 not_blank = validate.Length(min=1, error='Field cannot be blank')
@@ -230,22 +226,3 @@ class BookingSchema(ma.SQLAlchemyAutoSchema):
     def validate_dates(self, data, **kwargs):
         if data['end_time'] < data['start_time']:
             raise ValidationError('end_time can not be before start_time')
-
-
-# class BookingStatusSchema(ma.SQLAlchemyAutoSchema):
-#     class Meta:
-#         model = BookingStatus
-#
-#     @post_load
-#     def make_booking_status(self, data, **kwargs):
-#         """
-#         This function runs after Schema().loads (validation code).
-#
-#         Args:
-#             data: Valid data
-#             **kwargs: args passed automatically
-#
-#         Returns:
-#
-#         """
-#         return BookingStatus(**data)
