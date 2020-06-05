@@ -4,21 +4,18 @@ import json
 import os
 import os.path
 import pickle
-import requests
 import urllib
 from urllib.parse import unquote, urlparse, parse_qs
 
-from flask import Blueprint, request, jsonify, render_template, abort
+import requests
+from flask import request, jsonify, render_template, abort
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from oauth2client import file
 
-site = Blueprint("site", __name__)
+from site_web import site_blueprint
 
-
-# hardcoding username, email and personid to be used with the entire web page as working 
-# separately from the login/register page
 usr = "adi"
 # hardcoding person id to do the post request
 email = "raj@gmail.com"
@@ -28,16 +25,30 @@ personid = 1
 api_address = 'http://127.0.0.1:5000'
 
 # Client Landing webpage.
-@site.route("/")
+@site_blueprint.route("/")
 def index():
-    site.register_error_handler(404, page_not_found)
+    site_blueprint.register_error_handler(404, page_not_found)
     return render_template("index.html")
 
-# @site.errorhandler(404)
+
+@site_blueprint.route('/login', methods=['POST'])
+def login():
+    print('in login')
+    data = request.get_json()
+    print(data)
+
+
+@site_blueprint.route('/register', methods=['POST'])
+def register():
+    print('in register')
+    data = request.form
+    print(data)
+
+# @site_blueprint.errorhandler(404)
 # def invalid_data(e):
 #     return '<h1> No data to </h1>', 404
 
-@site.errorhandler(404)
+@site_blueprint.errorhandler(404)
 def page_not_found(e):
     """
         Implementation of error handler in case wrong page is enterer along the url
@@ -46,7 +57,7 @@ def page_not_found(e):
     return render_template("404.html")
 
 # method for the webpage through which the user can book cars
-@site.route("/bookcar", methods=["GET", "POST"])
+@site_blueprint.route("/bookcar", methods=["GET", "POST"])
 def bookcar():
     # Use REST API.
     """
@@ -105,7 +116,7 @@ def bookcar():
 
 
 # method after a car has been selected to be booked
-@site.route("/time/<carinfo>", methods=["GET", "POST"])
+@site_blueprint.route("/time/<carinfo>", methods=["GET", "POST"])
 def time(carinfo):
      """
         Parsing the json string which is retrieved from the available cars page
@@ -117,7 +128,7 @@ def time(carinfo):
          return render_template("time.html", info=decode1)
 
 # method after to add booking to google calendar
-@site.route("/timeBook", methods=["GET", "POST"])
+@site_blueprint.route("/timeBook", methods=["GET", "POST"])
 def timeBook():
 
     """
@@ -211,7 +222,7 @@ def timeBook():
 
 
 # method for webpage to view previous bookings
-@site.route("/history", methods=["GET", "POST"])
+@site_blueprint.route("/history", methods=["GET", "POST"])
 def history():
     """
         Retrieval of all the past and current bookings from the database, 
@@ -230,7 +241,7 @@ def history():
     return render_template("history.html", bookings = responder)
 
 # method after selction of booking to be canceled is selected
-@site.route("/cancel", methods=["POST"])
+@site_blueprint.route("/cancel", methods=["POST"])
 def cancel():
 
     """

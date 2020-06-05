@@ -57,6 +57,7 @@ google-auth-oauthlib = "*"
 oauth2client = "*"
 flask-httpauth = "*"
 flask-jwt-extended = "*"
+flask-bootstrap = "*"
 
 [requires]
 python_version = "3"

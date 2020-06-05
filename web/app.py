@@ -1,9 +1,10 @@
 from flask import Flask
 
 import carshare_config
+import carshare_config_local
 from api import jwt, api_blueprint
 from api.models import db
-from flask_site import site
+from site_web import site_blueprint
 
 
 def create_app(config=None):
@@ -28,10 +29,14 @@ def create_app(config=None):
     db.init_app(app)
     app.register_blueprint(api_blueprint, url_prefix='/api')
     jwt.init_app(app)
-    app.register_blueprint(site)
+    app.register_blueprint(site_blueprint)
 
     return app
 
+
+if __name__ == '__main__':
+    app = create_app(carshare_config_local.DevelopmentConfig)
+    app.run(host='127.0.0.1')
 
 # Method to drop db.
 # Specify what configuration you want to use (development or production db)
