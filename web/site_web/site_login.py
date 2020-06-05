@@ -1,5 +1,5 @@
 import requests
-from flask import request, render_template
+from flask import request, render_template, g, redirect
 
 from site_web import site_blueprint
 from site_web.flask_site import api_address
@@ -10,7 +10,8 @@ def login():
     response = requests.post(f"{api_address}/api/auth/login", json=request.form)
     if response.status_code == 200:
         g.auth = 'Authorization: Bearer ' + response.json().get('access_token')
-        return render_template('bookcar.html')
+        g.user = response.json().get('username')
+        return redirect('bookcar')
     else:
         return render_template('index.html', error='Could not login user!')
 
