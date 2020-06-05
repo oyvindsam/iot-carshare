@@ -34,3 +34,18 @@ class ApiAuthTest(TestCase):
             }
             response = app.post('api/auth/login', json=data)
             self.assertTrue('access_token' in response.get_json())
+
+    def test_registered_user_can_access_protected_endpoint(self):
+        with self.app.test_client() as app:
+            person1 = DummyPerson.create_random()
+            person_json = PersonSchema(exclude=['id', 'person_type']).dumps(person1)
+            response = app.post('api/auth/register', json=person_json)
+            data = {
+                'username': person1.username,
+                'password': person1.password_hashed  # note: this is the unhased password
+            }
+            response = app.post('api/auth/login', json=data)
+            token = response.get_json().get('access_token')
+
+            response = app.get('api/auth/protected', headers={'Authorization': 'Bearer ' + token})
+            self.assertEqual(200, response.status_code)

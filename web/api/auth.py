@@ -48,8 +48,8 @@ def role_required(roles):
         @wraps(fn)
         def wrapper(*args, **kwargs):
             verify_jwt_in_request()
-            claims = get_jwt_claims()
-            if claims['roles'] not in roles:
+            claim = get_jwt_claims()  # currently only one role per user
+            if claim not in roles:
                 return jsonify(msg='Does not have permission to access this endpoint!'), 403
             else:
                 return fn(*args, **kwargs)
@@ -93,3 +93,8 @@ def login_user():
     access_token = create_access_token(identity=person, expires_delta=False)
     return jsonify(access_token=access_token), 200
 
+
+@api_blueprint.route('auth/protected', methods=['GET'])
+@role_required(['CUSTOMER'])
+def protected_endpoint():
+    return jsonify('valid role')
