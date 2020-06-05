@@ -11,6 +11,13 @@ db = SQLAlchemy()
 ma = Marshmallow()
 
 
+class PersonType:
+    CUSTOMER = 'CUSTOMER'
+    ADMIN = 'ADMIN'
+    MANAGER = 'MANAGER'
+    ENGINEER = 'ENGINEER'
+
+
 class Person(db.Model):
     """
     Person SQLAlchemy class
@@ -20,19 +27,9 @@ class Person(db.Model):
     first_name = db.Column(db.String(40), nullable=False)
     last_name = db.Column(db.String(40), nullable=False)
     email = db.Column(db.String(40), nullable=False)
-    person_type = db.Column(db.Integer, db.ForeignKey('person_type.id'),
-                            nullable=False)
+    person_type = db.Column(db.String, nullable=False, default=PersonType.CUSTOMER)
     password_hashed = db.Column(db.String(80), nullable=False)
     face = db.Column(db.BLOB)
-    type = db.relationship('PersonType', backref='person', lazy=True)
-
-
-class PersonType(db.Model):
-    """
-    PersonType SQLAlchemy class
-    """
-    id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(40), nullable=False, unique=True)
 
 
 class Car(db.Model):
