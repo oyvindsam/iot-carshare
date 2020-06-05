@@ -28,7 +28,7 @@ class Person(db.Model):
     last_name = db.Column(db.String(40), nullable=False)
     email = db.Column(db.String(40), nullable=False)
     person_type = db.Column(db.String, nullable=False, default=PersonType.CUSTOMER)
-    password_hashed = db.Column(db.String(80), nullable=False)
+    password_hashed = db.Column(db.String(200), nullable=False)
     face = db.Column(db.BLOB)
 
 
@@ -170,25 +170,6 @@ class PersonSchema(ma.SQLAlchemyAutoSchema):
 
         """
         return Person(**data)
-
-
-class PersonTypeSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = PersonType
-
-    @post_load
-    def make_person_type(self, data, **kwargs):
-        """
-        This function runs after Schema().loads (validation code).
-
-        Args:
-            data: Valid data
-            **kwargs: args passed automatically
-
-        Returns:
-
-        """
-        return PersonType(**data)
 
 
 class CarSchema(ma.SQLAlchemyAutoSchema):

@@ -6,29 +6,13 @@ from api.models import PersonType, Person, Car, CarManufacturer, CarType, \
     CarColour, Booking, BookingStatusEnum
 
 
-class DummyPersonType:
-    customer = PersonType(
-        type='Customer'
-    )
-
-    @staticmethod
-    def create_random():
-        return PersonType(
-            type=uuid4().__str__()[:50]
-        )
-
-    pt_customer_no_id_json = json.dumps({
-        'type': uuid4().__str__()[:20]
-    })
-
-
 class DummyPerson:
     person_customer1 = Person(
         username='test',
         first_name='first',
         last_name='last',
         email='test@gmail.com',
-        person_type=1,
+        person_type=PersonType.CUSTOMER,
         password_hashed='password',
         face=None
     )
@@ -38,7 +22,7 @@ class DummyPerson:
         first_name='first2',
         last_name='last2',
         email='test2@gmail.com',
-        person_type=1,
+        person_type=PersonType.CUSTOMER,
         password_hashed='password',
         face=None
     )
@@ -50,7 +34,7 @@ class DummyPerson:
             first_name='random',
             last_name='random',
             email='random@gmail.com',
-            person_type=1,
+            person_type=PersonType.CUSTOMER,
             password_hashed='password',
             face=None
         )
@@ -62,7 +46,7 @@ class DummyPerson:
                 'first_name': 'first',
                 'last_name': 'last',
                 'email': 'test@gmail.com',
-                'person_type': 1,
+                'person_type': 'CUSTOMER',
                 'password_hashed': 'password',
                 'face': None
             })
@@ -73,7 +57,7 @@ class DummyPerson:
             'first_name': 'first',
             'last_name': 'last',
             'email': 'test@gmail.com',
-            'person_type': 1,
+            'person_type': 'CUSTOMER',
             'password_hashed': 'password',
         })
 
@@ -138,23 +122,6 @@ class DummyCar:
             longitude='10.7522',
             hour_rate=20.5,
         )
-
-#
-# class DummyBookingStatus:
-#     available = BookingStatus(
-#         status='Available'
-#     )
-#
-#     not_available = BookingStatus(
-#         status='Not available'
-#     )
-#
-#     @staticmethod
-#     def create_random():
-#         return BookingStatus(
-#             status=uuid4().__str__()[:20]
-#         )
-
 
 class DummyBooking:
     person1_car1_available = Booking(

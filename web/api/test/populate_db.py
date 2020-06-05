@@ -3,10 +3,6 @@ from flask import Flask
 from api.models import Person, CarManufacturer, CarType, CarColour, Car, db, \
     PersonType
 
-pt1 = PersonType(
-    type='Customer'
-)
-
 
 cm1 = CarManufacturer(
     manufacturer='BMW'
@@ -51,7 +47,6 @@ def populate_db(app):
         print('db dropped..')
         db.create_all()
         db.session.add_all([
-            pt1,
             cm1,
             cm2,
             cm3,
@@ -68,7 +63,7 @@ def populate_db(app):
             first_name='Adi',
             last_name='Lastname',
             email='raj@gmail.com',
-            person_type=pt1.id,
+            person_type=PersonType.CUSTOMER,
             password_hashed='password',
             face=None
         )
