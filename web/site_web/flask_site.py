@@ -32,21 +32,18 @@ def index():
 
 @site_blueprint.route('/login', methods=['POST'])
 def login():
-    print('in login')
-    data = request.form
-    response = requests.post(f"{api_address}/api/auth/login", data=data)
-    print(response)
+    response = requests.post(f"{api_address}/api/auth/login", json=request.form)
     if response.status_code == 200:
         return render_template('bookcar.html')
     else:
-        return render_template('login.html')
+        return render_template('index.html', error='Could not login user!')
 
 
 @site_blueprint.route('/register', methods=['POST'])
 def register():
-
     response = requests.post(f"{api_address}/api/auth/register", json=request.form)
     if response.status_code == 201:
+        # maybe tell the user that they registered successfully
         return render_template('index.html')
     else:
         return render_template('index.html', error='Could not create user!')

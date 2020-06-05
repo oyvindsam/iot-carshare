@@ -89,7 +89,7 @@ def login_user():
 
     # check if user exists, then check password
     person = Person.query.filter_by(username=username).first()
-    if person is None or not check_password_hash(person.password_hashed, password):
+    if person is None or not check_password_hash(person.password, password):
         return abort(403, 'Invalid username or password')
 
     # currently the token does not expire!
