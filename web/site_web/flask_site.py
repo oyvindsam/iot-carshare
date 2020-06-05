@@ -24,8 +24,9 @@ personid = 1
 
 api_address = 'http://127.0.0.1:5000'
 
+
 # Client Landing webpage.
-@site_blueprint.route("/")
+@site_blueprint.route('/')
 def index():
     return render_template('index.html')
 
@@ -50,14 +51,6 @@ def register():
         return render_template('index.html', error='Could not create user!')
 
 
-@site_blueprint.errorhandler(404)
-def page_not_found(e):
-    """
-        Implementation of error handler in case wrong page is enterer along the url
-        for example: http://127.0.0.1:5000/pagedoesnotexist
-    """
-    return render_template("404.html")
-
 # method for the webpage through which the user can book cars
 @site_blueprint.route("/bookcar", methods=["GET", "POST"])
 def bookcar():
@@ -65,7 +58,7 @@ def bookcar():
     """
         Displaying all the available cars from the database
     """
-    response = requests.get(f"{ipaddress}/api/car")
+    response = requests.get(f"{api_address}/api/car")
     carData = json.loads(response.json())
     length = len(carData)
     if carData is None:
@@ -75,13 +68,13 @@ def bookcar():
     
     else :
 
-        response1 = requests.get(f"{ipaddress}/api/car-manufacturer")
+        response1 = requests.get(f"{api_address}/api/car-manufacturer")
         carManuData = json.loads(response1.json())
 
-        response2 = requests.get(f"{ipaddress}/api/car-type")
+        response2 = requests.get(f"{api_address}/api/car-type")
         carTypeData = json.loads(response2.json())
 
-        response3 = requests.get(f"{ipaddress}/api/car-colour")
+        response3 = requests.get(f"{api_address}/api/car-colour")
         carColorData = json.loads(response3.json())
 
         #preprocess using hashmap
@@ -215,7 +208,7 @@ def timeBook():
 
         #prepping the payload for a POST request
         payload = json.dumps(initload)
-        url = requests.post(f"{ipaddress}/api/person/{usr}/booking", json=payload)
+        url = requests.post(f"{api_address}/api/person/{usr}/booking", json=payload)
 
         return render_template("confirmation.html", invite=google_event_link)
 
@@ -230,7 +223,7 @@ def history():
         Retrieval of all the past and current bookings from the database, 
         shows the person username, car id and for what duration it was booked
     """
-    response_book = requests.get(f"{ipaddress}/api/person/adi/booking")
+    response_book = requests.get(f"{api_address}/api/person/adi/booking")
     responder = json.loads(response_book.text)
 
     # preprocess the string object 
@@ -299,7 +292,7 @@ def cancelbook():
     service = build('calendar', 'v3', credentials=creds)
     response = service.events().delete(calendarId='primary', eventId = calID).execute()
     print(response)
-    url = f"{ipaddress}/api/person/{usrName}/booking/{bookingID}"
+    url = f"{api_address}/api/person/{usrName}/booking/{bookingID}"
     response = requests.delete(url)
     return render_template("cancelled.html")
 
