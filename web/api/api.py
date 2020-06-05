@@ -59,27 +59,6 @@ def get_person(username: str):
     return jsonify(result), 200
 
 
-# add/create user
-@api_blueprint.route('/person', methods=['POST'])
-def add_person():
-    """
-    Add a new person to db, or error if username already taken
-
-    Returns: Json string of added user
-
-    """
-    schema = PersonSchema(exclude=['id'])
-    try:
-        person = schema.loads(request.get_json())
-    except ValidationError:
-        return abort(400, description='Invalid person data')
-    if Person.query.filter_by(username=person.username).first() is not None:
-        return abort(409, description='User exists')
-    db.session.add(person)
-    db.session.commit()
-    return schema.jsonify(person), 201
-
-
 # authorized
 @api_blueprint.route('/person/<string:username>/booking', methods=['POST'])
 def add_booking(username: str):

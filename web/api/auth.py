@@ -23,7 +23,7 @@ def register_user():
     db.session.add(person)
     db.session.commit()
 
-    return {'User created!'}
+    return {'User created!'}, 201
 
 
 @api_blueprint.route('login', methods=['POST'])
@@ -38,8 +38,8 @@ def login_user():
     if person is None or not check_password_hash(person.password_hashed, password):
         return abort(403, 'Invalid username or password')
 
-    access_token = create_access_token(identity=username)
-    refresh_token = create_refresh_token(identity=username)
+    access_token = create_access_token(identity=person.id, expires_delta=False)
+    refresh_token = create_refresh_token(identity=person.id)
     return {
         'message': 'Logged in as {}'.format(person.username),
         'access_token': access_token,
