@@ -19,8 +19,43 @@ def is_valid_user(username, jwt_username):
     return True
 
 
+@api_blueprint.route('/person/<string:username>/booking', methods=['GET'])
 @jwt_required
+def get_bookings(username: str):
+    """
+    Get all bookings for this user
+
+    Args:
+        username (str): logged in user
+
+    Returns: All bookings for user with additional info as json list string, example:
+
+    """
+    if not is_valid_user(username, get_jwt_identity()):
+        return abort(403, description='Identity does not match url path')
+
+    schema = BookingSchema()
+    person = Person.query.filter_by(username=username).first()
+    if person is None:
+        return abort(404, 'User not found')
+    bookings = person.booking
+
+    person_schema = PersonSchema()
+    car_schema = CarSchema()
+
+    # TODO: add car type, color
+    data = [{
+        'booking': schema.dumps(booking),
+        'person': person_schema.dumps(booking.person),
+        'car': car_schema.dumps(booking.car)
+    }
+        for booking in bookings]
+
+    return jsonify(data), 200
+
+
 @api_blueprint.route('/person/<string:username>/booking', methods=['POST'])
+@jwt_required
 def add_booking(username: str):
     """
     Add a new booking for this user
@@ -60,8 +95,8 @@ def add_booking(username: str):
     return schema.jsonify(booking), 201
 
 
-@jwt_required
 @api_blueprint.route('/person/<string:username>/booking/<int:id>', methods=['PUT', 'DELETE'])
+@jwt_required
 def deactivate_booking(username: str, id: int):
     """
     Deactivate a booking (cancel/finish)
@@ -89,43 +124,8 @@ def deactivate_booking(username: str, id: int):
     return '', 200
 
 
-@jwt_required
-@api_blueprint.route('/person/<string:username>/booking', methods=['GET'])
-def get_bookings(username: str):
-    """
-    Get all bookings for this user
-
-    Args:
-        username (str): logged in user
-
-    Returns: All bookings for user with additional info as json list string, example:
-
-    """
-    if not is_valid_user(username, get_jwt_identity()):
-        return abort(403, description='Identity does not match url path')
-
-    schema = BookingSchema()
-    person = Person.query.filter_by(username=username).first()
-    if person is None:
-        return abort(404, 'User not found')
-    bookings = person.booking
-
-    person_schema = PersonSchema()
-    car_schema = CarSchema()
-
-    # TODO: add car type, color
-    data = [{
-        'booking': schema.dumps(booking),
-        'person': person_schema.dumps(booking.person),
-        'car': car_schema.dumps(booking.car)
-    }
-        for booking in bookings]
-
-    return jsonify(data), 200
-
-
-@jwt_required
 @api_blueprint.route('/person/<string:username>/booking/<int:id>', methods=['GET'])
+@jwt_required
 def get_booking(username: str, id: int):
     """
     Get booking for given user and booking id
