@@ -2,6 +2,8 @@ import json
 from datetime import datetime, timedelta
 from uuid import uuid4
 
+from werkzeug.security import generate_password_hash
+
 from api.models import PersonType, Person, Car, CarManufacturer, CarType, \
     CarColour, Booking, BookingStatusEnum
 
@@ -13,7 +15,7 @@ class DummyPerson:
         last_name='last',
         email='test@gmail.com',
         person_type=PersonType.CUSTOMER,
-        password_hashed='password',
+        password=generate_password_hash('password'),
         face=None
     )
 
@@ -23,7 +25,7 @@ class DummyPerson:
         last_name='last2',
         email='test2@gmail.com',
         person_type=PersonType.CUSTOMER,
-        password_hashed='password',
+        password=generate_password_hash('password'),
         face=None
     )
 
@@ -35,7 +37,7 @@ class DummyPerson:
             last_name='random',
             email='random@gmail.com',
             person_type=PersonType.CUSTOMER,
-            password_hashed='password',
+            password=generate_password_hash('password'),
             face=None
         )
 
@@ -47,7 +49,7 @@ class DummyPerson:
                 'last_name': 'last',
                 'email': 'test@gmail.com',
                 'person_type': 'CUSTOMER',
-                'password_hashed': 'password',
+                'password': generate_password_hash('password'),
                 'face': None
             })
 
@@ -58,7 +60,7 @@ class DummyPerson:
             'last_name': 'last',
             'email': 'test@gmail.com',
             'person_type': 'CUSTOMER',
-            'password_hashed': 'password',
+            'password': generate_password_hash('password'),
         })
 
 

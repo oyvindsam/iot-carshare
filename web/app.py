@@ -4,6 +4,7 @@ import carshare_config
 import carshare_config_local
 from api import jwt, api_blueprint
 from api.models import db
+from api.test.populate_db import populate_db
 from site_web import site_blueprint
 
 
@@ -39,8 +40,7 @@ def create_app(config=None):
 if __name__ == '__main__':
     app = create_app(carshare_config_local.DevelopmentConfig)
     with app.app_context():
-        db.drop_all()
-        db.create_all()
+        populate_db(app)
     app.run(host='127.0.0.1')
 
 # Method to drop db.

@@ -1,4 +1,5 @@
 from flask import Flask
+from werkzeug.security import generate_password_hash
 
 from api.models import Person, CarManufacturer, CarType, CarColour, Car, db, \
     PersonType
@@ -59,12 +60,21 @@ def populate_db(app):
         db.session.commit()
         print("Required foreign key rows commited..")
         p1 = Person(
+            username='as',
+            first_name='Random',
+            last_name='Person',
+            email='as@gmail.com',
+            person_type=PersonType.CUSTOMER,
+            password=generate_password_hash('as'),
+            face=None
+        )
+        p2 = Person(
             username='adi',
             first_name='Adi',
             last_name='Lastname',
             email='raj@gmail.com',
             person_type=PersonType.CUSTOMER,
-            password_hashed='password',
+            password=generate_password_hash('abc123'),
             face=None
         )
 
@@ -290,6 +300,7 @@ def populate_db(app):
 
         db.session.add_all([
             p1,
+            p2,
             c1,
             c2,
             c3,
