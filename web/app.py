@@ -18,7 +18,7 @@ def create_app(config=None):
 
     """
 
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='site_web/templates')
 
     # Load configuration from external file, or use production config
     if config is None:
