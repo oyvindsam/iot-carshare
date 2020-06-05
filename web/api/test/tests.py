@@ -3,7 +3,7 @@ from unittest import TestCase
 from flask import Flask
 from marshmallow import ValidationError
 
-from api.api import api
+from api.api import api_blueprint
 from api.models import db, PersonSchema, BookingSchema, CarSchema
 from api.test.dummy_data import *
 from app import create_app
@@ -28,7 +28,7 @@ def get_test_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['TESTING'] = True
     db.init_app(app)
-    app.register_blueprint(api)
+    app.register_blueprint(api_blueprint)
     with app.app_context():
         db.drop_all()
         db.create_all()
