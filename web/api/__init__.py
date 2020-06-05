@@ -1,5 +1,8 @@
 from flask import Blueprint
-from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
+from flask_jwt_extended import JWTManager
 
-api_blueprint = Blueprint('api', __name__, url_prefix='/api/')
-auth = HTTPTokenAuth(scheme='Bearer')
+api_blueprint = Blueprint('api', __name__)
+jwt = JWTManager()
+
+from . import api, auth
+
