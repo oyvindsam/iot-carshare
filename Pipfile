@@ -58,6 +58,7 @@ oauth2client = "*"
 flask-httpauth = "*"
 flask-jwt-extended = "*"
 flask-bootstrap = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3"

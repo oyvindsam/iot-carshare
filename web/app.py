@@ -38,6 +38,7 @@ def create_app(config=None):
 
 
 if __name__ == '__main__':
+    # create app from config
     app = create_app(carshare_config_local.DevelopmentConfig)
     with app.app_context():
         populate_db(app)
