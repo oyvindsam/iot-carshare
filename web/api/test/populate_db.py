@@ -60,6 +60,15 @@ def populate_db(app):
         ])
         db.session.commit()
         print("Required foreign key rows commited..")
+        admin = Person(
+            username='admin',
+            first_name='Mr. Admin',
+            last_name='Boss',
+            email='boss@gmail.com',
+            type=PersonType.ADMIN,
+            password=generate_password_hash('admin'),
+            face=None
+        )
         p1 = Person(
             username='as',
             first_name='Random',
@@ -67,6 +76,24 @@ def populate_db(app):
             email='as@gmail.com',
             type=PersonType.CUSTOMER,
             password=generate_password_hash('as'),
+            face=None
+        )
+        engineer = Person(
+            username='engineer',
+            first_name='Engineer',
+            last_name='Person',
+            email='engineer@gmail.com',
+            type=PersonType.ENGINEER,
+            password=generate_password_hash('engineer'),
+            face=None
+        )
+        p1 = Person(
+            username='manager',
+            first_name='Mr. Manager',
+            last_name='Ad',
+            email='mrmanager@gmail.com',
+            type=PersonType.MANAGER,
+            password=generate_password_hash('manager'),
             face=None
         )
         p2 = Person(
