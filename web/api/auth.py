@@ -15,27 +15,10 @@ from api.models import Person, PersonSchema, db, PersonType
 # https://flask-jwt-extended.readthedocs.io/en/stable/tokens_from_complex_object/
 @jwt.user_claims_loader
 def add_claims_to_access_token(person: Person):
-    """
-    Returns user role (person type)
-
-    Args:
-        person (Person): person who generates token
-
-    Returns: roles for this user
-
-    """
     return person.type
 
 @jwt.user_identity_loader
 def user_identity_lookup(person: Person):
-    """
-    Find identity from user object
-    Args:
-        person (Person): person who generates token
-
-    Returns: user id
-
-    """
     return person.username
 
 
@@ -45,6 +28,14 @@ def user_loader_callback(identity):
 
 
 def role_required(roles):
+    """
+    Use this as a decorator to verify that user has correct roles
+    Args:
+        roles (list[str]): roles required, e.g. 'CUSTOMER'
+
+    Returns: wrapped function, or error
+
+    """
     def check_role(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
@@ -58,11 +49,14 @@ def role_required(roles):
     return check_role
 
 
-
 @api_blueprint.route('/auth/register', methods=['POST'])
 def register_user():
+    """
+    Get user details from http form post and creates user
+    Returns: success message, or error
+
+    """
     data = request.get_json()
-    print(data)
     schema = PersonSchema(exclude=['id', 'type'])
     try:
         person = schema.load(request.get_json())
@@ -82,6 +76,11 @@ def register_user():
 
 @api_blueprint.route('/auth/login', methods=['POST'])
 def login_user():
+    """
+    Get user username and password from form post, try to log in user.
+    Returns: http 200 response with json data with token, and user details
+
+    """
     data = request.get_json()
     username, password = data.get('username', None), data.get('password', None)
     if username is None or password is None:

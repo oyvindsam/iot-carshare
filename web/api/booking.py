@@ -10,6 +10,15 @@ from .models import db, Person, PersonSchema, BookingSchema, \
 # Helper method to see if username (in url path) matches username from jwt,
 # in case jwt_user is a customer
 def is_valid_user(username, jwt_username):
+    """
+    Checks if a logged in user requests a endpoint it is allowed to reach
+    Args:
+        username (str): from url
+        jwt_username (str): from jwt_identity
+
+    Returns: True if user is allowed, false otherwise
+
+    """
     jwt_person = Person.query.filter_by(username=jwt_username).first()
     # check if user making request is customer, and if same as path user
     if jwt_person.type == PersonType.CUSTOMER:
