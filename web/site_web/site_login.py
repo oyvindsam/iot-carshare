@@ -1,9 +1,23 @@
+from functools import wraps
+
 import requests
 from flask import request, render_template, g, redirect, session, abort
 
 from site_web import site_blueprint
 from site_web.flask_site import api_address
 
+
+def require_type(required_type):
+    def check_role(fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            type = session['person']['type']
+            if type not in required_type:
+                return render_template('index.html', error='Log in with a valid user to view page!')
+            else:
+                return fn(*args, **kwargs)
+        return wrapper
+    return check_role
 
 @site_blueprint.route('/login', methods=['POST'])
 def login():
