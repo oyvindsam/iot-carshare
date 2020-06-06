@@ -17,12 +17,6 @@ from oauth2client import file
 
 from site_web import site_blueprint
 
-usr = "adi"
-# hardcoding person id to do the post request
-email = "raj@gmail.com"
-personid = 1
-
-
 api_address = 'http://127.0.0.1:5000'
 
 
@@ -126,6 +120,9 @@ def timeBook():
     startDateTime = startDateTime + ':00+10:00'
     endDateTime = endDateTime + ':00+10:00'
 
+    username = session['person']['username']
+    email = session['person']['email']
+
     if startDateTime < endDateTime :
 
         SCOPES = ["https://www.googleapis.com/auth/calendar"]
@@ -156,7 +153,7 @@ def timeBook():
         event = {
                     'summary': 'Novo Car share booking',
                     'location': location,
-                    'description': 'Your car booking with Novoshare booked by user '+ usr +' with email '+ email +' with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
+                    'description': 'Your car booking with Novoshare booked by user '+ username +' with email '+ email +' with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
                     'start': {
                         'dateTime': startDateTime,
                         'timeZone': "Australia/Melbourne",
@@ -184,7 +181,7 @@ def timeBook():
         print(google_event_id)
         initload = ({
             'car_id': carid,
-            'person_id': personid,
+            'person_id': username,
             'start_time': startDateTime,
             'end_time': endDateTime,
             'google_calendar_id': google_event_id,
@@ -192,7 +189,6 @@ def timeBook():
 
         #prepping the payload for a POST request
         payload = json.dumps(initload)
-        username = session['person']['username']
         url = requests.post(f"{api_address}/api/person/{username}/booking", json=payload)
 
         return render_template("confirmation.html", invite=google_event_link)

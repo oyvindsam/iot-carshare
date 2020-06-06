@@ -97,7 +97,8 @@ def login_user():
     response = {
         'access_token': access_token,
         'username': person.username,
-        'type': person.type
+        'type': person.type,
+        'email': person.email
     }
     return jsonify(response), 200
 

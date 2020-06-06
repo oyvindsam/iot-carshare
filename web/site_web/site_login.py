@@ -16,7 +16,8 @@ def login():
         # save logged in user
         session['person'] = {
             'username': data.get('username'),
-            'type': type
+            'type': type,
+            'email': data.get('email')
         }
         if type == 'CUSTOMER':
             return redirect('bookcar')
