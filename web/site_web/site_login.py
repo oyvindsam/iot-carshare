@@ -8,6 +8,14 @@ from site_web.flask_site import api_address
 
 
 def require_type(required_type):
+    """
+    Helper decorator method  to see if logged in user has access to requested endpoint
+    Args:
+        required_type (list[string]): types (e.g. ['CUSTOMER', 'ADMIN']
+
+    Returns: wrapped function or a render_template in not allowed
+
+    """
     def check_role(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
@@ -19,8 +27,15 @@ def require_type(required_type):
         return wrapper
     return check_role
 
+
 @site_blueprint.route('/login', methods=['POST'])
 def login():
+    """
+    Get log in data (username, password) from log in page, and try to
+    authenticate with api.
+    Returns: redirect to user type page, or log in page if details are not valid
+
+    """
     response = requests.post(f"{api_address}/api/auth/login", json=request.form)
     if response.status_code == 200:
         data = response.json()
@@ -50,6 +65,11 @@ def login():
 
 @site_blueprint.route('/register', methods=['POST'])
 def register():
+    """
+    Get user detail from form post, and registers user with api
+    Returns: log in page with or without error message
+
+    """
     response = requests.post(f"{api_address}/api/auth/register", json=request.form)
     if response.status_code == 201:
         # maybe tell the user that they registered successfully
@@ -60,6 +80,11 @@ def register():
 
 @site_blueprint.route('/logout')
 def logout():
+    """
+    Removes auth header from session
+    Returns: log in page
+
+    """
     if 'auth' in session.keys():
         del session['auth']
     return redirect('/')
