@@ -14,7 +14,7 @@ class DummyPerson:
         first_name='first',
         last_name='last',
         email='test@gmail.com',
-        person_type=PersonType.CUSTOMER,
+        type=PersonType.CUSTOMER,
         password=generate_password_hash('password'),
         face=None
     )
@@ -24,7 +24,7 @@ class DummyPerson:
         first_name='first2',
         last_name='last2',
         email='test2@gmail.com',
-        person_type=PersonType.CUSTOMER,
+        type=PersonType.CUSTOMER,
         password=generate_password_hash('password'),
         face=None
     )
@@ -36,7 +36,7 @@ class DummyPerson:
             first_name='random',
             last_name='random',
             email='random@gmail.com',
-            person_type=PersonType.CUSTOMER,
+            type=PersonType.CUSTOMER,
             password=generate_password_hash('password'),
             face=None
         )
@@ -48,7 +48,7 @@ class DummyPerson:
                 'first_name': 'first',
                 'last_name': 'last',
                 'email': 'test@gmail.com',
-                'person_type': 'CUSTOMER',
+                'type': 'CUSTOMER',
                 'password': generate_password_hash('password'),
                 'face': None
             })
@@ -59,7 +59,7 @@ class DummyPerson:
             'first_name': 'first',
             'last_name': 'last',
             'email': 'test@gmail.com',
-            'person_type': 'CUSTOMER',
+            'type': 'CUSTOMER',
             'password': generate_password_hash('password'),
         })
 

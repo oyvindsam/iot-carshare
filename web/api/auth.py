@@ -24,7 +24,7 @@ def add_claims_to_access_token(person: Person):
     Returns: roles for this user
 
     """
-    return person.person_type
+    return person.type
 
 @jwt.user_identity_loader
 def user_identity_lookup(person: Person):
@@ -63,7 +63,7 @@ def role_required(roles):
 def register_user():
     data = request.get_json()
     print(data)
-    schema = PersonSchema(exclude=['id', 'person_type'])
+    schema = PersonSchema(exclude=['id', 'type'])
     try:
         person = schema.load(request.get_json())
     except ValidationError:
@@ -97,7 +97,7 @@ def login_user():
     response = {
         'access_token': access_token,
         'username': person.username,
-        'type': person.person_type
+        'type': person.type
     }
     return jsonify(response), 200
 

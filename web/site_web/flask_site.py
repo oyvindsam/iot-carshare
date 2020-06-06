@@ -188,7 +188,8 @@ def timeBook():
 
         #prepping the payload for a POST request
         payload = json.dumps(initload)
-        url = requests.post(f"{api_address}/api/person/{usr}/booking", json=payload)
+        username = session['person']['username']
+        url = requests.post(f"{api_address}/api/person/{username}/booking", json=payload)
 
         return render_template("confirmation.html", invite=google_event_link)
 
@@ -203,7 +204,9 @@ def history():
         Retrieval of all the past and current bookings from the database, 
         shows the person username, car id and for what duration it was booked
     """
-    response_book = requests.get(f"{api_address}/api/person/adi/booking")
+    username = session['person']['username']
+    response_book = requests.get(f"{api_address}/api/person/{username}/booking",
+                                 headers=session['auth'])
     responder = json.loads(response_book.text)
 
     # preprocess the string object 
@@ -271,9 +274,10 @@ def cancelbook():
 
     service = build('calendar', 'v3', credentials=creds)
     response = service.events().delete(calendarId='primary', eventId = calID).execute()
-    print(response)
-    url = f"{api_address}/api/person/{usrName}/booking/{bookingID}"
-    response = requests.delete(url)
+    #print(response)
+    username = session['person']['username']
+    url = f"{api_address}/api/person/{username}/booking/{bookingID}"
+    response = requests.delete(url, headers=session['auth'])
     return render_template("cancelled.html")
 
 

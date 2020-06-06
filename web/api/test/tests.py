@@ -523,7 +523,7 @@ class ModelTest(TestCase):
             # circle reference works
             self.assertTrue(booking in booking.person.booking)
             self.assertTrue(person1 == Booking.query.filter_by(person=person1).first().person)
-            self.assertEqual(booking.person.type, person1.person_type)
+            self.assertEqual(booking.person.type, person1.type)
             # find all car person1 has booked
             self.assertTrue(car in [b.car for b in person1.booking])
 

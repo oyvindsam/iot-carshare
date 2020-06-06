@@ -12,7 +12,7 @@ from .models import db, Person, PersonSchema, BookingSchema, \
 def is_valid_user(username, jwt_username):
     jwt_person = Person.query.filter_by(username=jwt_username).first()
     # check if user making request is customer, and if same as path user
-    if jwt_person.person_type == PersonType.CUSTOMER:
+    if jwt_person.type == PersonType.CUSTOMER:
         # this case happens if a customer tries to access another customer
         if jwt_username != username:
             return False

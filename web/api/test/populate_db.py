@@ -1,9 +1,10 @@
+from datetime import datetime, timedelta
+
 from flask import Flask
 from werkzeug.security import generate_password_hash
 
 from api.models import Person, CarManufacturer, CarType, CarColour, Car, db, \
-    PersonType
-
+    PersonType, Booking
 
 cm1 = CarManufacturer(
     manufacturer='BMW'
@@ -64,7 +65,7 @@ def populate_db(app):
             first_name='Random',
             last_name='Person',
             email='as@gmail.com',
-            person_type=PersonType.CUSTOMER,
+            type=PersonType.CUSTOMER,
             password=generate_password_hash('as'),
             face=None
         )
@@ -73,7 +74,7 @@ def populate_db(app):
             first_name='Adi',
             last_name='Lastname',
             email='raj@gmail.com',
-            person_type=PersonType.CUSTOMER,
+            type=PersonType.CUSTOMER,
             password=generate_password_hash('abc123'),
             face=None
         )
@@ -321,6 +322,23 @@ def populate_db(app):
             c18,
             c19,
             c20
+        ])
+        db.session.commit()
+        b1 = Booking(
+            car_id=c1.id,
+            person_id=p1.id,
+            start_time=datetime.now(),
+            end_time=datetime.now() + timedelta(hours=5),
+        )
+        b2 = Booking(
+            car_id=c2.id,
+            person_id=p1.id,
+            start_time=datetime.now() + timedelta(days=1),
+            end_time=datetime.now() + timedelta(days=1, hours=4),
+        )
+        db.session.add_all([
+            b1,
+            b2
         ])
         db.session.commit()
         print('All data commited!')

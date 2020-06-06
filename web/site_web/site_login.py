@@ -13,9 +13,9 @@ def login():
         # save authorization header in session
         session['auth'] = {'Authorization': 'Bearer ' + data.get('access_token')}
         # save logged in user
-        session['user'] = {
+        session['person'] = {
             'username': data.get('username'),
-            'type': data.get('type') # todo: add type to api response
+            'type': data.get('type')
         }
         return redirect('bookcar')
     else:
