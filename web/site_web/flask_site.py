@@ -4,55 +4,39 @@ import json
 import os
 import os.path
 import pickle
-import requests
 import urllib
 from urllib.parse import unquote, urlparse, parse_qs
 
-from flask import Blueprint, request, jsonify, render_template, abort
+import requests
+from flask import request, jsonify, render_template, abort, g, session, \
+    redirect
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from oauth2client import file
 
-site = Blueprint("site", __name__)
-
-
-# hardcoding username, email and personid to be used with the entire web page as working 
-# separately from the login/register page
-usr = "adi"
-# hardcoding person id to do the post request
-email = "raj@gmail.com"
-personid = 1
-
+from site_web import site_blueprint
 
 api_address = 'http://127.0.0.1:5000'
 
+
 # Client Landing webpage.
-@site.route("/")
+@site_blueprint.route('/')
 def index():
-    site.register_error_handler(404, page_not_found)
-    return render_template("index.html")
+    return render_template('index.html')
 
-# @site.errorhandler(404)
-# def invalid_data(e):
-#     return '<h1> No data to </h1>', 404
-
-@site.errorhandler(404)
-def page_not_found(e):
-    """
-        Implementation of error handler in case wrong page is enterer along the url
-        for example: http://127.0.0.1:5000/pagedoesnotexist
-    """
-    return render_template("404.html")
 
 # method for the webpage through which the user can book cars
-@site.route("/bookcar", methods=["GET", "POST"])
+@site_blueprint.route("/bookcar", methods=["GET", "POST"])
 def bookcar():
     # Use REST API.
     """
         Displaying all the available cars from the database
     """
-    response = requests.get(f"{ipaddress}/api/car")
+
+    response = requests.get(f"{api_address}/api/car", headers=session.get('auth', None))
+    if response.status_code == 401:
+        return abort(401)
     carData = json.loads(response.json())
     length = len(carData)
     if carData is None:
@@ -62,13 +46,13 @@ def bookcar():
     
     else :
 
-        response1 = requests.get(f"{ipaddress}/api/car-manufacturer")
+        response1 = requests.get(f"{api_address}/api/car-manufacturer")
         carManuData = json.loads(response1.json())
 
-        response2 = requests.get(f"{ipaddress}/api/car-type")
+        response2 = requests.get(f"{api_address}/api/car-type")
         carTypeData = json.loads(response2.json())
 
-        response3 = requests.get(f"{ipaddress}/api/car-colour")
+        response3 = requests.get(f"{api_address}/api/car-colour")
         carColorData = json.loads(response3.json())
 
         #preprocess using hashmap
@@ -105,7 +89,7 @@ def bookcar():
 
 
 # method after a car has been selected to be booked
-@site.route("/time/<carinfo>", methods=["GET", "POST"])
+@site_blueprint.route("/time/<carinfo>", methods=["GET", "POST"])
 def time(carinfo):
      """
         Parsing the json string which is retrieved from the available cars page
@@ -117,7 +101,7 @@ def time(carinfo):
          return render_template("time.html", info=decode1)
 
 # method after to add booking to google calendar
-@site.route("/timeBook", methods=["GET", "POST"])
+@site_blueprint.route("/timeBook", methods=["GET", "POST"])
 def timeBook():
 
     """
@@ -135,6 +119,9 @@ def timeBook():
     endDateTime = request.form['bookingendtime']
     startDateTime = startDateTime + ':00+10:00'
     endDateTime = endDateTime + ':00+10:00'
+
+    username = session['person']['username']
+    email = session['person']['email']
 
     if startDateTime < endDateTime :
 
@@ -166,7 +153,7 @@ def timeBook():
         event = {
                     'summary': 'Novo Car share booking',
                     'location': location,
-                    'description': 'Your car booking with Novoshare booked by user '+ usr +' with email '+ email +' with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
+                    'description': 'Your car booking with Novoshare booked by user '+ username +' with email '+ email +' with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
                     'start': {
                         'dateTime': startDateTime,
                         'timeZone': "Australia/Melbourne",
@@ -194,7 +181,7 @@ def timeBook():
         print(google_event_id)
         initload = ({
             'car_id': carid,
-            'person_id': personid,
+            'person_id': username,
             'start_time': startDateTime,
             'end_time': endDateTime,
             'google_calendar_id': google_event_id,
@@ -202,7 +189,7 @@ def timeBook():
 
         #prepping the payload for a POST request
         payload = json.dumps(initload)
-        url = requests.post(f"{ipaddress}/api/person/{usr}/booking", json=payload)
+        url = requests.post(f"{api_address}/api/person/{username}/booking", json=payload)
 
         return render_template("confirmation.html", invite=google_event_link)
 
@@ -211,13 +198,15 @@ def timeBook():
 
 
 # method for webpage to view previous bookings
-@site.route("/history", methods=["GET", "POST"])
+@site_blueprint.route("/history", methods=["GET", "POST"])
 def history():
     """
         Retrieval of all the past and current bookings from the database, 
         shows the person username, car id and for what duration it was booked
     """
-    response_book = requests.get(f"{ipaddress}/api/person/adi/booking")
+    username = session['person']['username']
+    response_book = requests.get(f"{api_address}/api/person/{username}/booking",
+                                 headers=session['auth'])
     responder = json.loads(response_book.text)
 
     # preprocess the string object 
@@ -230,7 +219,7 @@ def history():
     return render_template("history.html", bookings = responder)
 
 # method after selction of booking to be canceled is selected
-@site.route("/cancel", methods=["POST"])
+@site_blueprint.route("/cancel", methods=["POST"])
 def cancel():
 
     """
@@ -247,12 +236,14 @@ def cancel():
     return render_template("cancel.html", info=cancel)
 
 # method with which booking is canceled
+@site_blueprint.route('/cancelbook', methods=['POST'])
 def cancelbook():
 
     """
     Passing parameters such as the booking ID of a particular booking and the user name
     of the user to do a DELETE request which updates the bookings with the booking which was cancelled
     """
+
     calID = request.form['googleid']
     bookingID = request.form['bookingId']
     usrName = request.form['username']
@@ -277,7 +268,7 @@ def cancelbook():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+                '../credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
@@ -285,9 +276,10 @@ def cancelbook():
 
     service = build('calendar', 'v3', credentials=creds)
     response = service.events().delete(calendarId='primary', eventId = calID).execute()
-    print(response)
-    url = f"{ipaddress}/api/person/{usrName}/booking/{bookingID}"
-    response = requests.delete(url)
+    #print(response)
+    username = session['person']['username']
+    url = f"{api_address}/api/person/{username}/booking/{bookingID}"
+    response = requests.delete(url, headers=session['auth'])
     return render_template("cancelled.html")
 
 

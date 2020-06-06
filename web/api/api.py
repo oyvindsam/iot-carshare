@@ -1,13 +1,15 @@
-import json
-
-from flask import Blueprint, jsonify, request, abort, render_template, redirect
-from marshmallow import ValidationError
+from flask import jsonify, request, abort
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.exc import InvalidRequestError
 
-from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
-    Booking, Car, CarSchema, CarManufacturer, \
+from api import api_blueprint, jwt
+from .auth import role_required
+from .booking import is_valid_user
+from .models import db, Person, PersonSchema, Booking, Car, CarSchema, \
+    CarManufacturer, \
     CarManufacturerSchema, CarType, CarTypeSchema, CarColour, CarColourSchema, \
-    BookingStatusEnum
+    BookingStatusEnum, PersonType
+
 
 # Url paths follows this pattern:
 #
@@ -22,28 +24,30 @@ from .models import db, Person, PersonSchema, PersonTypeSchema, BookingSchema, \
 # All enpoints return a Flask Response object, either with error or success response
 # success response usually have json data
 
-api = Blueprint('api', __name__, url_prefix='/api/')
-
-
 
 # TODO: standarize error handling. https://flask.palletsprojects.com/en/1.1.x/patterns/errorpages/
-@api.errorhandler(404)
-def resource_not_found(e):
-    return jsonify(error=str(e)), 404
-
-
-@api.errorhandler(400)
+@api_blueprint.errorhandler(400)
 def bad_request(e):
     return jsonify(error=str(e)), 400
 
 
-@api.errorhandler(409)
+@api_blueprint.errorhandler(403)
+def bad_request(e):
+    return jsonify(error=str(e)), 403
+
+
+@api_blueprint.errorhandler(404)
+def resource_not_found(e):
+    return jsonify(error=str(e)), 404
+
+
+@api_blueprint.errorhandler(409)
 def conflict(e):
     return jsonify(error=str(e)), 409
 
 
-# authorized
-@api.route('/person/<string:username>', methods=['GET'])
+@api_blueprint.route('/person/<string:username>', methods=['GET'])
+@role_required([PersonType.CUSTOMER, PersonType.ADMIN])
 def get_person(username: str):
     """
     Get person data for logged in user
@@ -54,6 +58,8 @@ def get_person(username: str):
     Returns: Response with person json string
 
     """
+    if not is_valid_user(username, get_jwt_identity()):
+        return abort(403, description='Identity does not match url path')
     persons = Person.query.filter_by(username=username).first()
     if persons is None:
         return abort(404, description='Person not found')
@@ -62,158 +68,8 @@ def get_person(username: str):
     return jsonify(result), 200
 
 
-# add/create user
-@api.route('/person', methods=['POST'])
-def add_person():
-    """
-    Add a new person to db, or error if username already taken
-
-    Returns: Json string of added user
-
-    """
-    schema = PersonSchema(exclude=['id'])
-    try:
-        person = schema.loads(request.get_json())
-    except ValidationError:
-        return abort(400, description='Invalid person data')
-    if Person.query.filter_by(username=person.username).first() is not None:
-        return abort(409, description='User exists')
-    db.session.add(person)
-    db.session.commit()
-    return schema.jsonify(person), 201
-
-
-# authorized
-@api.route('/person/<string:username>/booking', methods=['POST'])
-def add_booking(username: str):
-    """
-    Add a new booking for this user
-    Args:
-        username (str): logged in user
-
-    Returns: Json string of booking, or error
-
-    """
-    # bookings can't already have an id
-    schema = BookingSchema(exclude=['id', 'status'])
-    try:
-        booking = schema.loads(request.get_json())
-    except ValidationError as ve:
-        return abort(400, description='Invalid booking data')  # wow generic message
-
-    # check that references to data in db is valid
-
-    # FIXME: this does not work when the references are wrong, wrap in try catch?
-    # or change the ORM with less strict references.. For now do not give invalid parameters
-    person = Person.query.filter_by(id=booking.person_id).first()
-    car = Car.query.filter_by(id=booking.car_id).first()
-    if None in [person, car]:
-        return abort(403, description='Booking references invalid id(s)')
-
-    if username != person.username:
-        return abort(403, description='Booking under wrong person')
-
-    # Check that no booking with car is currently active
-    if Booking.is_car_busy(booking.start_time, booking.end_time, booking.car_id):
-        return abort(403, description=f'A booking with car id {booking.car_id}'
-                                      f' is already mad in that time period')
-
-    booking.status = BookingStatusEnum.ACTIVE
-
-    # TODO: Add Google calendar event
-
-    db.session.add(booking)
-    db.session.commit()
-    return schema.jsonify(booking), 201
-
-
-# Authorized
-@api.route('/person/<string:username>/booking/<int:id>', methods=['PUT', 'DELETE'])
-def deactivate_booking(username: str, id: int):
-    """
-    Deactivate a booking (cancel/finish)
-    Args:
-        username (str): username
-        id (int): booking id
-
-    Returns: Error if booking doesn't exist, or success message
-
-    """
-    booking = Booking.query.get(id)
-
-    if booking is None or username != booking.person.username:
-        return abort(403, description='Booking under wrong person')
-    if request.method == 'PUT':
-        booking.status = BookingStatusEnum.FINISHED
-    else:
-        booking.status = BookingStatusEnum.CANCELLED
-        # TODO: Update Google calendar
-
-    db.session.commit()
-    return '', 200
-
-
-# authorized!!
-@api.route('/person/<string:username>/booking', methods=['GET'])
-def get_bookings(username: str):
-    """
-    Get all bookings for this user
-
-    Args:
-        username (str): logged in user
-
-    Returns: All bookings for user with additional info as json list string, example:
-
-    """
-
-    schema = BookingSchema()
-    person = Person.query.filter_by(username=username).first()
-    if person is None:
-        return abort(404, 'User not found')
-    bookings = person.booking
-
-    person_schema = PersonSchema()
-    car_schema = CarSchema()
-
-    data = [{
-        'booking': schema.dumps(booking),
-        'person': person_schema.dumps(booking.person),
-        'car': car_schema.dumps(booking.car)
-    }
-        for booking in bookings]
-
-    return jsonify(data), 200
-
-
-# authorized!!
-@api.route('/person/<string:username>/booking/<int:id>', methods=['GET'])
-def get_booking(username: str, id: int):
-    """
-    Get booking for given user and booking id
-
-    Args:
-        username: (str) logged in user
-        id (int): booking id
-
-    Returns: One booking if exists, else 404
-
-    """
-    schema = BookingSchema()
-    booking = Booking.query.get(id)
-    if booking is None or booking.person.username != username:
-        return abort(404, description='Booking does not exist under this id/username!')
-
-    person_json = PersonSchema().dumps(booking.person)
-    car_json = CarSchema().dumps(booking.car)
-
-    return jsonify({
-        'booking': schema.dumps(booking),
-        'person': person_json,
-        'car': car_json
-    }), 200
-
-
-@api.route('/car', methods=['GET', 'POST'])
+@api_blueprint.route('/car', methods=['GET', 'POST'])
+@jwt_required
 def get_cars():
     """
     Get AVAILABLE cars based of query GET arguments/form POST arguments (supports both).
@@ -243,7 +99,9 @@ def get_cars():
     return jsonify(result), 200
 
 
-@api.route('/car/<int:id>/location', methods=['PUT'])
+
+@api_blueprint.route('/car/<int:id>/location', methods=['PUT'])
+@jwt_required
 def update_car_location(id: int):
     """
     Updates car in db (mainly for location).
@@ -277,7 +135,8 @@ def update_car_location(id: int):
     return jsonify(result), 200
 
 
-@api.route('/car-manufacturer', methods=['GET'])
+@api_blueprint.route('/car-manufacturer', methods=['GET'])
+@jwt_required
 def get_manufacturers():
     """
     Get all manufacturers
@@ -290,7 +149,8 @@ def get_manufacturers():
     return jsonify(result), 200
 
 
-@api.route('/car-type', methods=['GET'])
+@api_blueprint.route('/car-type', methods=['GET'])
+@jwt_required
 def get_car_types():
     """
     Get all car types
@@ -303,7 +163,8 @@ def get_car_types():
     return jsonify(result), 200
 
 
-@api.route('/car-colour', methods=['GET'])
+@api_blueprint.route('/car-colour', methods=['GET'])
+@jwt_required
 def get_car_colours():
     """
     Get all car colours.
@@ -316,24 +177,8 @@ def get_car_colours():
     return jsonify(result), 200
 
 
-# Admin endpoints, not neccessary for assignemnt 2.
-# adding this data is allows to do manually
-@api.route('/person_type', methods=['POST'])
-def add_person_type():
-    """
-    Add person type. For admins.
-
-    Returns: Added person type as json string.
-
-    """
-    schema = PersonTypeSchema()
-    person_type = schema.loads(request.get_json())
-    db.session.add(person_type)
-    db.session.commit()
-    return schema.jsonify(person_type), 201
-
-
-@api.route('/person', methods=['GET'])
+@api_blueprint.route('/person', methods=['GET'])
+@role_required([PersonType.ADMIN])
 def get_persons():
     """
     Get all persons. For admins.
@@ -344,54 +189,3 @@ def get_persons():
     persons = Person.query.all()
     result = PersonSchema(many=True).dump(persons)
     return jsonify(result), 200
-
-
-# Authorized
-@api.route('/registration', methods=['POST'])
-def add_person2():
-    """
-    Add a new person to db, or error if username already taken
-
-    Returns: Json string of added user
-
-    """
-    schema = PersonSchema(exclude=['id'])
-    booking = json.loads(schema.dumps(request.form))
-    person = Person(
-    booking['first_name'],
-    booking['last_name'],
-    booking['email'],
-    booking['username'],
-    1,
-    booking['password_hashed']
-    )
-
-    try :
-        db.session.add(person)
-        db.session.commit()
-    except Exception as e:
-        print(e)
-        return abort(400, 'User Name should be unique')
-
-    return render_template("bookcar.html")
-
-
-
-# add/create user
-@api.route('/loginUser', methods=['POST'])
-def loginUser():
-    """
-    Add a new person to db, or error if username already taken
-    Returns: Json string of added user
-    """
-    schema = PersonSchema(exclude=['id'])
-    booking = json.loads(schema.dumps(request.form))
-
-    userName= booking['username'],
-    passWord= booking['password_hashed']
-    active_users = Person.query.filter_by(username=userName ,password_hashed=passWord).first()
-    if active_users is None:
-        error='username or password is incorrect'
-        return redirect("/")
-
-    return render_template("bookcar.html")

@@ -1,13 +1,13 @@
 class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    JWT_SECRET_KEY = 'jwt-very-secret-key'
+    SECRET_KEY = 'flask-very-secret-key'
 
 
 class DevelopmentConfig(Config):
-    HOST = "35.228.215.119"
-    USER = "root"
-    PASSWORD = "carshare"
-    DATABASE = "carshare_db"
-    SQLALCHEMY_DATABASE_URI = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}" + '_test'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:?cache=shared'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    TESTING = True
 
 
 class ProductionConfig(Config):

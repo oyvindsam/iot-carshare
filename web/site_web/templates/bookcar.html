@@ -1,0 +1,64 @@
+{% extends '/base.html' %}
+
+{% block title %}Booking{% endblock %}
+
+{% block head %}
+    {{ super() }} <!-- this is necessary to load the css (i think) -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bookcar.css') }}">
+{% endblock %}}
+
+{% set active_page = "booking" %} <!-- helper to toggle active button in nav bar -->
+{% include 'customer_header.html' %}
+
+{% block content %}
+
+    <h1 class="align">Available Cars</h1>
+    <input id = "btnShow" class="loc" type="button" value="Car Locations"/>
+    <div id="dialog" style="display: none">
+        <div id="map" style="height: 700px; width: 900px;">
+        </div>
+    </div>
+
+    <input type="hidden" id="list_size" name="car_id" value={{leng}}>
+    <div class="container">
+        <table border="4" width="100%" id="table_format">
+            <tbody>
+            <tr>
+                <th class='skip-filter'>Car ID</th>
+                <th class='skip-filter'>Registration</th>
+                <th>Make</th>
+                <th>Car colour</th>
+                <th>Car type</th>
+                <th>Seats</th>
+                <th>Hour rate</th>
+                <th class='skip-filter'>Actions</th>
+
+                {%for c in cars%}
+                    <tr>
+
+                        <td>{{c.id}}</td>
+                        <td id="reg_{{c.index}}">{{c.reg_number}}</td>
+                        <td id="make_{{c.index}}">{{c.car_manufacturer}}</td>
+                        <td id="colour_{{c.index}}">{{c.car_colour}}</td>
+                        <td id="type_{{c.index}}">{{c.car_type}}</td>
+                        <td id="seats_{{c.index}}">{{c.seats}}</td>
+                        <td id="rate_{{c.index}}">{{c.hour_rate}}</td>
+                        <td style="display:none" id = "latitude_{{c.index}}">{{c.latitude}}</td>
+                        <td style="display:none" id = "longitude_{{c.index}}">{{c.longitude}}</td>
+                        <td><form action="{{ url_for('site.time', carinfo=c) }}" method="POST"><button name="book">Book</button></form></td>
+                    </tr>
+
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script> -->
+
+    <script type="text/javascript"  src="{{ url_for('static', filename='js/filter.js') }}"></script>
+    <script>
+        jQuery('#table_format').ddTableFilter();
+    </script>
+    <script type="text/javascript"  src="{{ url_for('static', filename='js/googleMaps.js') }}"></script>
+
+{% endblock %}

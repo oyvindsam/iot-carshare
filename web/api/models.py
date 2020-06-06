@@ -11,6 +11,20 @@ db = SQLAlchemy()
 ma = Marshmallow()
 
 
+class PersonType:
+    CUSTOMER = 'CUSTOMER'
+    ADMIN = 'ADMIN'
+    MANAGER = 'MANAGER'
+    ENGINEER = 'ENGINEER'
+
+    ALL = [
+        CUSTOMER,
+        ADMIN,
+        MANAGER,
+        ENGINEER,
+    ]
+
+
 class Person(db.Model):
     """
     Person SQLAlchemy class
@@ -20,19 +34,9 @@ class Person(db.Model):
     first_name = db.Column(db.String(40), nullable=False)
     last_name = db.Column(db.String(40), nullable=False)
     email = db.Column(db.String(40), nullable=False)
-    person_type = db.Column(db.Integer, db.ForeignKey('person_type.id'),
-                            nullable=False)
-    password_hashed = db.Column(db.String(80), nullable=False)
+    type = db.Column(db.String(20), nullable=False, default=PersonType.CUSTOMER)
+    password = db.Column(db.String(200), nullable=False)
     face = db.Column(db.BLOB)
-    type = db.relationship('PersonType', backref='person', lazy=True)
-
-
-class PersonType(db.Model):
-    """
-    PersonType SQLAlchemy class
-    """
-    id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(40), nullable=False, unique=True)
 
 
 class Car(db.Model):
@@ -121,29 +125,18 @@ class Booking(db.Model):
         Returns: bool if car is in use
 
         """
-        results = Booking.query\
-            .filter(Booking.car_id == car_id)\
+        results = Booking.query \
+            .filter(Booking.car_id == car_id) \
             .filter((start_time <= Booking.start_time) & (Booking.start_time <= end_time)  |
-                (Booking.start_time < start_time) & (start_time <= Booking.end_time) |
-                (start_time <= Booking.end_time) & (Booking.end_time <= end_time) |
-                (start_time < Booking.start_time) & (Booking.end_time < end_time))\
+                    (Booking.start_time < start_time) & (start_time <= Booking.end_time) |
+                    (start_time <= Booking.end_time) & (Booking.end_time <= end_time) |
+                    (start_time < Booking.start_time) & (Booking.end_time < end_time)) \
             .filter(Booking.status == BookingStatusEnum.ACTIVE).count()
 
         return results > 0
 
 def is_active(self):
     return self.start_time < datetime.now() < self.end_time
-
-
-# TODO: This might be redundant by above code..
-# FIXME: Only have hardcoded AVAILABLE / UNAVAILABLE statuses?
-# Is a car available if it is after end_time, but user has not returned it yet?.. no
-# class BookingStatus(db.Model):
-#     """
-#     BookingStatus SQLAlchemy class
-#     """
-#     id = db.Column(db.Integer, primary_key=True)
-#     status = db.Column(db.String(20), nullable=False, unique=True)
 
 
 not_blank = validate.Length(min=1, error='Field cannot be blank')
@@ -173,25 +166,6 @@ class PersonSchema(ma.SQLAlchemyAutoSchema):
 
         """
         return Person(**data)
-
-
-class PersonTypeSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = PersonType
-
-    @post_load
-    def make_person_type(self, data, **kwargs):
-        """
-        This function runs after Schema().loads (validation code).
-
-        Args:
-            data: Valid data
-            **kwargs: args passed automatically
-
-        Returns:
-
-        """
-        return PersonType(**data)
 
 
 class CarSchema(ma.SQLAlchemyAutoSchema):
@@ -252,22 +226,3 @@ class BookingSchema(ma.SQLAlchemyAutoSchema):
     def validate_dates(self, data, **kwargs):
         if data['end_time'] < data['start_time']:
             raise ValidationError('end_time can not be before start_time')
-
-
-# class BookingStatusSchema(ma.SQLAlchemyAutoSchema):
-#     class Meta:
-#         model = BookingStatus
-#
-#     @post_load
-#     def make_booking_status(self, data, **kwargs):
-#         """
-#         This function runs after Schema().loads (validation code).
-#
-#         Args:
-#             data: Valid data
-#             **kwargs: args passed automatically
-#
-#         Returns:
-#
-#         """
-#         return BookingStatus(**data)

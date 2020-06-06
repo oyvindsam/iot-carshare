@@ -1,10 +1,11 @@
 from flask import Flask
 
 import carshare_config
-from api.api import api
+import carshare_config_local
+from api import jwt, api_blueprint
 from api.models import db
 from api.test.populate_db import populate_db
-from flask_site import site
+from site_web import site_blueprint
 
 
 def create_app(config=None):
@@ -18,7 +19,9 @@ def create_app(config=None):
 
     """
 
-    app = Flask(__name__)
+    app = Flask(__name__,
+                template_folder='site_web/templates',
+                static_folder='site_web/static')
 
     # Load configuration from external file, or use production config
     if config is None:
@@ -27,11 +30,18 @@ def create_app(config=None):
         app.config.from_object(config)
 
     db.init_app(app)
-    app.register_blueprint(api)
-    app.register_blueprint(site)
+    app.register_blueprint(api_blueprint, url_prefix='/api')
+    jwt.init_app(app)
+    app.register_blueprint(site_blueprint)
 
     return app
 
+
+if __name__ == '__main__':
+    app = create_app(carshare_config_local.DevelopmentConfig)
+    with app.app_context():
+        populate_db(app)
+    app.run(host='127.0.0.1')
 
 # Method to drop db.
 # Specify what configuration you want to use (development or production db)
@@ -50,4 +60,4 @@ def setup_clean_db(PRODUCTION_DB=False):
 #setup_clean_db(PRODUCTION_DB=False)
 
 # pass in a valid app context
-populate_db(create_app(carshare_config.DevelopmentConfig))
+#populate_db(create_app(carshare_config.DevelopmentConfig))

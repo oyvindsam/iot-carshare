@@ -184,6 +184,17 @@ form {
 	cursor: pointer;
 }
 
+input[type=submit] {
+	display: block;
+	background: rgb(5, 148, 214);
+	padding: 14px 52px;
+	border-radius: 12px;
+	color: rgb(0, 0, 0);
+	font-weight: 700;
+	font-size: 21px;
+	cursor: pointer;
+}
+
 
 
 

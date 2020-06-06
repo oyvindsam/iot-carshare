@@ -1,0 +1,13 @@
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/customer_header.css') }}">
+
+{% set active_page = active_page|default('booking') %}
+
+<ul>
+    <li>
+        <a {% if active_page == 'booking' %}class="active"{% endif %} href="{{ url_for('.bookcar') }}"><b>Book Car</b></a>
+    </li>
+    <li>
+        <a {% if active_page == 'history' %}class="active"{% endif %} href="{{ url_for('.history') }}"><b>History</b></a>
+    </li>
+    <button class="sbutton"> <a href = "{{ url_for('.logout') }}" id="logButton">Logout</a></button>
+</ul>

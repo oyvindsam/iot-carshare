@@ -1,34 +1,16 @@
 from unittest import TestCase
 
-from flask import Flask
 from marshmallow import ValidationError
 
-from api.api import api
+import carshare_config_local
 from api.models import db, PersonSchema, BookingSchema, CarSchema
 from api.test.dummy_data import *
 from app import create_app
 
-LOCAL = True
-
-
-def get_production_db_test_app():
-    app = create_app()
-    #DB_URI = 'mysql://root:carshare@gcloud ip adress/carshare_db_test'
-    app.config["SQLALCHEMY_DATABASE_URI"] = DB_URI
-    return app
-
 
 def get_test_app():
-    if not LOCAL:
-        return get_production_db_test_app()
+    app = create_app(carshare_config_local.DevelopmentConfig)
 
-    app = Flask(__name__)
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:?cache=shared'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['TESTING'] = True
-    db.init_app(app)
-    app.register_blueprint(api)
     with app.app_context():
         db.drop_all()
         db.create_all()
@@ -53,6 +35,14 @@ class DatabaseTest(TestCase):
             self.assertEqual(p1.username, p11.username)
             self.assertTrue(p11.id < p22.id)
 
+    def test_get_invalid_person(self):
+        with self.app.app_context():
+            p1 = Person.query.filter_by(username='notvalid').first()
+            self.assertEqual(p1, None)
+
+            p2 = Person.query.get(999)
+            self.assertEqual(p2, None)
+
 
 class ApiTest(TestCase):
 
@@ -69,9 +59,7 @@ class ApiTest(TestCase):
         with self.app.app_context():
 
             # set up persons
-            self.person_type1 = add_to_db(DummyPersonType.create_random()).id
             person1 = DummyPerson.create_random()
-            person1.person_type = self.person_type1
 
             self.person1 = add_to_db(person1).id
 
@@ -124,24 +112,18 @@ class ApiTest(TestCase):
             self.booking2 = add_to_db(booking2).id
             self.booking3 = add_to_db(booking3).id
 
-    # Person tests
-    #
-    def test_add_person_type(self):
-        with self.app.test_client() as app:
-            response = app.post('/api/person_type', json=DummyPersonType.pt_customer_no_id_json)
-            self.assertEqual(response.status_code, 201)
 
     # id is automatically added by the db
     def test_cant_add_person_with_id(self):
         with self.app.test_client() as app:
-            p1 = DummyPerson.creat_random_json(id=11)
+            p1 = DummyPerson.create_random_json(id=11)
             response_post = app.post('/api/person', json=p1)
             self.assertEqual(400, response_post.status_code)
 
 
     def test_add_get_person(self):
         with self.app.test_client() as app:
-            p1 = DummyPerson.creat_random_json()
+            p1 = DummyPerson.create_random_json()
             response_post = app.post('/api/person', json=p1)
             self.assertEqual(response_post.status_code, 201)
 
@@ -161,7 +143,7 @@ class ApiTest(TestCase):
 
     def test_add_two_persons_with_same_username_raises_error(self):
         with self.app.test_client() as app:
-            person = DummyPerson.creat_random_json()
+            person = DummyPerson.create_random_json()
 
             response_valid = app.post('/api/person', json=person)
             response_error = app.post('/api/person', json=person)
@@ -447,9 +429,7 @@ class ModelTest(TestCase):
         with self.app.app_context():
 
             # set up persons
-            self.person_type1 = add_to_db(DummyPersonType.create_random()).id
             person1 = DummyPerson.create_random()
-            person1.person_type = self.person_type1
 
             self.person1 = add_to_db(person1).id
 
@@ -503,20 +483,6 @@ class ModelTest(TestCase):
             self.booking3 = add_to_db(booking3).id
 
 
-    def test_person_type_relationship(self):
-        with self.app.app_context():
-            p1 = add_to_db(DummyPerson.create_random())
-            p2 = add_to_db(DummyPerson.create_random())
-            pt1 = add_to_db(DummyPersonType.create_random())
-
-            p1.person_type = pt1.id
-            p2.person_type = pt1.id
-
-            self.assertEqual(Person.query.filter_by(username=p1.username).first().type.id, pt1.id)
-            self.assertEqual(Person.query.filter_by(username=p2.username).first().type.id, pt1.id)
-            # check that person1 and person2 are in the list of persons backreferenced from personType
-            self.assertTrue(set([p1, p2]) <= set(PersonType.query.filter_by(id=pt1.id).first().person))
-
     def test_car_relationships(self):
         with self.app.app_context():
             car = add_to_db(DummyCar.create_random())
@@ -540,8 +506,6 @@ class ModelTest(TestCase):
         with self.app.app_context():
             # set up objects and relationships
             person1 = add_to_db(DummyPerson.create_random())
-            person_type1 = add_to_db(DummyPersonType.create_random())
-            person1.person_type = person_type1.id
 
             car = add_to_db(DummyCar.create_random())
             car_type = add_to_db(DummyCarType.create_random())
@@ -559,7 +523,7 @@ class ModelTest(TestCase):
             # circle reference works
             self.assertTrue(booking in booking.person.booking)
             self.assertTrue(person1 == Booking.query.filter_by(person=person1).first().person)
-            self.assertEqual(booking.person.type, person_type1)
+            self.assertEqual(booking.person.type, person1.type)
             # find all car person1 has booked
             self.assertTrue(car in [b.car for b in person1.booking])
 
@@ -599,7 +563,7 @@ class ValidationTest(TestCase):
     def test_schema_load_data_from_json(self):
         with self.app.app_context():
             person_schema = PersonSchema()
-            person = person_schema.loads(DummyPerson.creat_random_json(id=None))
+            person = person_schema.loads(DummyPerson.create_random_json(id=None))
             self.assertEqual(type(person), Person)
 
             booking_schema = BookingSchema()
