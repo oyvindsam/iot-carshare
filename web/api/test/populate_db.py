@@ -69,15 +69,6 @@ def populate_db(app):
             password=generate_password_hash('admin'),
             face=None
         )
-        p1 = Person(
-            username='as',
-            first_name='Random',
-            last_name='Person',
-            email='as@gmail.com',
-            type=PersonType.CUSTOMER,
-            password=generate_password_hash('as'),
-            face=None
-        )
         engineer = Person(
             username='engineer',
             first_name='Engineer',
@@ -87,13 +78,22 @@ def populate_db(app):
             password=generate_password_hash('engineer'),
             face=None
         )
-        p1 = Person(
+        manager = Person(
             username='manager',
             first_name='Mr. Manager',
             last_name='Ad',
             email='mrmanager@gmail.com',
             type=PersonType.MANAGER,
             password=generate_password_hash('manager'),
+            face=None
+        )
+        p1 = Person(
+            username='as',
+            first_name='Random',
+            last_name='Person',
+            email='as@gmail.com',
+            type=PersonType.CUSTOMER,
+            password=generate_password_hash('as'),
             face=None
         )
         p2 = Person(
@@ -325,8 +325,10 @@ def populate_db(app):
             longitude='144.930974',
             hour_rate=20.5,
         )
-
         db.session.add_all([
+            admin,
+            engineer,
+            manager,
             p1,
             p2,
             c1,
