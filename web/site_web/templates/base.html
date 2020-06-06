@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- if this is confusing, read here: https://flask.palletsprojects.com/en/1.1.x/patterns/templateinheritance/ -->
+    {% block head %}
+        <title>{% block title %}{% endblock %} - CarShare</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0SdraTz1IKRkfy7m_Vr1QeZ-IgyYn6jM&callback=initMap"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.9/jquery-ui.js" type="text/javascript"></script>
+        <link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.9/themes/blitzer/jquery-ui.css" rel="stylesheet" type="text/css" />
+    {% endblock %}
+</head>
+
+<body>
+{% block content %}{% endblock %}
+
+</body>
+</html>

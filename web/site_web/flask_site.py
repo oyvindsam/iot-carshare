@@ -8,7 +8,8 @@ import urllib
 from urllib.parse import unquote, urlparse, parse_qs
 
 import requests
-from flask import request, jsonify, render_template, abort, g, session
+from flask import request, jsonify, render_template, abort, g, session, \
+    redirect
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
@@ -29,6 +30,13 @@ api_address = 'http://127.0.0.1:5000'
 @site_blueprint.route('/')
 def index():
     return render_template('index.html')
+
+
+@site_blueprint.route('/logout')
+def logout():
+    if 'auth' in session.keys():
+        del session['auth']
+    return redirect('/')
 
 
 # method for the webpage through which the user can book cars
