@@ -16,3 +16,8 @@ def page_not_found(e):
         for example: http://127.0.0.1:5000/pagedoesnotexist
     """
     return render_template("404.html")
+
+
+@site_blueprint.errorhandler(501)
+def not_authorized(e):
+    return render_template('index.html', error=e)

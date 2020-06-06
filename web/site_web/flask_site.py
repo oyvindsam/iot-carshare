@@ -32,13 +32,6 @@ def index():
     return render_template('index.html')
 
 
-@site_blueprint.route('/logout')
-def logout():
-    if 'auth' in session.keys():
-        del session['auth']
-    return redirect('/')
-
-
 # method for the webpage through which the user can book cars
 @site_blueprint.route("/bookcar", methods=["GET", "POST"])
 def bookcar():
