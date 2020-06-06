@@ -5,11 +5,9 @@ class Config(object):
 
 
 class DevelopmentConfig(Config):
-    HOST = "35.228.215.119"
-    USER = "root"
-    PASSWORD = "carshare"
-    DATABASE = "carshare_db"
-    SQLALCHEMY_DATABASE_URI = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}" + '_test'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:?cache=shared'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    TESTING = True
 
 
 class ProductionConfig(Config):
