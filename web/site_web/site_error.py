@@ -1,6 +1,12 @@
-from flask import render_template
+from flask import render_template, redirect
 
 from site_web import site_blueprint
+
+
+@site_blueprint.errorhandler(401)
+def not_authorized(e):
+
+    return render_template('index.html', error='Unauthorized, log in!')
 
 
 @site_blueprint.errorhandler(404)

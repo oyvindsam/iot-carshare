@@ -46,7 +46,10 @@ def bookcar():
     """
         Displaying all the available cars from the database
     """
-    response = requests.get(f"{api_address}/api/car", headers=session['auth'])
+
+    response = requests.get(f"{api_address}/api/car", headers=session.get('auth', None))
+    if response.status_code == 401:
+        return abort(401)
     carData = json.loads(response.json())
     length = len(carData)
     if carData is None:

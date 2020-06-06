@@ -32,7 +32,7 @@ def get_bookings(username: str):
 
     """
     if not is_valid_user(username, get_jwt_identity()):
-        return abort(403, description='Identity does not match url path')
+        return abort(401, description='Identity does not match url path')
 
     schema = BookingSchema()
     person = Person.query.filter_by(username=username).first()
