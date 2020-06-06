@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bookcar.css') }}">
 {% endblock %}}
 
+{% set active_page = "booking" %} <!-- helper to toggle active button in nav bar -->
 {% include 'customer_header.html' %}
 
 {% block content %}
