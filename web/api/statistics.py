@@ -1,9 +1,6 @@
-import base64
 import os
-from io import BytesIO
 
 import matplotlib.pyplot as plt
-from flask import send_file, send_from_directory
 
 from api import api_blueprint
 from api.models import Booking
@@ -29,6 +26,21 @@ def car_usage():
     plt.title('Hours booked')
     plt.xlabel('Hours')
     plt.ylabel('Frequency')
+
+    # FIXME: This is supposed to be saved on the API filesystem, then the
+    # url to the image is returned when requesting this endpoint.
+    # Not it is saving it in the website's static folder path, this is horrible
+    folder = get_folder()
+
+    file_name = 'car-usage-latest.jpg'
+    path = f"{folder}/{file_name}"
+    plt.savefig(path)
+    web_path = path.split('site_web')[1]
+    return {'car-usage-url': web_path}
+
+
+@api_blueprint.route('/manager/statistics/week-active', methods=['GET'])
+def get_last_week_report():
 
     # FIXME: This is supposed to be saved on the API filesystem, then the
     # url to the image is returned when requesting this endpoint.

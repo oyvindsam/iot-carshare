@@ -69,8 +69,8 @@ class StatisticsTest(TestCase):
 
             booking3 = duplicate_db_object(BookingSchema, booking1)
             booking3.car_id = car2.id
-            booking3.start_time = datetime.now() + timedelta(days=0)
-            booking3.end_time = datetime.now() + timedelta(hours=5)
+            booking3.start_time = datetime.now() - timedelta(days=3)
+            booking3.end_time = datetime.now() - timedelta(days=2, hours=10)
 
             # booking3 was yesterday
             booking4 = duplicate_db_object(BookingSchema, booking1)
@@ -80,13 +80,13 @@ class StatisticsTest(TestCase):
 
             booking5 = duplicate_db_object(BookingSchema, booking1)
             booking5.car_id = car2.id
-            booking5.start_time = datetime.now() - timedelta(days=2)
-            booking5.end_time = datetime.now() - timedelta(days=1, hours=5)
+            booking5.start_time = datetime.now() - timedelta(days=6)
+            booking5.end_time = datetime.now() - timedelta(days=4, hours=5)
 
             booking6 = duplicate_db_object(BookingSchema, booking1)
             booking6.car_id = car2.id
-            booking6.start_time = datetime.now() - timedelta(days=4)
-            booking6.end_time = datetime.now() - timedelta(days=1, hours=5)
+            booking6.start_time = datetime.now() - timedelta(days=6)
+            booking6.end_time = datetime.now() - timedelta(days=5, hours=5)
 
             self.booking1 = add_to_db(booking1).id
             self.booking2 = add_to_db(booking2).id
@@ -98,7 +98,30 @@ class StatisticsTest(TestCase):
     def test_car_usage(self):
         with self.app.app_context():
             with self.app.test_client() as app:
-                response = app.get('/api/manager/statistics/car-usage')
-                print(response)
-                data = response.get_json()
-                print(data)
+                bookings = filter(
+                    lambda b: (b.start_time > datetime.now() - timedelta(weeks=1)) &
+                              (b.start_time < datetime.now()),
+                    Booking.query.all())
+                bookings = [b for b in bookings]
+                xs = [datetime.now() - timedelta(days=x) for x in range(7, 0, -1)]  # hours in a week
+                ys = []
+                for day in xs:
+                    day_count = 0
+                    end = day + timedelta(days=1)
+
+                    for b in bookings:
+                        if (b.start_time < day < b.end_time) \
+                                | (day < b.start_time < end) \
+                                | (day < b.start_time < end):
+                            day_count += 1
+                    ys.append(day_count)
+
+                xs = [x.strftime('%d-%m-%y') for x in xs]
+                plt.plot(xs, ys)
+                plt.xlabel('Date')
+                plt.ylabel('Active rentals')
+                plt.title('Active rentals per day for last 7 days')
+                plt.show()
+
+
+
