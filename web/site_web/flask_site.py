@@ -244,12 +244,14 @@ def cancel():
     return render_template("cancel.html", info=cancel)
 
 # method with which booking is canceled
+@site_blueprint.route('/cancelbook', methods=['POST'])
 def cancelbook():
 
     """
     Passing parameters such as the booking ID of a particular booking and the user name
     of the user to do a DELETE request which updates the bookings with the booking which was cancelled
     """
+
     calID = request.form['googleid']
     bookingID = request.form['bookingId']
     usrName = request.form['username']
