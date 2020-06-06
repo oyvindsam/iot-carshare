@@ -101,6 +101,7 @@ def get_cars():
 
 
 @api_blueprint.route('/car/<int:id>/location', methods=['PUT'])
+@jwt_required
 def update_car_location(id: int):
     """
     Updates car in db (mainly for location).
@@ -135,6 +136,7 @@ def update_car_location(id: int):
 
 
 @api_blueprint.route('/car-manufacturer', methods=['GET'])
+@jwt_required
 def get_manufacturers():
     """
     Get all manufacturers
@@ -148,6 +150,7 @@ def get_manufacturers():
 
 
 @api_blueprint.route('/car-type', methods=['GET'])
+@jwt_required
 def get_car_types():
     """
     Get all car types
@@ -161,6 +164,7 @@ def get_car_types():
 
 
 @api_blueprint.route('/car-colour', methods=['GET'])
+@jwt_required
 def get_car_colours():
     """
     Get all car colours.
@@ -174,6 +178,7 @@ def get_car_colours():
 
 
 @api_blueprint.route('/person', methods=['GET'])
+@role_required([PersonType.ADMIN])
 def get_persons():
     """
     Get all persons. For admins.
