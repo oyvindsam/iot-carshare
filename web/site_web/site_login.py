@@ -21,11 +21,11 @@ def login():
         if type == 'CUSTOMER':
             return redirect('bookcar')
         elif type == 'ADMIN':
-            pass
+            return redirect('admin')
         elif type == 'ENGINEER':
-            pass
+            return redirect('engineer')
         elif type == 'MANAGER':
-            pass
+            return redirect('manager')
         else:
             # should not happen really
             return abort(501, description='Unknown user type')
