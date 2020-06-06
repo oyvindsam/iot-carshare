@@ -1,6 +1,7 @@
 class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JWT_SECRET_KEY = 'very-secret-key'
+    JWT_SECRET_KEY = 'jwt-very-secret-key'
+    SECRET_KEY = 'flask-very-secret-key'
 
 
 class DevelopmentConfig(Config):

@@ -8,7 +8,7 @@ import urllib
 from urllib.parse import unquote, urlparse, parse_qs
 
 import requests
-from flask import request, jsonify, render_template, abort, g
+from flask import request, jsonify, render_template, abort, g, session
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
@@ -38,7 +38,7 @@ def bookcar():
     """
         Displaying all the available cars from the database
     """
-    response = requests.get(f"{api_address}/api/car")
+    response = requests.get(f"{api_address}/api/car", headers=session['auth'])
     carData = json.loads(response.json())
     length = len(carData)
     if carData is None:

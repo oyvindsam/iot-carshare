@@ -94,5 +94,10 @@ def login_user():
 
     # currently the token does not expire!
     access_token = create_access_token(identity=person, expires_delta=False)
-    return jsonify(access_token=access_token), 200
+    response = {
+        'access_token': access_token,
+        'username': person.username,
+        'type': person.person_type
+    }
+    return jsonify(response), 200
 

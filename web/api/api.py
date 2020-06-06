@@ -1,5 +1,5 @@
 from flask import jsonify, request, abort
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.exc import InvalidRequestError
 
 from api import api_blueprint, jwt
@@ -69,6 +69,7 @@ def get_person(username: str):
 
 
 @api_blueprint.route('/car', methods=['GET', 'POST'])
+@jwt_required
 def get_cars():
     """
     Get AVAILABLE cars based of query GET arguments/form POST arguments (supports both).
