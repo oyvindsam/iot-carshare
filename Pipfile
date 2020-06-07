@@ -55,6 +55,7 @@ Pillow = "==7.1.2"
 google-api-python-client = "*"
 google-auth-oauthlib = "*"
 oauth2client = "*"
+pyzbar = "*"
 
 [requires]
 python_version = "3"
