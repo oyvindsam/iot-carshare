@@ -10,14 +10,12 @@
 ## https://www.pyimagesearch.com/2018/05/21/an-opencv-barcode-and-qr-code-scanner-with-zbar/
 ## pip3 install pyzbar
 
-from imutils.video import VideoStream
 from pyzbar import pyzbar
 import datetime
-import imutils
 import time
 import cv2
 
-class scannerQR:
+class ScannerQR:
 
   def __init__(self):
     super().__init__()
@@ -66,3 +64,8 @@ class scannerQR:
       time.sleep(1)
     
     vs.release()
+
+
+if __name__ == "__main__":
+    qr = ScannerQR()
+    qr.scanQR()
