@@ -1,4 +1,6 @@
-from flask import Blueprint, jsonify, request, abort
+import json
+
+from flask import Blueprint, jsonify, request, abort, render_template, redirect
 from marshmallow import ValidationError
 from sqlalchemy.exc import InvalidRequestError
 
@@ -156,24 +158,14 @@ def deactivate_booking(username: str, id: int):
 def get_bookings(username: str):
     """
     Get all bookings for this user
+
     Args:
         username (str): logged in user
 
     Returns: All bookings for user with additional info as json list string, example:
-        [
-            {
-                booking: ...,
-                status: ...,
-                person: ...,
-                car: ...,
-            },
-            {
-                booking: ...,
-                ...,
-            }
-        ]
 
     """
+
     schema = BookingSchema()
     person = Person.query.filter_by(username=username).first()
     if person is None:
@@ -352,3 +344,54 @@ def get_persons():
     persons = Person.query.all()
     result = PersonSchema(many=True).dump(persons)
     return jsonify(result), 200
+
+
+# Authorized
+@api.route('/registration', methods=['POST'])
+def add_person2():
+    """
+    Add a new person to db, or error if username already taken
+
+    Returns: Json string of added user
+
+    """
+    schema = PersonSchema(exclude=['id'])
+    booking = json.loads(schema.dumps(request.form))
+    person = Person(
+    booking['first_name'],
+    booking['last_name'],
+    booking['email'],
+    booking['username'],
+    1,
+    booking['password_hashed']
+    )
+
+    try :
+        db.session.add(person)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return abort(400, 'User Name should be unique')
+
+    return render_template("bookcar.html")
+
+
+
+# add/create user
+@api.route('/loginUser', methods=['POST'])
+def loginUser():
+    """
+    Add a new person to db, or error if username already taken
+    Returns: Json string of added user
+    """
+    schema = PersonSchema(exclude=['id'])
+    booking = json.loads(schema.dumps(request.form))
+
+    userName= booking['username'],
+    passWord= booking['password_hashed']
+    active_users = Person.query.filter_by(username=userName ,password_hashed=passWord).first()
+    if active_users is None:
+        error='username or password is incorrect'
+        return redirect("/")
+
+    return render_template("bookcar.html")

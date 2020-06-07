@@ -1,42 +1,53 @@
 from flask import Flask
 
+import carshare_config
 from api.api import api
 from api.models import db
+from api.test.populate_db import populate_db
+from flask_site import site
 
 
-def create_app():
+def create_app(config=None):
+    """
+
+    Args:
+        config: configuration object, specifying application variables
+        such as database uri.
+
+    Returns: instanciated Flask app
+
+    """
+
     app = Flask(__name__)
 
-    HOST = "gcloud ip adress" # UPDATE WITH YOUR OWN GCLOUD DB DETAILS
-    USER = "root"
-    PASSWORD = "carshare"
-    DATABASE = "carshare_db"
-
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"] = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    # Load configuration from external file, or use production config
+    if config is None:
+        app.config.from_object(carshare_config.ProductionConfig)
+    else:
+        app.config.from_object(config)
 
     db.init_app(app)
     app.register_blueprint(api)
+    app.register_blueprint(site)
 
     return app
 
 
+# Method to drop db.
+# Specify what configuration you want to use (development or production db)
+def setup_clean_db(PRODUCTION_DB=False):
 
-def setup_clean_db(TEST_DB=True):
-    app = create_app()
-    HOST = "gcloud ip adress"
-    USER = "root"
-    PASSWORD = "carshare"
-    DATABASE = "carshare_db"
+    if PRODUCTION_DB:
+        app = create_app(carshare_config.ProductionConfig)
+    else:
+        app = create_app(carshare_config.DevelopmentConfig)
 
-    if TEST_DB:
-        DATABASE += '_test'
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"] = f"mysql://{USER}:{PASSWORD}@{HOST}/{DATABASE}"
     with app.app_context():
         db.drop_all()
         db.create_all()
 
 
-#setup_clean_db()
+#setup_clean_db(PRODUCTION_DB=False)
+
+# pass in a valid app context
+populate_db(create_app(carshare_config.DevelopmentConfig))
