@@ -104,11 +104,11 @@ def Login(username, password, carId):
     """
 
     response = requests.get("http://{}:5000/api/person/{}".format(IPADD, username))
-    user = json.loads(response.json())
-    if user is None:
+    if response.status_code != 200:
         print("Failed Login - No User Registered under username")
         return {"error": True, "type": "login", "msg": "No user account for User {}".format(username)}
     else:
+        user = json.loads(response.json())
         if sha256_crypt.verify(password, user['password_hashed']):
             print("Successful Login")
             bookingRes = confirmBooking(username, carId)
@@ -138,11 +138,11 @@ def FaceLogin(username, carId):
     """
 
     response = requests.get("http://{}:5000/api/person/{}".format(IPADD, username))
-    user = json.loads(response.json())
-    if user is None:
+    if response.status_code != 200:
         print("Failed Login - No User Registered under username")
         return {"error": True, "type": "login", "msg": "No user account for User {}".format(username)}
     else:
+        user = json.loads(response.json())
         if user['username'] == username:
             print("Successful Login")
             bookingRes = confirmBooking(username, carId)
@@ -194,6 +194,8 @@ def confirmBooking(username, carId):
     """
 
     response = requests.get("http://{}:5000/api/person/{}/booking".format(IPADD, username))
+    if response.status_code == 404:
+        return {"error": True}
     bookings = json.loads(response.text)
     if bookings is None:
         return {"error": True}
