@@ -8,8 +8,7 @@ import urllib
 from urllib.parse import unquote, urlparse, parse_qs
 
 import requests
-from flask import request, jsonify, render_template, abort, g, session, \
-    redirect
+from flask import request, jsonify, render_template, abort, session
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build

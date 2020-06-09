@@ -1,11 +1,10 @@
-import base64
 from unittest import TestCase
+
+import matplotlib.pyplot as plt
 
 from api.models import BookingSchema
 from api.test.dummy_data import *
 from api.test.tests import get_test_app, add_to_db, duplicate_db_object
-
-import matplotlib.pyplot as plt
 
 
 class StatisticsTest(TestCase):
