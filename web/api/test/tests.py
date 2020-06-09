@@ -2,14 +2,13 @@ from unittest import TestCase
 
 from marshmallow import ValidationError
 
-import carshare_config_local
 from api.models import db, PersonSchema, BookingSchema, CarSchema
 from api.test.dummy_data import *
-from app import create_app
+from app import create_app, CONFIG_FILE_DEV
 
 
 def get_test_app():
-    app = create_app(carshare_config_local.DevelopmentConfig)
+    app = create_app(CONFIG_FILE_DEV)
 
     with app.app_context():
         db.drop_all()
