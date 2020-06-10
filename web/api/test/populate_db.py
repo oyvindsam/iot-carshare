@@ -356,8 +356,8 @@ def populate_db(app):
         b1 = Booking(
             car_id=c1.id,
             person_id=p1.id,
-            start_time=datetime.now().replace(microsecond=0) - timedelta(days=3),
-            end_time=datetime.now().replace(microsecond=0) - timedelta(days=5),
+            start_time=datetime.now().replace(microsecond=0) - timedelta(days=4),
+            end_time=datetime.now().replace(microsecond=0) - timedelta(days=2),
             status=BookingStatusEnum.CANCELLED
         )
         b2 = Booking(

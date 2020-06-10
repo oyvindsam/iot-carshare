@@ -11,6 +11,7 @@
 
 {% block content %}
     <form action="" method="POST">
+    {{ form.csrf_token() }}
         <table data-toggle="table">
             <thead>
             <tr>

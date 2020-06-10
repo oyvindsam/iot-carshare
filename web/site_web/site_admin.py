@@ -7,6 +7,7 @@ from flask_wtf import FlaskForm
 from wtforms import SelectField
 from wtforms.fields.html5 import IntegerField, DateTimeField, \
     DateTimeLocalField
+from wtforms.validators import InputRequired
 
 from site_web import site_blueprint
 from site_web.flask_site import api_address
@@ -25,12 +26,12 @@ def bookings():
 
 
 class BookingForm(FlaskForm):
-    id = IntegerField()
-    person_id = IntegerField()
-    car_id = IntegerField()
-    start_time = DateTimeLocalField(format="%Y-%m-%dT%H:%M:%S")
-    end_time = DateTimeLocalField(format="%Y-%m-%dT%H:%M:%S")
-    status = SelectField(choices=[
+    id = IntegerField(InputRequired('Need booking id'))
+    person_id = IntegerField(InputRequired('Need person id'))
+    car_id = IntegerField(InputRequired('Need car id'))
+    start_time = DateTimeLocalField(InputRequired(message='Date wrong'), format="%Y-%m-%dT%H:%M:%S")
+    end_time = DateTimeLocalField(InputRequired(message='Date wrong'), format="%Y-%m-%dT%H:%M:%S")
+    status = SelectField(InputRequired('Need status'), choices=[
         ('Not active', 'Not active'),
         ('Active', 'Active'),
         ('Finished', 'Finished'),
@@ -38,10 +39,24 @@ class BookingForm(FlaskForm):
     ])
 
 
-@site_blueprint.route('/admin/booking/<int:id>')
+@site_blueprint.route('/admin/booking/<int:id>', methods=['GET', 'POST'])
 def booking_detail(id):
+    form = BookingForm()
+    if form.validate_on_submit():
+        new_booking = {
+            'id': form.id.data,
+            'person_id': form.person_id.data,
+            'car_id': form.car_id.data,
+            'start_time': str(form.start_time.data),
+            'end_time': str(form.end_time.data),
+            'status': form.status.data
+        }
+        response = requests.put(f"{api_address}/api/booking/{form.id.data}",
+                                json=json.dumps(new_booking),
+                                headers=session['auth'])
+        return redirect('/admin/booking')
 
-    if request.method == 'GET':
+    else:
         booking_data = requests.get(f"{api_address}/api/booking/{id}",  headers=session['auth'])
         booking = json.loads(booking_data.json())
         # Need to convert to datetime object first
@@ -51,7 +66,3 @@ def booking_detail(id):
         form = BookingForm(**booking)
 
         return render_template('admin/booking-detail.html', form=form)
-
-    elif request.method == 'POST':
-        form = BookingForm()
-        data = request.get_json()

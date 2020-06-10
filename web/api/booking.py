@@ -178,11 +178,23 @@ def booking(id: int):
     Returns: One booking if exists, else 404
 
     """
-
-    schema = BookingSchema()
-    booking = Booking.query.get(id)
-    return jsonify(schema.dumps(booking)), 200
-
+    if request.method == 'DELETE':
+        pass
+    elif request.method == 'PUT':
+        schema = BookingSchema()
+        new_booking = schema.loads(request.get_json())
+        booking = Booking.query.get(new_booking.id)
+        booking.person_id = new_booking.person_id
+        booking.car_id = new_booking.car_id
+        booking.start_time = new_booking.start_time
+        booking.end_time = new_booking.end_time
+        booking.status = new_booking.status
+        db.session.commit()
+        return jsonify('Booking updated successfully'), 200
+    else:
+        schema = BookingSchema()
+        booking = Booking.query.get(id)
+        return jsonify(schema.dumps(booking)), 200
 
 @api_blueprint.route('/booking', methods=['GET'])
 @role_required([PersonType.ADMIN])
