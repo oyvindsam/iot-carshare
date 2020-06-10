@@ -11,29 +11,48 @@ def get_test_app():
         populate_db(app)
     return app
 
-def get_credentials(app):
+
+def get_credentials(app, username, password):
     with app.app_context():
         with app.test_client() as app:
             data = {
-                'username': 'as',
-                'password': 'as'
+                'username': username,
+                'password': password
             }
-            response = app.post('api/auth/login', json=data)
-            return response.get_json()
+            app.post('/login', data=data)
+
+
+class AdminPageTest(TestCase):
+    def setUp(self) -> None:
+        self.app = get_test_app()
+        self.username = 'admin'
+        self.password = 'admin'
+        get_credentials(self.app, self.username, 'admin')
+
+    def test_admin_page(self):
+        with self.app.app_context():
+            with self.app.test_client() as app:
+                data = {
+                    'username': 'admin',
+                    'password': 'admin'
+                }
+                reponse = app.post('/login', data=data)
+                response = app.get('/admin')
+                self.assertTrue(200, response.status_code)
 
 
 class BookingTest(TestCase):
     def setUp(self) -> None:
         self.app = get_test_app()
-        login_data = get_credentials(self.app)
-        self.header = {'Authorization': 'Bearer ' + login_data['access_token']}
-        self.username = login_data['username']
-        self.person_id = login_data['person_id']
+
+    def login(self):
+        get_credentials(self.app, 'as', 'as')
 
     def test_booking_page(self):
         with self.app.app_context():
             with self.app.test_client() as app:
-                response = app.get('bookcar', headers=self.header)
+                self.login()  # does not persist auth session
+                response = app.get('bookcar')
                 self.assertTrue(200, response.status_code)
 
 

@@ -3,6 +3,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from marshmallow import ValidationError
 
 from api import api_blueprint, jwt
+from .auth import role_required
 from .models import db, Person, PersonSchema, BookingSchema, \
     Booking, Car, CarSchema, BookingStatusEnum, PersonType
 
@@ -161,4 +162,29 @@ def get_booking(username: str, id: int):
         'person': person_json,
         'car': car_json
     }), 200
+
+
+@api_blueprint.route('/booking', methods=['GET'])
+@role_required([PersonType.ADMIN])
+def get_bookings_details():
+    """
+    Get all bookings
+
+    Returns: All bookings details in list of objects
+
+    """
+
+    bookings = Booking.query.all()
+    booking_data = [{
+        'booking_id': booking.id,
+        'person_id': booking.person_id,
+        'person_username': booking.person.username,
+        'person_first_name': booking.person.first_name,
+        'person_last_name': booking.person.last_name,
+        'car_id': booking.car_id,
+        'booking_start_time': booking.start_time,
+        'booking_end_time': booking.end_time,
+        'booking_status': booking.status
+    } for booking in bookings]
+    return jsonify(booking_data), 200
 

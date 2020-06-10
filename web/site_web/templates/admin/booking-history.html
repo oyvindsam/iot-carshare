@@ -10,25 +10,33 @@
 {% endblock %}}
 
 {% block content %}
-    <table data-toggle="table">
+    <table data-toggle="table"
+           data-search="true">
         <thead>
         <tr>
-            <th>Item ID</th>
-            <th>Item Name</th>
-            <th>Item Price</th>
+            <th>Booking id</th>
+            <th>Customer id</th>
+            <th>Username</th>
+            <th>Customer name</th>
+            <th>Car id</th>
+            <th>Start time</th>
+            <th>End time</th>
+            <th>Status</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>1</td>
-            <td>Item 1</td>
-            <td>$1</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Item 2</td>
-            <td>$2</td>
-        </tr>
+        {% for booking in booking_data %}
+            <tr>
+                <td>{{ booking.booking_id }}</td>
+                <td>{{ booking.person_id }}</td>
+                <td>{{ booking.person_username }}</td>
+                <td>{{ booking.person_first_name }} {{ booking.person_last_name }}</td>
+                <td>{{ booking.car_id }}</td>
+                <td>{{ booking.booking_start_time }}</td>
+                <td>{{ booking.booking_end_time }}</td>
+                <td>{{ booking.booking_status }}</td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 

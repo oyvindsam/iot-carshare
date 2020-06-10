@@ -1,10 +1,11 @@
-from flask import render_template
+import requests
+from flask import render_template, session
 
 from site_web import site_blueprint
-from site_web.site_login import require_type
+from site_web.flask_site import api_address
 
 
 @site_blueprint.route('/admin')
-@require_type('ADMIN')
 def admin():
-    return render_template('admin.html')
+    booking_data = requests.get(f"{api_address}/api/booking",  headers=session['auth'])
+    return render_template('admin/booking-history.html', booking_data=booking_data.json())
