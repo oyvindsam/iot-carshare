@@ -45,13 +45,13 @@ def bookcar():
     
     else :
 
-        response1 = requests.get(f"{api_address}/api/car-manufacturer")
+        response1 = requests.get(f"{api_address}/api/car-manufacturer", headers=session.get('auth', None))
         carManuData = json.loads(response1.json())
 
-        response2 = requests.get(f"{api_address}/api/car-type")
+        response2 = requests.get(f"{api_address}/api/car-type", headers=session.get('auth', None))
         carTypeData = json.loads(response2.json())
 
-        response3 = requests.get(f"{api_address}/api/car-colour")
+        response3 = requests.get(f"{api_address}/api/car-colour", headers=session.get('auth', None))
         carColorData = json.loads(response3.json())
 
         #preprocess using hashmap
@@ -188,7 +188,7 @@ def timeBook():
 
         #prepping the payload for a POST request
         payload = json.dumps(initload)
-        url = requests.post(f"{api_address}/api/person/{username}/booking", json=payload)
+        url = requests.post(f"{api_address}/api/person/{username}/booking", json=payload, headers=session.get('auth', None))
 
         return render_template("confirmation.html", invite=google_event_link)
 
