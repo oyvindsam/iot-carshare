@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_bootstrap import Bootstrap
 
 from api import jwt, api_blueprint
 from api.models import db
@@ -39,6 +40,7 @@ def create_app(config=None):
     app.register_blueprint(api_blueprint, url_prefix='/api')
     jwt.init_app(app)
     app.register_blueprint(site_blueprint)
+    Bootstrap(app)
 
     return app
 
