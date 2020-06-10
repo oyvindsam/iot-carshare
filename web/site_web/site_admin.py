@@ -1,3 +1,5 @@
+import json
+
 import requests
 from flask import render_template, session, redirect
 
@@ -19,4 +21,5 @@ def bookings():
 @site_blueprint.route('/admin/booking/<int:id>')
 def booking_detail(id):
     booking_data = requests.get(f"{api_address}/api/booking/{id}",  headers=session['auth'])
-    return render_template('admin/booking-detail.html', booking_data=booking_data.json())
+    booking = json.loads(booking_data.json())
+    return render_template('admin/booking-detail.html', booking=booking)

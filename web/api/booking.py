@@ -179,9 +179,9 @@ def booking(id: int):
 
     """
 
-    schema = BookingSchema(many=True)
-    bookings = Booking.query.all()
-    return jsonify(schema.dumps(bookings)), 200
+    schema = BookingSchema()
+    booking = Booking.query.get(id)
+    return jsonify(schema.dumps(booking)), 200
 
 
 @api_blueprint.route('/booking', methods=['GET'])
