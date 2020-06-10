@@ -356,15 +356,15 @@ def populate_db(app):
         b1 = Booking(
             car_id=c1.id,
             person_id=p1.id,
-            start_time=datetime.now() - timedelta(days=3),
-            end_time=datetime.now() - timedelta(days=5),
+            start_time=datetime.now().replace(microsecond=0) - timedelta(days=3),
+            end_time=datetime.now().replace(microsecond=0) - timedelta(days=5),
             status=BookingStatusEnum.CANCELLED
         )
         b2 = Booking(
             car_id=c2.id,
             person_id=p1.id,
-            start_time=datetime.now() - timedelta(days=1),
-            end_time=datetime.now() - timedelta(hours=10),
+            start_time=datetime.now().replace(microsecond=0) - timedelta(days=1),
+            end_time=datetime.now().replace(microsecond=0) - timedelta(hours=10),
             status=BookingStatusEnum.FINISHED
         )
         db.session.add_all([

@@ -59,6 +59,7 @@ flask-httpauth = "*"
 flask-jwt-extended = "*"
 flask-bootstrap = "*"
 matplotlib = "*"
+flask-wtf = "*"
 
 [requires]
 python_version = "3"

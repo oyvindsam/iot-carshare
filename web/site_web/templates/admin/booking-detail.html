@@ -24,17 +24,12 @@
             </thead>
             <tbody>
             <tr>
-                <td><input type="number" value="{{ booking.id }}"> </td>
-                <td><input type="number" value="{{ booking.person_id }}"></td>
-                <td><input type="number" value="{{ booking.car_id }}"></td>
-                <td><input type="datetime-local" value="{{ booking.start_time }}"></td>
-                <td><input type="datetime-local" value="{{ booking.end_time }}"></td>
-                <td><select name="cars"> <!-- dummy data -->
-                    <option value="volvo">Volvo</option>
-                    <option value="saab">Saab</option>
-                    <option value="fiat">Fiat</option>
-                    <option value="audi">Audi</option>
-                </select></td>
+                <td>{{ form.id }}</td>
+                <td>{{ form.person_id }}</td>
+                <td>{{ form.car_id }}</td>
+                <td>{{ form.start_time }}</td>
+                <td>{{ form.end_time }}</td>
+                <td>{{ form.status }}</td>
             </tr>
             </tbody>
         </table>
