@@ -85,6 +85,7 @@ class CarColour(db.Model):
 
 # Marshmallow does not support Enum, use String. In future: look at marshmallow-enum
 class BookingStatusEnum:
+    NOT_ACTIVATED = 'Not activated'
     ACTIVE = 'Active'
     FINISHED = 'Finished'
     CANCELLED = 'Cancelled'
@@ -101,7 +102,7 @@ class Booking(db.Model):
     end_time = db.Column(db.DateTime, nullable=False)
     car = db.relationship('Car', backref='booking', lazy=True)
     person = db.relationship('Person', backref='booking', lazy=True)
-    status = db.Column(db.String(20), default=BookingStatusEnum.ACTIVE)
+    status = db.Column(db.String(20), default=BookingStatusEnum.NOT_ACTIVATED)
     google_calendar_id = db.Column(db.String(200), nullable=True)
 
     # Is a car available if it is after end_time, but user has _not_ returned it yet?.. no
