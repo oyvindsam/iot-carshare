@@ -164,9 +164,29 @@ def get_booking(username: str, id: int):
     }), 200
 
 
+
+@api_blueprint.route('/booking/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+@role_required(PersonType.ADMIN)
+def booking(id: int):
+    """
+    Get booking for given user and booking id
+
+    Args:
+        username: (str) logged in user
+        id (int): booking id
+
+    Returns: One booking if exists, else 404
+
+    """
+
+    schema = BookingSchema(many=True)
+    bookings = Booking.query.all()
+    return jsonify(schema.dumps(bookings)), 200
+
+
 @api_blueprint.route('/booking', methods=['GET'])
 @role_required([PersonType.ADMIN])
-def get_bookings_details():
+def get_all_bookings_details():
     """
     Get all bookings
 

@@ -1,14 +1,13 @@
 from functools import wraps
 
 from flask import request, abort, jsonify
-from flask_jwt_extended import jwt_required, create_access_token, \
-    verify_jwt_in_request, get_jwt_claims, get_jwt_identity
+from flask_jwt_extended import create_access_token, \
+    verify_jwt_in_request, get_jwt_claims
 from marshmallow import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from api import api_blueprint, jwt
-from api.booking import is_valid_user
-from api.models import Person, PersonSchema, db, PersonType
+from api.models import Person, PersonSchema, db
 
 
 # Read up on how to create token with user id and roles
