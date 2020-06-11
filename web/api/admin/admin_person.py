@@ -18,7 +18,6 @@ def person(id: int):
     if request.method == 'GET':
         # Dump to dict, then add issue text
         person_data = schema.dump(person)
-        person_data['type'] = person.type.type
         return jsonify(json.dumps(person_data)), 200
 
     elif request.method == 'PUT':

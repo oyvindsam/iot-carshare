@@ -79,6 +79,7 @@ def person_detail(id):
                                    headers=session['auth'])
         person = json.loads(person_data.json())
         form = PersonForm(**person)
+        print(person)
         return render_template('admin/person-detail.html', form=form)
 
 
