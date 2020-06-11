@@ -13,11 +13,11 @@
         <tr>
             <th>Car id</th>
             <th>Registration number</th>
-            <th>Manufacturer (id)</th>
-            <th>Colour (id)</th>
-            <th>Type (id)</th>
-            <th>Seats</th>
-            <th>Hour rate</th>
+            <th data-sortable="true">Manufacturer (id)</th>
+            <th data-sortable="true">Colour (id)</th>
+            <th data-sortable="true">Type (id)</th>
+            <th data-sortable="true">Seats</th>
+            <th data-sortable="true">Hour rate</th>
             <th>Latitude</th>
             <th>Longitude</th>
         </tr>
@@ -25,7 +25,7 @@
         <tbody>
         {% for data in car_data %}
             <tr>
-                <td>{{ data['car'].id }} <a href="{{ url_for('.car_detail', id=data['car'].id) }}">Update</a> </td>
+                <td >{{ data['car'].id }} <a href="{{ url_for('.car_detail', id=data['car'].id) }}">Update</a> </td>
                 <td>{{ data['car'].reg_number }}</td>
                 <td>{{ data['manufacturer'].manufacturer }} ({{ data['car'].car_manufacturer }})</td>
                 <td>{{ data['colour'].colour }} ({{ data['car'].car_colour }})</td>
