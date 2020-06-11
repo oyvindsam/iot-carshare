@@ -22,12 +22,16 @@ def fix_datetime(date_str):
 
 
 class BookingForm(FlaskForm):
-    id = IntegerField(InputRequired('Need booking id'), default=-1)
-    person_id = IntegerField(InputRequired('Need person id'))
-    car_id = IntegerField(InputRequired('Need car id'))
-    start_time = DateTimeLocalField(InputRequired(message='Date wrong'), format="%Y-%m-%dT%H:%M")
-    end_time = DateTimeLocalField(InputRequired(message='Date wrong'), format="%Y-%m-%dT%H:%M")
-    status = SelectField(InputRequired('Need status'), choices=[
+    id = IntegerField('Id', default=-1, render_kw={'readonly': True})
+    person_id = IntegerField('Person id', [InputRequired('Need person id')])
+    car_id = IntegerField('Car id', [InputRequired('Need car id')])
+    start_time = DateTimeLocalField('Start time',
+                                    [InputRequired(message='Date wrong')],
+                                    format="%Y-%m-%dT%H:%M")
+    end_time = DateTimeLocalField('End time',
+                                    [InputRequired(message='Date wrong')],
+                                    format="%Y-%m-%dT%H:%M")
+    status = SelectField('Status', [InputRequired('Need status')], choices=[
         ('Not active', 'Not active'),
         ('Active', 'Active'),
         ('Finished', 'Finished'),

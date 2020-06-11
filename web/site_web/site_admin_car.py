@@ -13,15 +13,17 @@ from site_web.flask_site import api_address
 
 class CarForm(FlaskForm):
     # id is -1 for new cars
-    id = IntegerField(InputRequired('Need car id'), default=-1, render_kw={'readonly': True})
-    reg_number = StringField(InputRequired('Need car reg number'))
-    car_manufacturer = IntegerField(InputRequired('Need manufaturer id'))
-    car_colour = IntegerField(InputRequired('Need colour id'))
-    car_type = IntegerField(InputRequired('Need type id'))
-    seats = IntegerField(InputRequired('Need seats'))
-    hour_rate = FloatField(InputRequired('Need hour rate'))
-    latitude = StringField(InputRequired('Need latitude'), default='0.0')
-    longitude = StringField(InputRequired('Need longitude'), default='0.0')
+    id = IntegerField('Id', default=-1, render_kw={'readonly': True})
+    reg_number = StringField('Registration number',
+                             [InputRequired('Need car reg number')])
+    car_manufacturer = IntegerField('Manufacturer',
+                                    [InputRequired('Need manufaturer id')])
+    car_colour = IntegerField('Colour', [InputRequired('Need colour id')])
+    car_type = IntegerField('Type', [InputRequired('Need type id')])
+    seats = IntegerField('Seats', [InputRequired('Need seats')])
+    hour_rate = FloatField('Hour rate', [InputRequired('Need hour rate')])
+    latitude = StringField('Latitude', default='0.0')
+    longitude = StringField('Longitude', default='0.0')
     issue = StringField()
     # issue_id is -1 if issue is not set
     issue_id = IntegerField(default=-1, render_kw={'readonly': True})
