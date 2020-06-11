@@ -10,7 +10,7 @@ from api.models import db, PersonType, PersonSchema, Person
 
 @api_blueprint.route('/admin/person/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 @role_required(PersonType.ADMIN)
-def car(id: int):
+def person(id: int):
     schema = PersonSchema()
     person = Person.query.get(id)
     if person is None:
