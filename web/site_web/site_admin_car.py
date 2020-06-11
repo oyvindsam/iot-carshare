@@ -12,7 +12,7 @@ from site_web.flask_site import api_address
 
 
 class CarForm(FlaskForm):
-    # id is -1 for new cars
+    # id is -1 for new carsrender_kw={'class': 'form-control'}
     id = IntegerField('Id', default=-1, render_kw={'readonly': True})
     reg_number = StringField('Registration number',
                              [InputRequired('Need car reg number')])

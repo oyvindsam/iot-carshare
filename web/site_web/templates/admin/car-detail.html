@@ -1,5 +1,5 @@
 {% extends 'admin/admin-base.html' %}
-{% block title %}Car - {{ form.id }}{% endblock %}
+{% block title %}Car - {{ form.id.data }}{% endblock %}
 
 {% block nav %}
     {% set active_page = "car" %}
@@ -15,34 +15,37 @@
     {% endif %}
     <form action="" method="POST">
         {{ form.csrf_token() }}
-        <table data-toggle="table">
-            <thead>
-            <tr>
-                <th>Car id</th>
-                <th>Registration number</th>
-                <th>Manufacturer id</th>
-                <th>Colour id</th>
-                <th>Type id</th>
-                <th>Seats</th>
-                <th>Hour rate</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>{{ form.id }} </td>
-                <td>{{ form.reg_number }}</td>
-                <td>{{ form.car_manufacturer }}</td>
-                <td>{{ form.car_colour }} </td>
-                <td>{{ form.car_type }}</td>
-                <td>{{ form.seats }}</td>
-                <td>{{ form.hour_rate }}</td>
-                <td>{{ form.latitude }}</td>
-                <td>{{ form.longitude }}</td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive-sm">
+            <table class="table table-responsive" data-toggle="table">
+                <thead>
+                <tr>
+                    <th data-width="900">Car id</th>
+                    <th data-width="20">Registration number</th>
+                    <th>Manufacturer id</th>
+                    <th>Colour id</th>
+                    <th>Type id</th>
+                    <th>Seats</th>
+                    <th>Hour rate</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td >{{ form.id) }} </td>
+                    <td>{{ form.reg_number }}</td>
+                    <td>{{ form.car_manufacturer }}</td>
+                    <td>{{ form.car_colour }} </td>
+                    <td>{{ form.car_type }}</td>
+                    <td>{{ form.seats }}</td>
+                    <td>{{ form.hour_rate }}</td>
+                    <td>{{ form.latitude }}</td>
+                    <td>{{ form.longitude }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
         <input type="submit" value="Update"/>
     </form>
     <form action="{{ url_for('.car_detail_delete', id=form.id.data) }}" method="POST">
