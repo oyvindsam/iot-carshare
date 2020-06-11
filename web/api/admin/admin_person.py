@@ -12,12 +12,19 @@ from api.models import db, PersonType, PersonSchema, Person
 @api_blueprint.route('/admin/person/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 @role_required(PersonType.ADMIN)
 def person(id: int):
-    schema = PersonSchema()
+    """
+    Endpoint to get/update/delete person
+    Args:
+        id (int): person id
+
+    Returns: Error or 200 if task successful
+
+    """
     person = Person.query.get(id)
     if person is None:
         return abort(404, description='Person not found')
+    schema = PersonSchema()
     if request.method == 'GET':
-        # Dump to dict, then add issue text
         person_data = schema.dump(person)
         return jsonify(json.dumps(person_data)), 200
 
@@ -32,6 +39,8 @@ def person(id: int):
         person.email = new_person.email
         person.type = new_person.type
         person.type = new_person.type
+
+        # check if password is plaintext or hashed
         if not new_person.password.startswith('pbkdf2'):
             person.password = generate_password_hash(new_person.password)
         else:
@@ -49,6 +58,11 @@ def person(id: int):
 @api_blueprint.route('/admin/person', methods=['GET'])
 @role_required(PersonType.ADMIN)
 def get_all_persons():
+    """
+    Endpoint to get all persons
+    Returns: all persons
+
+    """
     schema = PersonSchema(many=True)
     persons = Person.query.all()
     return jsonify(schema.dumps(persons)), 200
@@ -57,6 +71,11 @@ def get_all_persons():
 @api_blueprint.route('/admin/person', methods=['POST'])
 @role_required(PersonType.ADMIN)
 def add_person():
+    """
+    Endpoint to add a person
+    Returns: Updated person 201, or invalid data error
+
+    """
     schema = PersonSchema(exclude=['id'])
     try:
         new_person = schema.loads(request.get_json())

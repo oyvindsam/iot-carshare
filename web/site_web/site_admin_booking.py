@@ -13,11 +13,24 @@ from site_web.flask_site import api_address
 
 @site_blueprint.route('/admin/booking')
 def booking_list():
+    """
+    Load bookings from api and pass to view
+    Returns: view
+
+    """
     booking_data = requests.get(f"{api_address}/api/booking",  headers=session['auth'])
     return render_template('admin/booking-list.html', booking_data=booking_data.json())
 
 
 def fix_datetime(date_str):
+    """
+    Helper method to load formatted datetime string
+    Args:
+        date_str (str): string in correct datetime format
+
+    Returns: datetime
+
+    """
     return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
 
 
@@ -41,6 +54,12 @@ class BookingForm(FlaskForm):
 
 @site_blueprint.route('/admin/booking/new', methods=['GET', 'POST'])
 def booking_detail_new():
+    """
+    Create a new booking from form
+    Returns: views, either booking_detail if form contains errors,
+    or returns to booking list
+
+    """
     form = BookingForm()
 
     if form.validate_on_submit():
@@ -63,6 +82,14 @@ def booking_detail_new():
 
 @site_blueprint.route('/admin/booking/<int:id>', methods=['GET', 'POST'])
 def booking_detail(id):
+    """
+    Load and view booking
+    Args:
+        id (int): booking id
+
+    Returns: booking detail view
+
+    """
     form = BookingForm()
 
     if form.validate_on_submit():
@@ -92,5 +119,13 @@ def booking_detail(id):
 
 @site_blueprint.route('/admin/booking/<int:id>/delete', methods=['POST'])
 def booking_detail_delete(id):
+    """
+    Endpoint to pass delete call to api
+    Args:
+        id (int): booking id to delete
+
+    Returns: redirects to booking list view
+
+    """
     response = requests.delete(f"{api_address}/api/booking/{id}", headers=session['auth'])
     return redirect('/admin/booking')

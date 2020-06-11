@@ -31,12 +31,22 @@ class PersonForm(FlaskForm):
 
 @site_blueprint.route('/admin/person')
 def person_list():
+    """
+    Load persons data from api and pass to view
+    Returns: Person list view
+
+    """
     person_data = requests.get(f"{api_address}/api/admin/person", headers=session['auth'])
     return render_template('admin/person-list.html', person_data=json.loads(person_data.json()))
 
 
 @site_blueprint.route('/admin/person/new', methods=['GET', 'POST'])
 def person_detail_new():
+    """
+    View to create new person
+    Returns: same view if form has errors or person list
+
+    """
     form = PersonForm()
     if form.validate_on_submit():
         new_person = {
@@ -59,6 +69,14 @@ def person_detail_new():
 
 @site_blueprint.route('/admin/person/<int:id>', methods=['GET', 'POST'])
 def person_detail(id):
+    """
+    Load person details from api and pass to detail view
+    Args:
+        id (int): person id
+
+    Returns: detail view
+
+    """
     form = PersonForm()
     if form.validate_on_submit():
         person = {
@@ -89,6 +107,14 @@ def person_detail(id):
 
 @site_blueprint.route('/admin/person/<int:id>/delete', methods=['POST'])
 def person_detail_delete(id):
+    """
+    Endpoint to call api delete person
+    Args:
+        id (int): person id
+
+    Returns: redirects to person list
+
+    """
     response = requests.delete(f"{api_address}/api/admin/person/{id}", headers=session['auth'])
     return redirect('/admin/person')
 

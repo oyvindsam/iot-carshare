@@ -62,24 +62,29 @@ def get_all_bookings_details():
 @role_required(PersonType.ADMIN)
 def booking(id: int):
     """
-    Get booking for given user and booking id
+    Get, put, delete booking
 
     Args:
-        username: (str) logged in user
         id (int): booking id
 
-    Returns: One booking if exists, else 404
+    Returns: 403 if booking not found, 200 Ok
 
     """
-    # TODO: add? validate object exists
+    booking = Booking.query.get(id)
+    if booking is None:
+        return abort(403, description='Booking not found')
+
     if request.method == 'DELETE':
         Booking.query.filter_by(id=id).delete()
         db.session.commit()
         return jsonify('Booking deleted'), 200
     elif request.method == 'PUT':
         schema = BookingSchema()
-        new_booking = schema.loads(request.get_json())
-        booking = Booking.query.get(new_booking.id)
+        try:
+            new_booking = schema.loads(request.get_json())
+        except ValidationError as ve:
+            return abort(403, description=ve.messages)
+
         booking.person_id = new_booking.person_id
         booking.car_id = new_booking.car_id
         booking.start_time = new_booking.start_time

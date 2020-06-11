@@ -12,7 +12,6 @@ from site_web.flask_site import api_address
 
 
 class CarForm(FlaskForm):
-    # id is -1 for new carsrender_kw={'class': 'form-control'}
     id = IntegerField('Id', default=-1, render_kw={'readonly': True})
     reg_number = StringField('Registration number',
                              [InputRequired('Need car reg number')])
@@ -31,12 +30,22 @@ class CarForm(FlaskForm):
 
 @site_blueprint.route('/admin/car')
 def car_list():
+    """
+    Load cars from api and pass to car list view
+    Returns: view
+
+    """
     car_data = requests.get(f"{api_address}/api/admin/car", headers=session['auth'])
     return render_template('admin/car-list.html', car_data=car_data.json())
 
 
 @site_blueprint.route('/admin/car/new', methods=['GET', 'POST'])
 def car_detail_new():
+    """
+    Create new car
+    Returns: same view if form has errors, or car list
+
+    """
     form = CarForm()
     if form.validate_on_submit():
         new_car = {
@@ -61,6 +70,14 @@ def car_detail_new():
 
 @site_blueprint.route('/admin/car/<int:id>', methods=['GET', 'POST'])
 def car_detail(id):
+    """
+    Load car from api and show in detail view
+    Args:
+        id (int): car id
+
+    Returns: car detail view
+
+    """
     form = CarForm()
     if form.validate_on_submit():
         id = form.id.data
@@ -78,6 +95,7 @@ def car_detail(id):
         response = requests.put(f"{api_address}/api/admin/car/{id}",
                                 json=json.dumps(car),
                                 headers=session['auth'])
+        # if car data is ok, update issue
         if response.status_code == 200:
             # save new issue
             issue = {
@@ -102,6 +120,14 @@ def car_detail(id):
 
 @site_blueprint.route('/admin/car/<int:id>/delete', methods=['POST'])
 def car_detail_delete(id):
+    """
+    Endpoint to call api delete car
+    Args:
+        id (int): car to delete
+
+    Returns: redirects to car list
+
+    """
     response = requests.delete(f"{api_address}/api/admin/car/{id}", headers=session['auth'])
     return redirect('/admin/car')
 
