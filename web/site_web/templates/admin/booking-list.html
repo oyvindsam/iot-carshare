@@ -28,7 +28,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for booking in bookings_data %}
+        {% for booking in booking_data %}
             <tr>
                 <td>{{ booking.booking_id }} <a href="{{ url_for('.booking_detail', id=booking.booking_id) }}">Update</a> </td>
                 <td>{{ booking.person_id }}</td>

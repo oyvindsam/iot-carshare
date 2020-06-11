@@ -13,8 +13,8 @@ from site_web.flask_site import api_address
 
 @site_blueprint.route('/admin/booking')
 def booking_list():
-    bookings_data = requests.get(f"{api_address}/api/booking",  headers=session['auth'])
-    return render_template('admin/booking-history.html', bookings_data=bookings_data.json())
+    booking_data = requests.get(f"{api_address}/api/booking",  headers=session['auth'])
+    return render_template('admin/booking-list.html', booking_data=booking_data.json())
 
 
 def fix_datetime(date_str):
