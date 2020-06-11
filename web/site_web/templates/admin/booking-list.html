@@ -9,6 +9,8 @@
 
 {% endblock %}}
 
+{% include 'admin/admin-nav.html' %}
+
 {% block content %}
     <form action="{{ url_for('.booking_detail_new') }}" method="GET">
     <input type="submit" value="New booking">
