@@ -1,10 +1,10 @@
 import json
-import requests
 
+import requests
 from flask import render_template, session, redirect
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField
-from wtforms.fields.html5 import IntegerField
+from wtforms import StringField, SelectField, validators
+from wtforms.fields.html5 import IntegerField, EmailField
 from wtforms.validators import InputRequired
 
 from site_web import site_blueprint
@@ -12,14 +12,21 @@ from site_web.flask_site import api_address
 
 
 class PersonForm(FlaskForm):
+    type_choices = [
+        ('CUSTOMER', 'Customer'),
+        ('ADMIN', 'Admin'),
+        ('MANAGER', 'Manager'),
+        ('ENGINEER', 'Engineer')
+    ]
+
     # id is -1 for new persons
     id = IntegerField(InputRequired('Need person id'), default=-1, render_kw={'readonly': True})
-    username = StringField(InputRequired('Need username'))
-    first_name = StringField(InputRequired('Need first name'))
-    last_name = StringField(InputRequired('Need last name'))
-    email = StringField(InputRequired('Need email'))
-    type = IntegerField(InputRequired('Need type id'))
-    password = StringField(InputRequired('Need password'))
+    username = StringField('Username', [InputRequired('Need username')])
+    first_name = StringField('First name', [InputRequired('Need first name')])
+    last_name = StringField('Last name', [InputRequired('Need last name')])
+    email = EmailField('Email', [InputRequired('Need email'), validators.Email()])
+    password = StringField('Password', [InputRequired('Need password')])
+    type = SelectField('Type', [InputRequired('Need type id')], choices=type_choices)
 
 
 @site_blueprint.route('/admin/person')
@@ -34,7 +41,7 @@ def person_detail_new():
     form = PersonForm()
     if form.validate_on_submit():
         new_person = {
-            'username': form.person_manufacturer.data,
+            'username': form.username.data,
             'first_name': form.first_name.data,
             'last_name': form.last_name.data,
             'email': form.email.data,
@@ -71,7 +78,7 @@ def person_detail(id):
         if response.status_code == 200:
             return redirect('/admin/person')
         else:
-            return render_template('admin/person-detail-new.html',
+            return render_template('admin/person-detail.html',
                                    form=form,
                                    error=response.json())
     else:
@@ -79,7 +86,6 @@ def person_detail(id):
                                    headers=session['auth'])
         person = json.loads(person_data.json())
         form = PersonForm(**person)
-        print(person)
         return render_template('admin/person-detail.html', form=form)
 
 

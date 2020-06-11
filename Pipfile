@@ -60,6 +60,7 @@ flask-jwt-extended = "*"
 flask-bootstrap = "*"
 matplotlib = "*"
 flask-wtf = "*"
+email-validator = "*"
 
 [requires]
 python_version = "3"
