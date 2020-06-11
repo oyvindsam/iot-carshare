@@ -385,7 +385,11 @@ def populate_db(app):
         )
         db.session.add_all([
             b1,
-            b2
+            b2,
+            i1,
+            i2,
+            i3,
+            i4
         ])
         db.session.commit()
         print('All data commited!')

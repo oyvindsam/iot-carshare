@@ -6,6 +6,7 @@ from marshmallow import post_load, validate, ValidationError, \
     validates_schema, fields
 from marshmallow_sqlalchemy import auto_field
 from sqlalchemy import or_
+from sqlalchemy.orm import backref
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -63,9 +64,9 @@ class CarIssue(db.Model):
     CarIssue SQLAlchemy class
     """
     id = db.Column(db.Integer, primary_key=True)
-    car_id = db.Column(db.Integer, db.ForeignKey('car.id'), nullable=False)
-    issue = db.Column(db.Text, nullable=False)
-    car = db.relationship('Car', backref='car_issue', lazy=True)
+    issue = db.Column(db.Text, nullable=True)
+    car_id = db.Column(db.Integer, db.ForeignKey('car.id'), nullable=True)
+    car = db.relationship('Car', backref=backref('issue', uselist=False), lazy=True)
 
 
 class CarManufacturer(db.Model):
@@ -202,6 +203,20 @@ class CarIssueSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = CarIssue
         include_fk = True
+
+    @post_load
+    def make_issue(self, data, **kwargs):
+        """
+        This function runs after Schema().loads (validation code).
+
+        Args:
+            data: Valid data
+            **kwargs: args passed automatically
+
+        Returns:
+
+        """
+        return CarIssue(**data)
 
 
 class CarManufacturerSchema(ma.SQLAlchemyAutoSchema):

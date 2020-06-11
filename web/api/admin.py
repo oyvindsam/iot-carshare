@@ -1,10 +1,12 @@
+import json
+
 from flask import jsonify, request, abort
 from marshmallow import ValidationError
 
 from api import api_blueprint
 from .auth import role_required
 from .models import db, Person, BookingSchema, \
-    Booking, Car, PersonType, CarSchema
+    Booking, Car, PersonType, CarSchema, CarIssue, CarIssueSchema
 
 
 @api_blueprint.route('/booking', methods=['POST'])
@@ -97,6 +99,23 @@ def booking(id: int):
         return jsonify(schema.dumps(booking)), 200
 
 
+@api_blueprint.route('/admin/car/<int:car_id>/issue', methods=['POST'])
+@role_required(PersonType.ADMIN)
+def issue(car_id: int):
+    schema = CarIssueSchema(exclude=['id'])
+    try:
+        issue = schema.loads(request.get_json())
+    except ValidationError as ve:
+        print(ve)
+        return abort(400, description='Invalid issue data')
+
+    car = Car.query.filter_by(id=car_id).first()
+    db.session.add(issue)
+    car.issue = issue
+    db.session.commit()
+    return jsonify('Issue updated'), 200
+
+
 @api_blueprint.route('/admin/car/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 @role_required(PersonType.ADMIN)
 def car(id: int):
@@ -105,7 +124,11 @@ def car(id: int):
     if car is None:
         return abort(404, description='Car not found')
     if request.method == 'GET':
-        return jsonify(schema.dumps(car)), 200
+        # Dump to dict, then add issue text
+        car_data = schema.dump(car)
+        car_data['issue'] = car.issue.issue
+
+        return jsonify(json.dumps(car_data)), 200
 
     elif request.method == 'PUT':
         try:

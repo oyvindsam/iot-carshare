@@ -19,7 +19,8 @@ def admin():
 
 
 class CarForm(FlaskForm):
-    id = IntegerField(InputRequired('Need car id'), default=-1)
+    # id is -1 for new cars
+    id = IntegerField(InputRequired('Need car id'), default=-1, render_kw={'readonly': True})
     reg_number = StringField(InputRequired('Need car reg number'))
     car_manufacturer = IntegerField(InputRequired('Need manufaturer id'))
     car_colour = IntegerField(InputRequired('Need colour id'))
@@ -28,6 +29,10 @@ class CarForm(FlaskForm):
     hour_rate = FloatField(InputRequired('Need hour rate'))
     latitude = StringField(InputRequired('Need latitude'), default='0.0')
     longitude = StringField(InputRequired('Need longitude'), default='0.0')
+    issue = StringField()
+    # issue_id is -1 if issue is not set
+    issue_id = IntegerField(default=-1, render_kw={'readonly': True})
+
 
 
 @site_blueprint.route('/admin/car')
@@ -55,6 +60,7 @@ def car_detail_new():
         response = requests.post(f"{api_address}/api/admin/car",
                                  json=json.dumps(new_car),
                                  headers=session['auth'])
+
         if response.status_code == 201:
             return redirect('/admin/car')
         error = response.json()['error']
@@ -66,8 +72,9 @@ def car_detail_new():
 def car_detail(id):
     form = CarForm()
     if form.validate_on_submit():
+        id = form.id.data
         car = {
-            'id': form.id.data,
+            'id': id,
             'reg_number': form.reg_number.data,
             'car_manufacturer': form.car_manufacturer.data,
             'car_colour': form.car_colour.data,
@@ -77,10 +84,20 @@ def car_detail(id):
             'latitude': form.latitude.data,
             'longitude': form.longitude.data
         }
-        response = requests.put(f"{api_address}/api/admin/car/{form.id.data}",
+        response = requests.put(f"{api_address}/api/admin/car/{id}",
                                 json=json.dumps(car),
                                 headers=session['auth'])
         if response.status_code == 200:
+            # save new issue
+            if len(form.issue.data) > 0:
+                issue = {
+                    'car_id': id,
+                    'issue': form.issue.data
+                }
+                response = requests.post(f"{api_address}/api/admin/car/{id}/issue",
+                                         json=json.dumps(issue),
+                                         headers=session['auth'])
+                # TODO: validate response
             return redirect('/admin/car')
         error = response.json()
         return render_template('admin/car-detail-new.html', form=form, error=error)
