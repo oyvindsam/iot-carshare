@@ -3,7 +3,7 @@ from datetime import datetime
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from marshmallow import post_load, validate, ValidationError, \
-    validates_schema
+    validates_schema, fields
 from marshmallow_sqlalchemy import auto_field
 from sqlalchemy import or_
 
@@ -208,6 +208,9 @@ class BookingSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Booking
         include_fk = True
+
+    start_time = fields.DateTime("%Y-%m-%d %H:%M:%S")
+    end_time = fields.DateTime("%Y-%m-%d %H:%M:%S")
 
     @post_load
     def make_booking(self, data, **kwargs):

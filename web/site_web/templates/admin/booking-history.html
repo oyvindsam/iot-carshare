@@ -10,6 +10,9 @@
 {% endblock %}}
 
 {% block content %}
+    <form action="{{ url_for('.booking_detail_new') }}" method="GET">
+    <input type="submit" value="New booking">
+    </form>
     <table data-toggle="table"
            data-search="true">
         <thead>

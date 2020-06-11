@@ -25,12 +25,16 @@ def bookings():
     return render_template('admin/booking-history.html', bookings_data=bookings_data.json())
 
 
+def fix_datetime(date_str):
+    return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+
+
 class BookingForm(FlaskForm):
-    id = IntegerField(InputRequired('Need booking id'))
+    id = IntegerField(InputRequired('Need booking id'), default=-1)
     person_id = IntegerField(InputRequired('Need person id'))
     car_id = IntegerField(InputRequired('Need car id'))
-    start_time = DateTimeLocalField(InputRequired(message='Date wrong'), format="%Y-%m-%dT%H:%M:%S")
-    end_time = DateTimeLocalField(InputRequired(message='Date wrong'), format="%Y-%m-%dT%H:%M:%S")
+    start_time = DateTimeLocalField(InputRequired(message='Date wrong'), format="%Y-%m-%dT%H:%M")
+    end_time = DateTimeLocalField(InputRequired(message='Date wrong'), format="%Y-%m-%dT%H:%M")
     status = SelectField(InputRequired('Need status'), choices=[
         ('Not active', 'Not active'),
         ('Active', 'Active'),
@@ -39,9 +43,33 @@ class BookingForm(FlaskForm):
     ])
 
 
+@site_blueprint.route('/admin/booking/new', methods=['GET', 'POST'])
+def booking_detail_new():
+    form = BookingForm()
+
+    if form.validate_on_submit():
+        new_booking = {
+            'person_id': form.person_id.data,
+            'car_id': form.car_id.data,
+            'start_time': str(form.start_time.data),
+            'end_time': str(form.end_time.data),
+            'status': form.status.data
+        }
+        response = requests.post(f"{api_address}/api/booking",
+                                 json=json.dumps(new_booking),
+                                 headers=session['auth'])
+        if response.status_code == 201:
+            return redirect('/admin/booking')
+        error = response.json()['error']
+        return render_template('admin/booking-detail-new.html', form=form, error=error)
+
+    return render_template('admin/booking-detail-new.html', form=form)
+
+
 @site_blueprint.route('/admin/booking/<int:id>', methods=['GET', 'POST'])
 def booking_detail(id):
     form = BookingForm()
+
     if form.validate_on_submit():
         new_booking = {
             'id': form.id.data,
@@ -60,11 +88,10 @@ def booking_detail(id):
         booking_data = requests.get(f"{api_address}/api/booking/{id}",  headers=session['auth'])
         booking = json.loads(booking_data.json())
         # Need to convert to datetime object first
-        booking['start_time'] = datetime.strptime(booking['start_time'], "%Y-%m-%dT%H:%M:%S")
-        booking['end_time'] = datetime.strptime(booking['end_time'], "%Y-%m-%dT%H:%M:%S")
+        booking['start_time'] = fix_datetime(booking['start_time'])
+        booking['end_time'] = fix_datetime(booking['end_time'])
 
         form = BookingForm(**booking)
-
         return render_template('admin/booking-detail.html', form=form)
 
 

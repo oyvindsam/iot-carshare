@@ -104,6 +104,38 @@ def add_booking(username: str):
     return schema.jsonify(booking), 201
 
 
+@api_blueprint.route('/booking', methods=['POST'])
+@role_required(PersonType.ADMIN)
+def add_booking_admin():
+    """
+    Add a new booking
+
+    Returns: Json string of booking, or error
+
+    """
+
+    schema = BookingSchema(exclude=['id'])
+    try:
+        booking = schema.loads(request.get_json())
+    except ValidationError as ve:
+        return abort(400, description='Invalid booking data')  # wow generic message
+    # check that references to data in db is valid
+    person = Person.query.filter_by(id=booking.person_id).first()
+    car = Car.query.filter_by(id=booking.car_id).first()
+    if None in [person, car]:
+        return abort(403, description='Booking references invalid id(s)')
+
+    # Check that no booking with car is currently active
+    if Booking.is_car_busy(booking.start_time, booking.end_time, booking.car_id):
+        print('busy car')
+        return abort(403, description=f'A booking with car id {booking.car_id}'
+                                      f' is already mad in that time period')
+
+    db.session.add(booking)
+    db.session.commit()
+    return schema.jsonify(booking), 201
+
+
 @api_blueprint.route('/person/<string:username>/booking/<int:id>', methods=['PUT', 'DELETE'])
 @jwt_required
 def deactivate_booking(username: str, id: int):
@@ -208,7 +240,6 @@ def get_all_bookings_details():
     Returns: All bookings details in list of objects
 
     """
-
     bookings = Booking.query.all()
     booking_data = [{
         'booking_id': booking.id,
