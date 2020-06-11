@@ -2,6 +2,7 @@ import json
 
 from flask import jsonify, request, abort
 from marshmallow import ValidationError
+from werkzeug.security import generate_password_hash
 
 from api import api_blueprint
 from api.auth import role_required
@@ -51,7 +52,9 @@ def add_person():
         new_person = schema.loads(request.get_json())
     except ValidationError as ve:
         return abort(400, description=ve.messages)
-
+    # if password not on correct hash format, hash it
+    if not new_person.password.startswith('pbkdf2'):
+        new_person.password = generate_password_hash(new_person.password)
     db.session.add(new_person)
     db.session.commit()
 
