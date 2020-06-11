@@ -89,16 +89,15 @@ def car_detail(id):
                                 headers=session['auth'])
         if response.status_code == 200:
             # save new issue
-            if len(form.issue.data) > 0:
-                issue = {
-                    'car_id': id,
-                    'issue': form.issue.data
-                }
-                response = requests.post(f"{api_address}/api/admin/car/{id}/issue",
-                                         json=json.dumps(issue),
-                                         headers=session['auth'])
-                # TODO: validate response
-            return redirect('/admin/car')
+            issue = {
+                'car_id': id,
+                'issue': form.issue.data
+            }
+            response = requests.post(f"{api_address}/api/admin/car/{id}/issue",
+                                     json=json.dumps(issue),
+                                     headers=session['auth'])
+            # TODO: validate response
+        return redirect('/admin/car')
         error = response.json()
         return render_template('admin/car-detail-new.html', form=form, error=error)
     else:

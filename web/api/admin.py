@@ -106,10 +106,13 @@ def issue(car_id: int):
     try:
         issue = schema.loads(request.get_json())
     except ValidationError as ve:
-        print(ve)
         return abort(400, description='Invalid issue data')
-
     car = Car.query.filter_by(id=car_id).first()
+    if len(issue.issue) == 0:
+        CarIssue.query.filter_by(id=car.issue.id).delete()
+        db.session.commit()
+        return jsonify('Issue deleted!'), 200
+
     db.session.add(issue)
     car.issue = issue
     db.session.commit()
@@ -126,7 +129,8 @@ def car(id: int):
     if request.method == 'GET':
         # Dump to dict, then add issue text
         car_data = schema.dump(car)
-        car_data['issue'] = car.issue.issue
+        if car.issue is not None:
+            car_data['issue'] = car.issue.issue
 
         return jsonify(json.dumps(car_data)), 200
 
