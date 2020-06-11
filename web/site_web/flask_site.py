@@ -42,7 +42,7 @@ def bookcar():
         abort(404, description="Resource not found")
 
         return jsonify(carData)
-    
+
     else :
 
         response1 = requests.get(f"{api_address}/api/car-manufacturer", headers=session.get('auth', None))
@@ -65,11 +65,11 @@ def bookcar():
 
         for t in carTypeData:
             carTypeMap[t['id']] = t['type']
-        
+
         for color in carColorData:
             carColorMap[color['id']] = color['colour']
         index = 1
-        
+
         #For each car get the values from the hasmap
         for car in carData:
             manuId = car['car_manufacturer']
@@ -82,7 +82,7 @@ def bookcar():
             car['car_colour'] = carColorMap.get(colourId)
             car['index'] = index
             index = index + 1
-                    
+
         return render_template("bookcar.html", cars = carData, leng=length)
 
 
@@ -90,14 +90,14 @@ def bookcar():
 # method after a car has been selected to be booked
 @site_blueprint.route("/time/<carinfo>", methods=["GET", "POST"])
 def time(carinfo):
-     """
-        Parsing the json string which is retrieved from the available cars page
-        and decoding it using: urllib.parse.unquote, to convert it into a parsable string so that it can be read 
     """
-     if request.method == 'POST':
-         decoded_query = urllib.parse.unquote(carinfo)
-         decode1=ast.literal_eval(decoded_query)
-         return render_template("time.html", info=decode1)
+       Parsing the json string which is retrieved from the available cars page
+       and decoding it using: urllib.parse.unquote, to convert it into a parsable string so that it can be read
+   """
+    if request.method == 'POST':
+        decoded_query = urllib.parse.unquote(carinfo)
+        decode1=ast.literal_eval(decoded_query)
+        return render_template("time.html", info=decode1)
 
 # method after to add booking to google calendar
 @site_blueprint.route("/timeBook", methods=["GET", "POST"])
@@ -150,28 +150,28 @@ def timeBook():
         service = build('calendar', 'v3', credentials=creds)
 
         event = {
-                    'summary': 'Novo Car share booking',
-                    'location': location,
-                    'description': 'Your car booking with Novoshare booked by user '+ username +' with email '+ email +' with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
-                    'start': {
-                        'dateTime': startDateTime,
-                        'timeZone': "Australia/Melbourne",
-                    },
-                    'end': {
-                        'dateTime': endDateTime,
-                        'timeZone': "Australia/Melbourne",
-                    },
-                    'recurrence': [
-                        'RRULE:FREQ=DAILY;COUNT=2'
-                    ],
-                    'reminders': {
-                        'useDefault': False,
-                        'overrides': [
-                        {'method': 'email', 'minutes': 24 * 60},
-                        {'method': 'popup', 'minutes': 10},
-                        ],
-                    },
-                    }
+            'summary': 'Novo Car share booking',
+            'location': location,
+            'description': 'Your car booking with Novoshare booked by user '+ username +' with email '+ email +' with the following car details of your car: '+ make +' with registration: '+ carreg+ ' and type is: '+cartype + ' and the Hourly Rate is: ' + rate,
+            'start': {
+                'dateTime': startDateTime,
+                'timeZone': "Australia/Melbourne",
+            },
+            'end': {
+                'dateTime': endDateTime,
+                'timeZone': "Australia/Melbourne",
+            },
+            'recurrence': [
+                'RRULE:FREQ=DAILY;COUNT=2'
+            ],
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                    {'method': 'email', 'minutes': 24 * 60},
+                    {'method': 'popup', 'minutes': 10},
+                ],
+            },
+        }
         event = service.events().insert(calendarId='primary', body=event).execute()
         google_event_link = event.get('htmlLink')
 
@@ -180,7 +180,6 @@ def timeBook():
         print(google_event_id)
         initload = ({
             'car_id': carid,
-            'person_id': username,
             'start_time': startDateTime,
             'end_time': endDateTime,
             'google_calendar_id': google_event_id,
@@ -193,7 +192,7 @@ def timeBook():
         return render_template("confirmation.html", invite=google_event_link)
 
     else :
-        return render_template("timerror.html")
+        return render_template("timeerror.html")
 
 
 # method for webpage to view previous bookings
@@ -254,9 +253,9 @@ def cancelbook():
     store = file.Storage('token.json')
     creds = None
 
-        # The file token.pickle stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
 
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:

@@ -76,8 +76,7 @@ def add_booking(username: str):
     """
     if not is_valid_user(username, get_jwt_identity()):
         return abort(403, description='Identity does not match url path')
-
-    schema = BookingSchema(exclude=['id', 'status', 'person'])
+    schema = BookingSchema(exclude=['id', 'status', 'person_id'])
     try:
         booking = schema.loads(request.get_json())
     except ValidationError as ve:
@@ -85,6 +84,7 @@ def add_booking(username: str):
 
     # check that references to data in db is valid
     person = Person.query.filter_by(username=username).first()
+    booking.person = person
     car = Car.query.filter_by(id=booking.car_id).first()
     if None in [person, car]:
         return abort(403, description='Booking references invalid id(s)')
@@ -96,7 +96,6 @@ def add_booking(username: str):
 
     booking.person_id = person.id
     booking.status = BookingStatusEnum.ACTIVE
-
     # TODO: Add Google calendar event
 
     db.session.add(booking)
