@@ -1,0 +1,23 @@
+<iframe
+        allow="microphone;"
+        width="350"
+        height="430"
+        src="https://console.dialogflow.com/api-client/demo/embedded/ca79c14f-c863-4c9f-8b24-7c5538a47eb5">
+</iframe>
+
+<body>
+<div>
+    <h2>Audio record and playback</h2>
+    <p>
+        <button id=startRecord>start</button>
+        <button id=stopRecord disabled>stop</button>
+    </p>
+    <p>
+        <audio id=recordedAudio></audio>
+        <a id=audioDownload></a>
+    </p>
+</div>
+</body>
+<script type="text/javascript"  src="{{ url_for('static', filename='js/voice.js') }}"></script>
+
+<h1>This is admin!</h1>
