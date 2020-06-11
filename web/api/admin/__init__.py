@@ -1,1 +1,1 @@
-from . import admin, admin_booking, admin_car
+from . import admin, admin_booking, admin_car, admin_user
