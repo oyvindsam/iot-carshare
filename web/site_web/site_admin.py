@@ -4,7 +4,7 @@ from datetime import datetime
 import requests
 from flask import render_template, session, redirect, request
 from flask_wtf import FlaskForm
-from wtforms import SelectField
+from wtforms import SelectField, StringField, FloatField
 from wtforms.fields.html5 import IntegerField, DateTimeField, \
     DateTimeLocalField
 from wtforms.validators import InputRequired
@@ -18,10 +18,90 @@ def admin():
     return redirect('booking')
 
 
+class CarForm(FlaskForm):
+    id = IntegerField(InputRequired('Need car id'), default=-1)
+    reg_number = StringField(InputRequired('Need car reg number'))
+    car_manufacturer = IntegerField(InputRequired('Need manufaturer id'))
+    car_colour = IntegerField(InputRequired('Need colour id'))
+    car_type = IntegerField(InputRequired('Need type id'))
+    seats = IntegerField(InputRequired('Need seats'))
+    hour_rate = FloatField(InputRequired('Need hour rate'))
+    latitude = StringField(InputRequired('Need latitude'), default='0.0')
+    longitude = StringField(InputRequired('Need longitude'), default='0.0')
+
+
+@site_blueprint.route('/admin/car')
+def car_list():
+    car_data = requests.get(f"{api_address}/api/admin/car", headers=session['auth'])
+    return render_template('admin/car-list.html', car_data=json.loads(car_data.json()))
+
+
+@site_blueprint.route('/admin/car/new', methods=['GET', 'POST'])
+def car_detail_new():
+    form = CarForm()
+
+    if form.validate_on_submit():
+        new_car = {
+            'reg_number': form.reg_number.data,
+            'car_manufacturer': form.car_manufacturer.data,
+            'car_colour': form.car_colour.data,
+            'car_type': form.car_type.data,
+            'seats': form.seats.data,
+            'hour_rate': form.hour_rate.data,
+            'latitude': form.latitude.data,
+            'longitude': form.longitude.data
+        }
+
+        response = requests.post(f"{api_address}/api/admin/car",
+                                 json=json.dumps(new_car),
+                                 headers=session['auth'])
+        if response.status_code == 201:
+            return redirect('/admin/car')
+        error = response.json()['error']
+        return render_template('admin/car-detail-new.html', form=form, error=error)
+    return render_template('admin/car-detail-new.html', form=form)
+
+
+@site_blueprint.route('/admin/car/<int:id>', methods=['GET', 'POST'])
+def car_detail(id):
+    form = CarForm()
+    if form.validate_on_submit():
+        car = {
+            'id': form.id.data,
+            'reg_number': form.reg_number.data,
+            'car_manufacturer': form.car_manufacturer.data,
+            'car_colour': form.car_colour.data,
+            'car_type': form.car_type.data,
+            'seats': form.seats.data,
+            'hour_rate': form.hour_rate.data,
+            'latitude': form.latitude.data,
+            'longitude': form.longitude.data
+        }
+        response = requests.put(f"{api_address}/api/admin/car/{form.id.data}",
+                                json=json.dumps(car),
+                                headers=session['auth'])
+        if response.status_code == 200:
+            return redirect('/admin/car')
+        error = response.json()
+        return render_template('admin/car-detail-new.html', form=form, error=error)
+    else:
+        car_data = requests.get(f"{api_address}/api/admin/car/{id}",
+                                headers=session['auth'])
+        car = json.loads(car_data.json())
+        form = CarForm(**car)
+
+        return render_template('admin/car-detail.html', form=form)
+
+
+@site_blueprint.route('/admin/car/<int:id>/delete', methods=['POST'])
+def car_detail_delete(id):
+    response = requests.delete(f"{api_address}/api/admin/car/{id}", headers=session['auth'])
+    return redirect('/admin/car')
+
+
 @site_blueprint.route('/admin/booking')
 def bookings():
     bookings_data = requests.get(f"{api_address}/api/booking",  headers=session['auth'])
-
     return render_template('admin/booking-history.html', bookings_data=bookings_data.json())
 
 
@@ -62,7 +142,6 @@ def booking_detail_new():
             return redirect('/admin/booking')
         error = response.json()['error']
         return render_template('admin/booking-detail-new.html', form=form, error=error)
-
     return render_template('admin/booking-detail-new.html', form=form)
 
 

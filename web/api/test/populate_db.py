@@ -4,7 +4,7 @@ from flask import Flask
 from werkzeug.security import generate_password_hash
 
 from api.models import Person, CarManufacturer, CarType, CarColour, Car, db, \
-    PersonType, Booking, BookingStatusEnum
+    PersonType, Booking, BookingStatusEnum, CarIssue
 
 cm1 = CarManufacturer(
     manufacturer='BMW'
@@ -366,6 +366,22 @@ def populate_db(app):
             start_time=datetime.now().replace(microsecond=0, second=0) - timedelta(days=1),
             end_time=datetime.now().replace(microsecond=0, second=0) - timedelta(hours=10),
             status=BookingStatusEnum.FINISHED
+        )
+        i1 = CarIssue(
+            car_id=c1.id,
+            issue='There are no tiers'
+        )
+        i2 = CarIssue(
+            car_id=c2.id,
+            issue='The engine is gone'
+        )
+        i3 = CarIssue(
+            car_id=c3.id,
+            issue='Can only drive backwards'
+        )
+        i4 = CarIssue(
+            car_id=c4.id,
+            issue='Totalled'
         )
         db.session.add_all([
             b1,

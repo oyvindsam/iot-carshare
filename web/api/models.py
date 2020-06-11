@@ -52,11 +52,20 @@ class Car(db.Model):
     seats = db.Column(db.Integer, nullable=False)
     latitude = db.Column(db.String(20))
     longitude = db.Column(db.String(20))
-    #hour_rate = db.Column(db.DECIMAL(5, 2), nullable=False)
     hour_rate = db.Column(db.Float(6), nullable=False)
     manufacturer = db.relationship('CarManufacturer', backref='car', lazy=True)
     color = db.relationship('CarColour', backref='car', lazy=True)
     type = db.relationship('CarType', backref='car', lazy=True)
+
+
+class CarIssue(db.Model):
+    """
+    CarIssue SQLAlchemy class
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    car_id = db.Column(db.Integer, db.ForeignKey('car.id'), nullable=False)
+    issue = db.Column(db.Text, nullable=False)
+    car = db.relationship('Car', backref='car_issue', lazy=True)
 
 
 class CarManufacturer(db.Model):
@@ -187,6 +196,12 @@ class CarSchema(ma.SQLAlchemyAutoSchema):
 
         """
         return Car(**data)
+
+
+class CarIssueSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = CarIssue
+        include_fk = True
 
 
 class CarManufacturerSchema(ma.SQLAlchemyAutoSchema):
