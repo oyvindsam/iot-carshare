@@ -1,6 +1,10 @@
 {% extends 'admin/admin-base.html' %}
 {% block title %}Car - {{ form.id.data }}{% endblock %}
 
+{% block head %}
+    {{ super() }} <!-- this is necessary to load the css (i think) -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}}
 {% block nav %}
     {% set active_page = "car" %}
     {% include 'admin/admin-nav.html' %}
@@ -19,8 +23,8 @@
             <table class="table table-responsive" data-toggle="table">
                 <thead>
                 <tr>
-                    <th data-width="900">Car id</th>
-                    <th data-width="20">Registration number</th>
+                    <th>Car id</th>
+                    <th>Registration number</th>
                     <th>Manufacturer id</th>
                     <th>Colour id</th>
                     <th>Type id</th>
@@ -32,7 +36,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td >{{ form.id }} </td>
+                    <td>{{ form.id }} </td>
                     <td>{{ form.reg_number }}</td>
                     <td>{{ form.car_manufacturer }}</td>
                     <td>{{ form.car_colour }} </td>
