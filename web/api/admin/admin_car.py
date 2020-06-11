@@ -5,7 +5,8 @@ from marshmallow import ValidationError
 
 from api import api_blueprint
 from api.auth import role_required
-from api.models import db, Car, PersonType, CarSchema, CarIssue, CarIssueSchema
+from api.models import db, Car, PersonType, CarSchema, CarIssue, \
+    CarIssueSchema, CarTypeSchema, CarManufacturerSchema, CarColourSchema
 
 
 @api_blueprint.route('/admin/car/<int:car_id>/issue', methods=['POST'])
@@ -71,9 +72,19 @@ def car(id: int):
 @role_required(PersonType.ADMIN)
 def get_all_cars():
 
-    schema = CarSchema(many=True)
+    carSchema = CarSchema()
+    typeSchema = CarTypeSchema()
+    manufacturerSchema = CarManufacturerSchema()
+    colourSchema = CarColourSchema()
     cars = Car.query.all()
-    return jsonify(schema.dumps(cars)), 200
+    car_data = [{
+        'car': carSchema.dump(car),
+        'type': typeSchema.dump(car.type),
+        'manufacturer': manufacturerSchema.dump(car.manufacturer),
+        'colour': colourSchema.dump(car.color)
+    }
+        for car in cars]
+    return jsonify(car_data), 200
 
 
 @api_blueprint.route('/admin/car', methods=['POST'])

@@ -32,7 +32,8 @@ class CarForm(FlaskForm):
 @site_blueprint.route('/admin/car')
 def car_list():
     car_data = requests.get(f"{api_address}/api/admin/car", headers=session['auth'])
-    return render_template('admin/car-list.html', car_data=json.loads(car_data.json()))
+    print(car_data.json())
+    return render_template('admin/car-list.html', car_data=car_data.json())
 
 
 @site_blueprint.route('/admin/car/new', methods=['GET', 'POST'])
