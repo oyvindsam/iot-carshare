@@ -4,7 +4,7 @@ from marshmallow import ValidationError
 from api import api_blueprint
 from api.auth import role_required
 from api.models import db, Person, BookingSchema, \
-    Booking, Car, PersonType
+    Booking, Car, PersonType, CarSchema, PersonSchema, CarManufacturerSchema
 
 
 @api_blueprint.route('/booking', methods=['POST'])
@@ -49,16 +49,12 @@ def get_all_bookings_details():
     """
     bookings = Booking.query.all()
     booking_data = [{
-        'booking_id': booking.id,
-        'person_id': booking.person_id,
-        'person_username': booking.person.username,
-        'person_first_name': booking.person.first_name,
-        'person_last_name': booking.person.last_name,
-        'car_id': booking.car_id,
-        'booking_start_time': booking.start_time,
-        'booking_end_time': booking.end_time,
-        'booking_status': booking.status
+        'booking': BookingSchema().dump(booking),
+        'person': PersonSchema().dump(booking.person),
+        'car': CarSchema().dump(booking.car),
+        'manufacturer': CarManufacturerSchema().dump(booking.car.manufacturer)
     } for booking in bookings]
+    print(booking_data)
     return jsonify(booking_data), 200
 
 

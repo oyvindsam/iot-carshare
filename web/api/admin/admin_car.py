@@ -72,16 +72,12 @@ def car(id: int):
 @role_required(PersonType.ADMIN)
 def get_all_cars():
 
-    carSchema = CarSchema()
-    typeSchema = CarTypeSchema()
-    manufacturerSchema = CarManufacturerSchema()
-    colourSchema = CarColourSchema()
     cars = Car.query.all()
     car_data = [{
-        'car': carSchema.dump(car),
-        'type': typeSchema.dump(car.type),
-        'manufacturer': manufacturerSchema.dump(car.manufacturer),
-        'colour': colourSchema.dump(car.color)
+        'car': CarSchema().dump(car),
+        'type': CarTypeSchema().dump(car.type),
+        'manufacturer': CarManufacturerSchema().dump(car.manufacturer),
+        'colour': CarColourSchema().dump(car.color)
     }
         for car in cars]
     return jsonify(car_data), 200

@@ -12,26 +12,26 @@
         <thead>
         <tr>
             <th>Booking id</th>
-            <th>Customer id</th>
-            <th>Username</th>
+            <th>Username (id)</th>
             <th>Customer name</th>
-            <th>Car id</th>
+            <th>Car regnr. (id)</th>
+            <th>Car manufacturer</th>
             <th>Start time</th>
             <th>End time</th>
             <th>Status</th>
         </tr>
         </thead>
         <tbody>
-        {% for booking in booking_data %}
+        {% for data in booking_data %}
             <tr>
-                <td>{{ booking.booking_id }} <a href="{{ url_for('.booking_detail', id=booking.booking_id) }}">Update</a> </td>
-                <td>{{ booking.person_id }}</td>
-                <td>{{ booking.person_username }}</td>
-                <td>{{ booking.person_first_name }} {{ booking.person_last_name }}</td>
-                <td>{{ booking.car_id }}</td>
-                <td>{{ booking.booking_start_time }}</td>
-                <td>{{ booking.booking_end_time }}</td>
-                <td>{{ booking.booking_status }}</td>
+                <td>{{ data['booking'].id }} <a href="{{ url_for('.booking_detail', id=data['booking'].id) }}">Update</a> </td>
+                <td>{{ data['person'].username }} ({{ data['person'].id }})</td>
+                <td>{{ data['person'].first_name }} {{ data['person'].last_name }}</td>
+                <td>{{ data['car'].reg_number }} ({{ data['booking'].car_id }})</td>
+                <td>{{ data['manufacturer'].manufacturer }}</td>
+                <td>{{ data['booking'].start_time }}</td>
+                <td>{{ data['booking'].end_time }}</td>
+                <td>{{ data['booking'].status }}</td>
             </tr>
         {% endfor %}
         </tbody>
