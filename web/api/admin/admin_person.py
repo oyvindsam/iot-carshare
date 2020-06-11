@@ -26,6 +26,16 @@ def person(id: int):
             new_person = schema.loads(request.get_json())
         except ValidationError as ve:
             return abort(400, description=ve.messages)
+        person.username = new_person.username
+        person.first_name = new_person.first_name
+        person.last_name = new_person.last_name
+        person.email = new_person.email
+        person.type = new_person.type
+        person.type = new_person.type
+        if not new_person.password.startswith('pbkdf2'):
+            person.password = generate_password_hash(new_person.password)
+        else:
+            person.password = new_person.password
 
         db.session.commit()
         return jsonify('Person updated'), 200

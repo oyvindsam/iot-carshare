@@ -20,7 +20,7 @@ class PersonForm(FlaskForm):
     ]
 
     # id is -1 for new persons
-    id = IntegerField(InputRequired('Need person id'), default=-1, render_kw={'readonly': True})
+    id = IntegerField('Id', default=-1, render_kw={'readonly': True})
     username = StringField('Username', [InputRequired('Need username')])
     first_name = StringField('First name', [InputRequired('Need first name')])
     last_name = StringField('Last name', [InputRequired('Need last name')])
@@ -32,7 +32,6 @@ class PersonForm(FlaskForm):
 @site_blueprint.route('/admin/person')
 def person_list():
     person_data = requests.get(f"{api_address}/api/admin/person", headers=session['auth'])
-    print(json.loads(person_data.json()))
     return render_template('admin/person-list.html', person_data=json.loads(person_data.json()))
 
 
@@ -62,10 +61,9 @@ def person_detail_new():
 def person_detail(id):
     form = PersonForm()
     if form.validate_on_submit():
-        id = form.id.data
         person = {
             'id': id,
-            'username': form.person_manufacturer.data,
+            'username': form.username.data,
             'first_name': form.first_name.data,
             'last_name': form.last_name.data,
             'email': form.email.data,
