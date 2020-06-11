@@ -178,8 +178,11 @@ def booking(id: int):
     Returns: One booking if exists, else 404
 
     """
+    # TODO: add? validate object exists
     if request.method == 'DELETE':
-        pass
+        Booking.query.filter_by(id=id).delete()
+        db.session.commit()
+        return jsonify('Booking deleted'), 200
     elif request.method == 'PUT':
         schema = BookingSchema()
         new_booking = schema.loads(request.get_json())

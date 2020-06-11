@@ -66,3 +66,9 @@ def booking_detail(id):
         form = BookingForm(**booking)
 
         return render_template('admin/booking-detail.html', form=form)
+
+
+@site_blueprint.route('/admin/booking/<int:id>/delete', methods=['POST'])
+def booking_detail_delete(id):
+    response = requests.delete(f"{api_address}/api/booking/{id}", headers=session['auth'])
+    return redirect('/admin/booking')
