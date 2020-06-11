@@ -95,7 +95,7 @@ class CarColour(db.Model):
 
 # Marshmallow does not support Enum, use String. In future: look at marshmallow-enum
 class BookingStatusEnum:
-    NOT_ACTIVATED = 'Not activated'
+    NOT_ACTIVATED = 'Not active'
     ACTIVE = 'Active'
     FINISHED = 'Finished'
     CANCELLED = 'Cancelled'
