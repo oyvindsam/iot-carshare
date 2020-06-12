@@ -39,6 +39,7 @@ def car_list():
     return render_template('admin/car-list.html', car_data=car_data.json())
 
 
+
 @site_blueprint.route('/admin/car/new', methods=['GET', 'POST'])
 def car_detail_new():
     """
@@ -63,8 +64,8 @@ def car_detail_new():
                                  headers=session['auth'])
         if response.status_code == 201:
             return redirect('/admin/car')
-        error = response.json()['error']
-        return render_template('admin/car-detail-new.html', form=form, error=error)
+        if 'error' in response.json():
+            return render_template('admin/car-detail-new.html', form=form, error=response.json()['error'])
     return render_template('admin/car-detail-new.html', form=form)
 
 
@@ -105,11 +106,12 @@ def car_detail(id):
             response = requests.post(f"{api_address}/api/admin/car/{id}/issue",
                                      json=json.dumps(issue),
                                      headers=session['auth'])
-            # TODO: validate response
-            return redirect('/admin/car')
-        else:
-            error = response.json()
-            return render_template('admin/car-detail-new.html', form=form, error=error)
+            if response.status_code == 200:
+                return redirect('/admin/car')
+        # catch all response errors
+        if 'error' in response.json():
+            return render_template('admin/car-detail.html', form=form,
+                                   error=response.json()['error'])
     else:
         car_data = requests.get(f"{api_address}/api/admin/car/{id}",
                                 headers=session['auth'])

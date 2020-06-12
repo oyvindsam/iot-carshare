@@ -60,10 +60,10 @@ def person_detail_new():
         response = requests.post(f"{api_address}/api/admin/person",
                                  json=json.dumps(new_person),
                                  headers=session['auth'])
-        if response.status_code == 201:
-            return redirect('/admin/person')
-        error = response.json()['error']
-        return render_template('admin/person-detail-new.html', form=form, error=error)
+        if 'error' in response.json():
+            return render_template('admin/person-detail-new.html', form=form,
+                                   error=response.json()['error'])
+        return redirect('/admin/person')
     return render_template('admin/person-detail-new.html', form=form)
 
 
@@ -91,12 +91,11 @@ def person_detail(id):
         response = requests.put(f"{api_address}/api/admin/person/{id}",
                                 json=json.dumps(person),
                                 headers=session['auth'])
-        if response.status_code == 200:
-            return redirect('/admin/person')
-        else:
-            return render_template('admin/person-detail.html',
-                                   form=form,
-                                   error=response.json())
+        if 'error' in response.json():
+            return render_template('admin/person-detail.html', form=form,
+                                   error=response.json()['error'])
+        return redirect('/admin/person')
+
     else:
         person_data = requests.get(f"{api_address}/api/admin/person/{id}",
                                    headers=session['auth'])

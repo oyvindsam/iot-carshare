@@ -2,6 +2,7 @@ from flask import jsonify, request, abort
 from marshmallow import ValidationError
 
 from api import api_blueprint
+from api.api import handle_db_operation
 from api.auth import role_required
 from api.models import db, Person, BookingSchema, \
     Booking, Car, PersonType, CarSchema, PersonSchema, CarManufacturerSchema
@@ -21,12 +22,12 @@ def add_booking_admin():
     try:
         booking = schema.loads(request.get_json())
     except ValidationError as ve:
-        return abort(400, description='Invalid booking data')  # wow generic message
+        return abort(400, description=ve.messages)  # wow generic message
     # check that references to data in db is valid
     person = Person.query.filter_by(id=booking.person_id).first()
     car = Car.query.filter_by(id=booking.car_id).first()
     if None in [person, car]:
-        return abort(403, description='Booking references invalid id(s)')
+        return abort(403, description='Booking references invalid person/car id(s)')
 
     # Check that no booking with car is currently active
     if Booking.is_car_busy(booking.start_time, booking.end_time, booking.car_id):
@@ -34,7 +35,7 @@ def add_booking_admin():
                                       f' is already mad in that time period')
 
     db.session.add(booking)
-    db.session.commit()
+    handle_db_operation(db.session.commit)
     return schema.jsonify(booking), 201
 
 
@@ -54,7 +55,6 @@ def get_all_bookings_details():
         'car': CarSchema().dump(booking.car),
         'manufacturer': CarManufacturerSchema().dump(booking.car.manufacturer)
     } for booking in bookings]
-    print(booking_data)
     return jsonify(booking_data), 200
 
 
@@ -76,7 +76,7 @@ def booking(id: int):
 
     if request.method == 'DELETE':
         Booking.query.filter_by(id=id).delete()
-        db.session.commit()
+        handle_db_operation(db.session.commit)
         return jsonify('Booking deleted'), 200
     elif request.method == 'PUT':
         schema = BookingSchema()
@@ -90,9 +90,8 @@ def booking(id: int):
         booking.start_time = new_booking.start_time
         booking.end_time = new_booking.end_time
         booking.status = new_booking.status
-        db.session.commit()
+        handle_db_operation(db.session.commit)
         return jsonify('Booking updated successfully'), 200
     else:
         schema = BookingSchema()
-        booking = Booking.query.get(id)
         return jsonify(schema.dumps(booking)), 200
