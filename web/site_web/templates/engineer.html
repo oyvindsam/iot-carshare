@@ -31,16 +31,34 @@
 </nav>
 
 
-<div class="container-fluid text-center">
+<div class="container-fluid">
     <br>
     <br>
-    <h4>Bookings started per day</h4>
-    <iframe width="600" height="450" src="https://datastudio.google.com/embed/reporting/76dfc503-aa4f-47d3-96a8-176c68ad2eda/page/6I4TB" frameborder="0" style="border:0" allowfullscreen></iframe>
-    <br>
-    <img src="{{ images['car_usage'] }}" alt="Car usage chart"/>
-    <br>
-    <img src="{{ images['week_active'] }}" alt="Week active chart"/>
-
+    <table data-toggle="table"
+           data-search="true">
+        <thead>
+        <tr>
+            <th>Registration number</th>
+            <th data-sortable="true">Manufacturer (id)</th>
+            <th data-sortable="true">Colour (id)</th>
+            <th data-sortable="true">Type (id)</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for data in car_data %}
+            <tr>
+                <td>{{ data['car'].reg_number }}</td>
+                <td>{{ data['manufacturer'].manufacturer }}</td>
+                <td>{{ data['colour'].colour }} ({{ data['car'].car_colour }})</td>
+                <td>{{ data['type'].type }} ({{ data['car'].car_type }})</td>
+                <td>{{ data['car'].latitude }}</td>
+                <td>{{ data['car'].longitude }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
