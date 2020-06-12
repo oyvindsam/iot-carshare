@@ -49,7 +49,7 @@ def get_last_week_active():
                   (b.start_time < datetime.now()),
         Booking.query.all())
     bookings = [b for b in bookings]
-    xs = [datetime.now() - timedelta(days=x) for x in
+    xs = [datetime.now().replace(hour=0, minute=0) - timedelta(days=x) for x in
           range(7, 0, -1)]  # hours in a week
     ys = []
     for day in xs:
@@ -57,6 +57,7 @@ def get_last_week_active():
         end = day + timedelta(days=1)
 
         for b in bookings:
+            print(b.start_time)
             if (b.start_time < day < b.end_time) \
                     | (day < b.start_time < end) \
                     | (day < b.start_time < end):
