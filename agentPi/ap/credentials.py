@@ -213,4 +213,4 @@ class Credentials:
                 self.__user_token = None
             return res
         else:
-            return {"error": True, "type": "logout", "msg": "No User logged in"}
+            return {"error": True, "type": "eng-comp", "msg": "No User logged in"}
