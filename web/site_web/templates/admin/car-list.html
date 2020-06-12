@@ -7,8 +7,11 @@
 {% endblock %}
 
 {% block content %}
-    <table data-toggle="table"
-           data-search="true">
+    <form method="post" action="/admin/car">
+        <input id = "vc" class="vc"  name="voice" type="submit" value="Voice Search"/>
+    </form>
+
+    <table data-toggle="table" data-search="true">
         <thead>
         <tr>
             <th>Car id</th>
@@ -39,3 +42,4 @@
         </tbody>
     </table>
 {% endblock %}
+
