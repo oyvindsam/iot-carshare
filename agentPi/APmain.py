@@ -34,21 +34,28 @@ class APMain:
             if (state == False):
                 APMain.mainMenu()
             else:
-                APMain.userMenu()
+                userType = APMain.credsClass.getType()
+                if userType == "user":
+                    APMain.userMenu()
+                elif userType == "engineer":
+                    APMain.engineerMenu()
 
             print("\n")
 
     @staticmethod
     def mainMenu():
-        print("Choose method of authentication")
+        print("Choose An Option")
         print("1. Enter Credentials")
         print("2. Facial Recognition")
+        print("3. Service Car")
         opt = input("Option: ")
 
         if (opt == "1"):
             APMain.credsMenu()
         elif (opt == "2"):
             APMain.faceMenu()
+        elif (opt == "3"):
+            APMain.engineerCred()
         elif (opt.lower() == "exit"):
             APMain.trans.send({'type': 'carOff','car_id': APMain.car_id, "lat": -37.8102361, "lng": 144.9627652})
             print("System shutting down...")
@@ -93,7 +100,37 @@ class APMain:
         opt = input('Option: ')
         if (opt == "1"):
             APMain.updateCarLoc()
-            APMain.credsClass.signOut(1)
+            APMain.credsClass.signOut(APMain.car_id)
+        else:
+            print("Invalid Option!")
+
+    @staticmethod
+    def engineerMenu():
+        uName = APMain.credsClass.getUserName()
+        print("{} logged in. Choose from below:".format(uName))
+        print("1. Service complete and Logout")
+        opt = input('Option: ')
+        if (opt == "1"):
+            APMain.updateCarLoc()
+            APMain.credsClass.engComplete(APMain.car_id)
+        else:
+            print("Invalid Option!")
+    
+    @staticmethod
+    def engineerCred():
+        print("Choose method of authentication")
+        print("1. QR Code")
+        print("2. Bluetooth")
+        print("0. Return")
+
+        opt = input('Option: ')
+
+        if (opt == "1"):
+            APMain.credsClass.qrSignIn(APMain.car_id)
+        elif (opt == "2"):
+            print("To be done")
+        elif (opt == "3"):
+            return
         else:
             print("Invalid Option!")
 
