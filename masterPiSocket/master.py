@@ -36,6 +36,10 @@ def main():
                     elif(data['type'] == 'face-login'):
                         result = FaceLogin(data['username'], data['car_id'])
                         socket_utils.sendJson(conn, result)
+                    #Engineer Login
+                    elif(data['type'] == 'eng-login'):
+                        result = EngLogin(data['username'], data['car_id'])
+                        socket_utils.sendJson(conn, result)
                     #Logout
                     elif(data['type'] == 'logout'):
                         result = Logout(data['username'], data['car_id'], data['bId'], data['token'])
@@ -63,8 +67,6 @@ def main():
 def Login(username, password, carId):
     """
     Sign In fucntion with username/password and carId.
-    Performs GET request to /api/person/<string:username> and does validation checks
-    Then calls confirmBooking()
 
     Args:
         username (string): The entered username
@@ -97,8 +99,6 @@ def Login(username, password, carId):
 def FaceLogin(username, carId):
     """
     Sign In fucntion with username from facial recognition and carId.
-    Performs GET request to /api/person/<string:username> and does validation checks
-    Then calls confirmBooking()
 
     Args:
         username (string): The entered username
@@ -112,21 +112,51 @@ def FaceLogin(username, carId):
     """
     print(f"Facial Recognition Login - {username} [Car ID({carId})]")
 
-    response = requests.get("http://{}:5000/api/person/{}".format(IPADD, username))
-    if response.status_code != 200:
-        print("Failed Login - No User Registered under username")
-        return {"error": True, "type": "login", "msg": "No user account for User {}".format(username)}
+    postData = {'username': username}
+    response = requests.post(f"{IPADD}/api/auth/mp/login", json=json.dumps(postData))
+    if response.status_code == 200:
+        print("Successful Login")
+        data = response.json()
+        token = {'Authorization': 'Bearer ' + data.get('access_token')}
+        bookingRes = confirmBooking(username, carId, token)
+        if "success" in bookingRes:
+            return {"success": True, "type": "face-login", "msg": f"Logged in User {username}", "bId": bookingRes['bId'], "token": token}
+        if "error" in bookingRes:
+            return {"error": True, "type": "face-login", "msg": f"No active booking for User {username}"}
     else:
-        user = json.loads(response.json())
-        if user['username'] == username:
-            print("Successful Login")
-            bookingRes = confirmBooking(username, carId)
-            if "success" in bookingRes:
-                return {"success": True, "type": "face-login", "msg": f"Logged in User {username}", "bId": bookingRes['bId']}
-            if "error" in bookingRes:
-                return {"error": True, "type": "login", "msg": f"No active booking for User {username}"}
-        else:
-            return {"error": True, "type": "face-login", "msg": "Username does not match"}
+        print("Failed Login - Incorrect Password")
+        return {"error": True, "type": "face-login", "msg": "Incorrect User Credentials"}
+
+def EngLogin(username, carId):
+    """
+    Sign In fucntion with username from QR code and carId.
+
+    Args:
+        username (string): The entered username
+        carId (int): The id of the current car
+
+    Returns:
+        json: Return a json object based on valdation checks for the username and password
+        ex:
+        {"success": True ,"type" : string, "msg" : string}
+        {"error": True ,"type" : string, "msg" : string}
+    """
+    print(f"Facial Recognition Login - {username} [Car ID({carId})]")
+
+    postData = {'username': username}
+    response = requests.post(f"{IPADD}/api/auth/mp/login", json=json.dumps(postData))
+    if response.status_code == 200:
+        print("Successful Login")
+        data = response.json()
+        token = {'Authorization': 'Bearer ' + data.get('access_token')}
+        repairRes = confirmRepair(username, carId, token)
+        if "success" in repairRes:
+            return {"success": True, "type": "eng-login", "msg": f"Logged in Engineer {username}", "token": token}
+        if "error" in repairRes:
+            return {"error": True, "type": "eng-login", "msg": "Car does not require service"}
+    else:
+        print("Failed Login - No existing engineer!")
+        return {"error": True, "type": "eng-login", "msg": "Incorrect User Credentials"}
 
 def Logout(username, carId, bId, token):
     """
@@ -186,6 +216,32 @@ def confirmBooking(username, carId, token):
         if b['booking']['status'] == "Active" and b['car']['id'] == carId:
             if datetime.strptime(b['booking']['start_time'], "20%y-%m-%dT%H:%M:%S") < datetime.now():
                 return {"success": True, "bId": b['booking']['id']}
+    
+    return {'error': True}
+
+def confirmRepair(carId, token):
+    """
+    Confirm repair by iterating over car status and
+    filter for repair statuss
+
+    Args:
+        carId (int): The id of the current car
+        token (string): Access token for the API
+
+    Returns:
+        json: Return a json object based on valdation checks for the username and password
+        ex:
+        {"success": True}
+        {"error": True}
+    """
+
+    response = requests.get(f"http://{IPADD}:5000/api/car", headers=token)
+    if response.status_code != 200:
+        return {"error": True}
+    carData = json.loads(response.json())
+    for c in carData:
+        if c['status'] == "Not active" and c['id'] == carId:
+            return {"success": True}
     
     return {'error': True}
 
