@@ -44,6 +44,10 @@ def main():
                     elif(data['type'] == 'logout'):
                         result = Logout(data['username'], data['car_id'], data['bId'], data['token'])
                         socket_utils.sendJson(conn, result)
+                     #Engineer Logout
+                    elif(data['type'] == 'eng-comp'):
+                        result = engComp(data['username'], data['car_id'], data['token'])
+                        socket_utils.sendJson(conn, result)
                     #Car login - when car comes online
                     elif(data['type'] == 'carReg'):
                         result = carOnline(data['car_id'], data['lat'], data['lng'], True)
@@ -148,6 +152,9 @@ def EngLogin(username, carId):
     if response.status_code == 200:
         print("Successful Login")
         data = response.json()
+        if data.get('type')!="ENGINEER":
+            return {"error": True, "type": "eng-login", "msg": "User not an Engineer"}
+
         token = {'Authorization': 'Bearer ' + data.get('access_token')}
         repairRes = confirmRepair(username, carId, token)
         if "success" in repairRes:
@@ -183,6 +190,32 @@ def Logout(username, carId, bId, token):
     else:
         print("Failed to Logged out")
         return {"error": True, "type": "logout", "msg": f"No booking for User {username}"}
+
+def engComp(username, carId, token):
+    """
+    Sign out method for user. Takes in the Username, CarId and Booking up
+    Updates the booking as finished if it exists
+
+    Args:
+        username (string): The entered username
+        password (string): The entered password
+        carId (int): The id of the current car
+
+    Returns:
+        json: Return a json object based on valdation checks for the username and password
+        ex:
+        {"success": True, "type": string, "msg": string}
+        {"error": True, "type": string, "msg": string}
+    """
+    print(f"Logout - {username} [Car ID({carId})]")
+
+    response = requests.put(f"http://{IPADD}:5000/api/person/{username}/booking", headers=token)
+    if response.status_code == 200:
+        print("Succesfully Completed Service")
+        return {"success": True, "type": "eng-comp", "msg": f"Logged out Engineer {username}"}
+    else:
+        print("Failed to Complete Service")
+        return {"error": True, "type": "eng-comp", "msg": "Failed to find service car"}
 
 
 def confirmBooking(username, carId, token):
