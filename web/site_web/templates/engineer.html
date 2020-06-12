@@ -16,7 +16,7 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/engineer">CarShare - Manager</a>
+    <a class="navbar-brand" href="/engineer">CarShare - Engineer</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -38,10 +38,12 @@
            data-search="true">
         <thead>
         <tr>
+            <th>Issue number</th>
+            <th>Issue description</th>
             <th>Registration number</th>
-            <th data-sortable="true">Manufacturer (id)</th>
-            <th data-sortable="true">Colour (id)</th>
-            <th data-sortable="true">Type (id)</th>
+            <th>Manufacturer (id)</th>
+            <th>Colour (id)</th>
+            <th>Type (id)</th>
             <th>Latitude</th>
             <th>Longitude</th>
         </tr>
@@ -49,6 +51,8 @@
         <tbody>
         {% for data in car_data %}
             <tr>
+                <td>{{ data['issue'].id }}</td>
+                <td>{{ data['issue'].issue }}</td>
                 <td>{{ data['car'].reg_number }}</td>
                 <td>{{ data['manufacturer'].manufacturer }}</td>
                 <td>{{ data['colour'].colour }} ({{ data['car'].car_colour }})</td>
