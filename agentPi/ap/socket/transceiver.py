@@ -107,6 +107,8 @@ class Transceiver:
             print("Unlocking Car")
         elif(data['type'] == "logout"):
             print("Locking Car")
+        elif(data['type'] == "eng-login"):
+            print("Service Initiated")
         else:
             print("Car Update Done")
 
@@ -127,6 +129,8 @@ class Transceiver:
                 print("Logging in as {}".format(data["username"]))
             elif(data['type'] == 'face-login'):
                 print("Logging in as {}".format(data["username"]))
+            elif(data['type'] == 'eng-login'):
+                print("Logging in engineer {}".format(data["username"]))
             elif(data['type'] == 'logout'):
                 print("Logging out {}".format(data["username"]))
             elif(data['type'] == 'carReg'):
