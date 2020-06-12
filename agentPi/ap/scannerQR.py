@@ -59,7 +59,7 @@ class ScannerQR:
 
         print("[FOUND] Type: {}, Data: {}".format(barcodeType, barcodeData))
         exit = True
-        return {"success": True, "dataType": barcodeType, "data": barcodeData}
+        return {"success": True, "type": barcodeType, "data": barcodeData}
 
       time.sleep(1)
     
