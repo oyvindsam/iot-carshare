@@ -13,6 +13,7 @@
         <tr>
             <th>Car id</th>
             <th>Registration number</th>
+            <th>Issue</th>
             <th data-sortable="true">Manufacturer (id)</th>
             <th data-sortable="true">Colour (id)</th>
             <th data-sortable="true">Type (id)</th>
@@ -27,6 +28,7 @@
             <tr>
                 <td >{{ data['car'].id }} <a href="{{ url_for('.car_detail', id=data['car'].id) }}">Update</a> </td>
                 <td>{{ data['car'].reg_number }}</td>
+                <td>{{ data['issue'].id }}</td>
                 <td>{{ data['manufacturer'].manufacturer }} ({{ data['car'].car_manufacturer }})</td>
                 <td>{{ data['colour'].colour }} ({{ data['car'].car_colour }})</td>
                 <td>{{ data['type'].type }} ({{ data['car'].car_type }})</td>

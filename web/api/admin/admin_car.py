@@ -105,7 +105,8 @@ def get_all_cars():
         'car': CarSchema().dump(car),
         'type': CarTypeSchema().dump(car.type),
         'manufacturer': CarManufacturerSchema().dump(car.manufacturer),
-        'colour': CarColourSchema().dump(car.color)
+        'colour': CarColourSchema().dump(car.color),
+        'issue': CarIssueSchema().dump(car.issue)
     }
         for car in cars]
     return jsonify(car_data), 200
