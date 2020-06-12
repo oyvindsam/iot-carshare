@@ -47,7 +47,7 @@ def create_app(config=None):
 
 if __name__ == '__main__':
     # create app from config
-    app = create_app(CONFIG_FILE_DEV)
+    app = create_app(CONFIG_FILE_PROD)
     with app.app_context():
         populate_db(app)
     app.run(host='127.0.0.1')

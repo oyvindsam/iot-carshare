@@ -21,12 +21,12 @@ def add_booking_admin():
     try:
         booking = schema.loads(request.get_json())
     except ValidationError as ve:
-        return abort(400, description='Invalid booking data')  # wow generic message
+        return abort(400, description=ve.messages)  # wow generic message
     # check that references to data in db is valid
     person = Person.query.filter_by(id=booking.person_id).first()
     car = Car.query.filter_by(id=booking.car_id).first()
     if None in [person, car]:
-        return abort(403, description='Booking references invalid id(s)')
+        return abort(403, description='Booking references invalid person/car id(s)')
 
     # Check that no booking with car is currently active
     if Booking.is_car_busy(booking.start_time, booking.end_time, booking.car_id):
@@ -54,7 +54,6 @@ def get_all_bookings_details():
         'car': CarSchema().dump(booking.car),
         'manufacturer': CarManufacturerSchema().dump(booking.car.manufacturer)
     } for booking in bookings]
-    print(booking_data)
     return jsonify(booking_data), 200
 
 
@@ -94,5 +93,4 @@ def booking(id: int):
         return jsonify('Booking updated successfully'), 200
     else:
         schema = BookingSchema()
-        booking = Booking.query.get(id)
         return jsonify(schema.dumps(booking)), 200

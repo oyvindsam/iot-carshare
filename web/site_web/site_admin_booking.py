@@ -73,10 +73,10 @@ def booking_detail_new():
         response = requests.post(f"{api_address}/api/booking",
                                  json=json.dumps(new_booking),
                                  headers=session['auth'])
-        if response.status_code == 201:
-            return redirect('/admin/booking')
-        error = response.json()['error']
-        return render_template('admin/booking-detail-new.html', form=form, error=error)
+        if 'error' in response.json():
+            return render_template('admin/car-detail-new.html', form=form,
+                                   error=response.json()['error'])
+        return render_template('admin/booking-list.html')
     return render_template('admin/booking-detail-new.html', form=form)
 
 
@@ -104,6 +104,9 @@ def booking_detail(id):
         response = requests.put(f"{api_address}/api/booking/{form.id.data}",
                                 json=json.dumps(new_booking),
                                 headers=session['auth'])
+        if 'error' in response.json():
+            return render_template('admin/booking-detail-new.html', form=form,
+                                   error=response.json()['error'])
         return redirect('/admin/booking')
 
     else:
