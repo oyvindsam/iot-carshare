@@ -105,7 +105,7 @@ def get_cars():
 
     active_bookings = Booking.query.filter_by(status=BookingStatusEnum.ACTIVE)
     active_car_ids = set([b.car.id for b in active_bookings])
-    available_cars = Car.query.filter(~Car.id.in_(active_car_ids))
+    available_cars = Car.query.filter(~Car.id.in_(active_car_ids)).filter(Car.issue == None)
 
     filters = request.values.to_dict()
     if len(filters) > 0:
