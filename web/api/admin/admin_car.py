@@ -122,7 +122,8 @@ def add_car():
         new_car = schema.loads(request.get_json())
     except ValidationError as ve:
         return abort(400, description=ve.messages)
-
+    if Car.query.filter_by(reg_number=new_car.reg_number).first() is not None:
+        return abort(403, description='Conflict, reg number exists!')
     db.session.add(new_car)
     db.session.commit()
     return jsonify(schema.dumps(new_car)), 201
