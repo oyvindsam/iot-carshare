@@ -1,0 +1,44 @@
+{% extends 'admin/admin-base.html' %}
+{% block title %}Add car{% endblock %}
+
+{% block nav %}
+    {% set active_page = "car" %}
+    {% include 'admin/admin-nav.html' %}
+{% endblock %}
+
+{% block content %}
+    {{ error }}
+    {% if form.errors %}
+        {{ form.errors }}
+    {% endif %}
+    <form action="" method="POST">
+        {{ form.csrf_token() }}
+        <table data-toggle="table">
+            <thead>
+            <tr>
+                <th>Registration number</th>
+                <th>Manufacturer id</th>
+                <th>Colour id</th>
+                <th>Type id</th>
+                <th>Seats</th>
+                <th>Hour rate</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ form.reg_number }}</td>
+                <td>{{ form.car_manufacturer }}</td>
+                <td>{{ form.car_colour }} </td>
+                <td>{{ form.car_type }}</td>
+                <td>{{ form.seats }}</td>
+                <td>{{ form.hour_rate }}</td>
+                <td>{{ form.latitude }}</td>
+                <td>{{ form.longitude }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <input type="submit" value="Add car"/>
+    </form>
+{% endblock %}

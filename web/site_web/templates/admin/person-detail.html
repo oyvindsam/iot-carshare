@@ -1,0 +1,47 @@
+{% extends 'admin/admin-base.html' %}
+{% block title %}Person - {{ form.username.data }}{% endblock %}
+
+{% block nav %}
+    {% set active_page = "person" %}
+    {% include 'admin/admin-nav.html' %}
+{% endblock %}
+
+{% block content %}
+    {% if error %}
+        {{ error }}
+    {% endif %}
+    {% if form.errors %}
+        {{ form.errors }}
+    {% endif %}
+    <form action="" method="POST">
+        {{ form.csrf_token() }}
+        <table data-toggle="table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Email</th>
+                <th>Type</th>
+                <th>Password</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ form.id }}</td>
+                <td>{{ form.username }}</td>
+                <td>{{ form.first_name }} </td>
+                <td>{{ form.last_name }} </td>
+                <td>{{ form.email }}</td>
+                <td>{{ form.type }}</td>
+                <td>{{ form.password }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <input type="submit" value="Update"/>
+    </form>
+    <form action="{{ url_for('.person_detail_delete', id=form.id.data) }}" method="POST">
+        <input type="submit" value="Delete">
+    </form>
+{% endblock %}

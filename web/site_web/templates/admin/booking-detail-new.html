@@ -1,0 +1,37 @@
+{% extends 'admin/admin-base.html' %}
+{% block title %}Add booking{% endblock %}
+
+{% block nav %}
+    {% set active_page = "booking" %}
+    {% include 'admin/admin-nav.html' %}
+{% endblock %}
+
+{% block content %}
+    {% if error %}
+        {{ error }}
+    {% endif %}
+    <form action="" method="POST">
+        {{ form.csrf_token() }}
+        <table data-toggle="table">
+            <thead>
+            <tr>
+                <th>Customer id</th>
+                <th>Car id</th>
+                <th>Start time</th>
+                <th>End time</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ form.person_id }}</td>
+                <td>{{ form.car_id }}</td>
+                <td>{{ form.start_time }}</td>
+                <td>{{ form.end_time }}</td>
+                <td>{{ form.status }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <input type="submit" value="Create new booking"/>
+    </form>
+{% endblock %}
