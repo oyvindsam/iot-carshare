@@ -54,12 +54,13 @@ class ScannerQR:
       barcodes = pyzbar.decode(frame)
 
       for barcode in barcodes:
-        barcodeData = barcode.data.decode("utf-8")
         barcodeType = barcode.type
-
-        print("[FOUND] Type: {}, Data: {}".format(barcodeType, barcodeData))
-        exit = True
-        return {"success": True, "type": barcodeType, "data": barcodeData}
+        if barcodeType == "QRCODE":
+          barcodeData = barcode.data.decode("utf-8")
+          
+          print("[FOUND] Type: {}, Data: {}".format(barcodeType, barcodeData))
+          exit = True
+          return {"success": True, "type": barcodeType, "data": barcodeData}
 
       time.sleep(1)
     

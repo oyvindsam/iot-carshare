@@ -134,7 +134,7 @@ class Credentials:
 
         if (self.__user_exists == True):
             result = self.__scanQR.scanQR()
-            if result['type'] == "qr":
+            if result['type'] == "QRCODE":
                 data = {"type": "eng-login", "username": result['data'], "dateTime": datetime.now().isoformat(), "car_id": carId}
                 res = self.__trans.send(data)
                 if "success" in res:
@@ -144,7 +144,7 @@ class Credentials:
                     self.__user_token = res['token']
                 return res
             else:
-                return {"error": True ,"type" : "eng-login", "msg" : "No User Logged In"}
+                return {"error": True ,"type" : "eng-login", "msg" : "Invalid QR code format"}
         else:
             return {"error": True ,"type" : "eng-login", "msg" : "Current Login Already Exists"}
 
