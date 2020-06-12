@@ -2,6 +2,7 @@ from flask import jsonify, request, abort
 from marshmallow import ValidationError
 
 from api import api_blueprint
+from api.api import handle_db_operation
 from api.auth import role_required
 from api.models import db, Person, BookingSchema, \
     Booking, Car, PersonType, CarSchema, PersonSchema, CarManufacturerSchema
@@ -34,7 +35,7 @@ def add_booking_admin():
                                       f' is already mad in that time period')
 
     db.session.add(booking)
-    db.session.commit()
+    handle_db_operation(db.session.commit)
     return schema.jsonify(booking), 201
 
 
@@ -75,7 +76,7 @@ def booking(id: int):
 
     if request.method == 'DELETE':
         Booking.query.filter_by(id=id).delete()
-        db.session.commit()
+        handle_db_operation(db.session.commit)
         return jsonify('Booking deleted'), 200
     elif request.method == 'PUT':
         schema = BookingSchema()
@@ -89,7 +90,7 @@ def booking(id: int):
         booking.start_time = new_booking.start_time
         booking.end_time = new_booking.end_time
         booking.status = new_booking.status
-        db.session.commit()
+        handle_db_operation(db.session.commit)
         return jsonify('Booking updated successfully'), 200
     else:
         schema = BookingSchema()

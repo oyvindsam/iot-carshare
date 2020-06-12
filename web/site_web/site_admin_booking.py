@@ -105,7 +105,7 @@ def booking_detail(id):
                                 json=json.dumps(new_booking),
                                 headers=session['auth'])
         if 'error' in response.json():
-            return render_template('admin/booking-detail-new.html', form=form,
+            return render_template('admin/booking-detail.html', form=form,
                                    error=response.json()['error'])
         return redirect('/admin/booking')
 

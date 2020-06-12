@@ -109,7 +109,7 @@ def car_detail(id):
                 return redirect('/admin/car')
         # catch all response errors
         if 'error' in response.json():
-            return render_template('admin/car-detail-new.html', form=form,
+            return render_template('admin/car-detail.html', form=form,
                                    error=response.json()['error'])
     else:
         car_data = requests.get(f"{api_address}/api/admin/car/{id}",

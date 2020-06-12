@@ -5,6 +5,7 @@ from marshmallow import ValidationError
 from werkzeug.security import generate_password_hash
 
 from api import api_blueprint
+from api.api import handle_db_operation
 from api.auth import role_required
 from api.models import db, PersonType, PersonSchema, Person
 
@@ -46,12 +47,12 @@ def person(id: int):
         else:
             person.password = new_person.password
 
-        db.session.commit()
+        handle_db_operation(db.session.commit)
         return jsonify('Person updated'), 200
 
     elif request.method == 'DELETE':
         Person.query.filter_by(id=id).delete()
-        db.session.commit()
+        handle_db_operation(db.session.commit)
         return jsonify('Person deleted'), 200
 
 
@@ -85,6 +86,6 @@ def add_person():
     if not new_person.password.startswith('pbkdf2'):
         new_person.password = generate_password_hash(new_person.password)
     db.session.add(new_person)
-    db.session.commit()
+    handle_db_operation(db.session.commit)
 
     return jsonify(schema.dumps(new_person)), 201

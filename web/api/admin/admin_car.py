@@ -4,6 +4,7 @@ from flask import jsonify, request, abort
 from marshmallow import ValidationError
 
 from api import api_blueprint
+from api.api import handle_db_operation
 from api.auth import role_required
 from api.models import db, Car, PersonType, CarSchema, CarIssue, \
     CarIssueSchema, CarTypeSchema, CarManufacturerSchema, CarColourSchema
@@ -31,15 +32,16 @@ def issue(car_id: int):
         return abort(400, description=ve.messages)
 
     # issue text is removed -> delete issue from db
-    if len(issue.issue) == 0:
+    if len(issue.issue) == 0 and car.issue:
         CarIssue.query.filter_by(id=car.issue.id).delete()
-        db.session.commit()
+        handle_db_operation(db.session.commit)
         return jsonify('Issue deleted!'), 200
 
     # add or update car issue
     db.session.add(issue)
     car.issue = issue
-    db.session.commit()
+
+    handle_db_operation(db.session.commit)
     return jsonify('Issue updated'), 200
 
 
@@ -81,12 +83,12 @@ def car(id: int):
         car.longitude = new_car.longitude
         car.latitude = new_car.latitude
 
-        db.session.commit()
+        handle_db_operation(db.session.commit)
         return jsonify('Car updated'), 200
 
     elif request.method == 'DELETE':
         Car.query.filter_by(id=id).delete()
-        db.session.commit()
+        handle_db_operation(db.session.commit)
         return jsonify('Car deleted'), 200
 
 
@@ -125,5 +127,5 @@ def add_car():
     if Car.query.filter_by(reg_number=new_car.reg_number).first() is not None:
         return abort(403, description='Conflict, reg number exists!')
     db.session.add(new_car)
-    db.session.commit()
+    handle_db_operation(db.session.commit)
     return jsonify(schema.dumps(new_car)), 201
