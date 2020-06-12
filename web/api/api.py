@@ -101,7 +101,7 @@ def get_cars():
 
 
 @api_blueprint.route('/car/<int:id>/location', methods=['PUT'])
-@jwt_required
+#@jwt_required
 def update_car_location(id: int):
     """
     Updates car in db (mainly for location).
