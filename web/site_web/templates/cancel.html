@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Cancel Booking</title>
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/time.css') }}">
+</head>
+
+<body>
+    <h1>Cancel Booking?</h1>
+    <div class="container">
+      <table border="4" width="100%" id="table_format">
+        <tbody>
+          <tr>
+          <th>Booking id</th>
+          <th>Car id</th>
+          <th>Username</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Status</th>
+          <th colspan="1">Actions</th>
+          
+          <tr>
+              <td>{{info.bookingID}}</td>
+              <td>{{info.cid}}</td>
+              <td>{{info.username}}</td>
+              <td>{{info.start_time}}</td>
+              <td>{{info.end_time}}</td>
+              <td>{{info.status}}</td>
+              <td><form action="{{ url_for('.cancelbook')}}" method="POST">
+                <input type="hidden" id="bookingId" name="bookingId" value={{info.bookingID}}>
+                <input type="hidden" id="username" name="username" value={{info.username}}>
+                <input type="hidden" id="googleid" name="googleid" value={{info.googleID}}>
+                <input type="submit" value="Cancel Booking">
+              </form>
+            </td>
+          </tr> 
+        
+      </tbody>
+      </table>
+  </div>
+</body>
+</html>

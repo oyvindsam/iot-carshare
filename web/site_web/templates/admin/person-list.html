@@ -1,0 +1,35 @@
+{% extends 'admin/admin-base.html' %}
+{% block title %}Persons{% endblock %}
+
+{% block nav %}
+    {% set active_page = "person" %}
+    {% include 'admin/admin-nav.html' %}
+{% endblock %}
+
+{% block content %}
+    <table data-toggle="table"
+           data-search="true">
+        <thead>
+        <tr>
+            <th data-sortable="true">Person id</th>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th data-sortable="true">Type</th>
+            <th>Password</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for person in person_data %}
+            <tr>
+                <td>{{ person.id }} <a href="{{ url_for('.person_detail', id=person.id) }}">Update</a> </td>
+                <td>{{ person.username }}</td>
+                <td>{{ person.first_name }} {{ person.last_name }}</td>
+                <td>{{ person.email }}</td>
+                <td>{{ person.type }}</td>
+                <td>{{ person.password }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

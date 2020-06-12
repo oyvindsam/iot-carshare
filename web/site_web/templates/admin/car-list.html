@@ -1,0 +1,41 @@
+{% extends 'admin/admin-base.html' %}
+{% block title %}Cars{% endblock %}
+
+{% block nav %}
+    {% set active_page = "car" %}
+    {% include 'admin/admin-nav.html' %}
+{% endblock %}
+
+{% block content %}
+    <table data-toggle="table"
+           data-search="true">
+        <thead>
+        <tr>
+            <th>Car id</th>
+            <th>Registration number</th>
+            <th data-sortable="true">Manufacturer (id)</th>
+            <th data-sortable="true">Colour (id)</th>
+            <th data-sortable="true">Type (id)</th>
+            <th data-sortable="true">Seats</th>
+            <th data-sortable="true">Hour rate</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for data in car_data %}
+            <tr>
+                <td >{{ data['car'].id }} <a href="{{ url_for('.car_detail', id=data['car'].id) }}">Update</a> </td>
+                <td>{{ data['car'].reg_number }}</td>
+                <td>{{ data['manufacturer'].manufacturer }} ({{ data['car'].car_manufacturer }})</td>
+                <td>{{ data['colour'].colour }} ({{ data['car'].car_colour }})</td>
+                <td>{{ data['type'].type }} ({{ data['car'].car_type }})</td>
+                <td>{{ data['car'].seats }}</td>
+                <td>{{ data['car'].hour_rate }}</td>
+                <td>{{ data['car'].latitude }}</td>
+                <td>{{ data['car'].longitude }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title%}History{% endblock %}
+
+{% block head %}
+    {{ super() }} <!-- this is necessary to load the css (i think) -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/history.css') }}">
+{% endblock %}}
+
+
+{% set active_page = "history" %}
+{% include 'customer_header.html' %}
+
+
+{% block content %}
+    <h1 class="align">Current Bookings</h1>
+
+    <div class="container">
+        <table border="4" width="100%" id="table_format">
+            <tbody>
+            <tr>
+                <th>Booking id</th>
+                <th class='skip-filter'>Car id</th>
+                <th class='skip-filter'>Person Username</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Status</th>
+                <th class='skip-filter'>Actions</th>
+
+                {%for b in bookings%}
+                    <tr>
+                        <td>{{b.booking.id}}</td>
+                        <td>{{b.car.id}}</td>
+                        <td>{{b.person.username}}</td>
+                        <td>{{b.booking.start_time}}</td>
+                        <td>{{b.booking.end_time}}</td>
+                        <td>{{b.booking.status}}</td>
+
+                        <td><form action="{{ url_for('site.cancel')}}" method="POST">
+                            <input type="hidden" id="bookingId" name="bookingId" value={{b.booking.id}}>
+                            <input type="hidden" id="gid" name="gid" value={{b.booking.google_calendar_id}}>
+                            <input type="hidden" id="cid" name="cid" value={{b.car.id}}>
+                            <input type="hidden" id="pusr" name="pusr" value={{b.person.username}}>
+                            <input type="hidden" id="starttime" name="starttime" value={{b.booking.start_time}}>
+                            <input type="hidden" id="endtime" name="endtime" value={{b.booking.end_time}}>
+                            <input type="hidden" id="bstatus" name="bstatus" value={{b.booking.status}}>
+                            <input type="submit" value="Cancel Booking">
+                        </form></td>
+                    </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'admin/admin-base.html' %}
+{% block title %}Booking{% endblock %}
+
+{% block nav %}
+    {% set active_page = "booking" %}
+    {% include 'admin/admin-nav.html' %}
+{% endblock %}
+
+{% block content %}
+    <table data-toggle="table"
+           data-search="true">
+        <thead>
+        <tr>
+            <th data-sortable="true">Booking id</th>
+            <th>Username (id)</th>
+            <th>Customer name</th>
+            <th>Car regnr. (id)</th>
+            <th>Car manufacturer</th>
+            <th data-sortable="true">Start time</th>
+            <th data-sortable="true">End time</th>
+            <th data-sortable="true">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for data in booking_data %}
+            <tr>
+                <td>{{ data['booking'].id }} <a href="{{ url_for('.booking_detail', id=data['booking'].id) }}">Update</a> </td>
+                <td>{{ data['person'].username }} ({{ data['person'].id }})</td>
+                <td>{{ data['person'].first_name }} {{ data['person'].last_name }}</td>
+                <td>{{ data['car'].reg_number }} ({{ data['booking'].car_id }})</td>
+                <td>{{ data['manufacturer'].manufacturer }}</td>
+                <td>{{ data['booking'].start_time }}</td>
+                <td>{{ data['booking'].end_time }}</td>
+                <td>{{ data['booking'].status }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
