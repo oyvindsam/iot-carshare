@@ -35,12 +35,15 @@ def create_app(config=None):
     # Load configuration from external file, or use production config
     if config is None:
         app.config.from_object(CONFIG_FILE_PROD)
-        with app.app_context():
-            populate_db(app)
     else:
         app.config.from_object(config)
 
     db.init_app(app)
+
+    if config is None:
+        with app.app_context():
+            populate_db(app)
+
     app.register_blueprint(api_blueprint, url_prefix='/api')
     jwt.init_app(app)
     app.register_blueprint(site_blueprint)
