@@ -58,6 +58,10 @@ class Car(db.Model):
     color = db.relationship('CarColour', backref='car', lazy=True)
     type = db.relationship('CarType', backref='car', lazy=True)
 
+    @classmethod
+    def has_issue(cls):
+        return Car.issue is not None
+
 
 class CarIssue(db.Model):
     """
