@@ -37,11 +37,14 @@ def issue(car_id: int):
         handle_db_operation(db.session.commit)
         return jsonify('Issue deleted!'), 200
 
-    # add or update car issue
-    db.session.add(issue)
-    car.issue = issue
+    if car.issue:
+        car.issue.issue = issue.issue
+    else:
+        db.session.add(issue)
+        car.issue = issue
 
     handle_db_operation(db.session.commit)
+
     return jsonify('Issue updated'), 200
 
 
