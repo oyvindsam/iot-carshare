@@ -13,8 +13,8 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../web'))
 sys.path.insert(0, os.path.abspath('../agentPi'))
-sys.path.insert(0, os.path.abspath('../agentPi/ap'))
 sys.path.insert(0, os.path.abspath('../masterPiSocket'))
 
 # -- Project information -----------------------------------------------------

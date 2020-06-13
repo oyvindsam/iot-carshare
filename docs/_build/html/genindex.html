@@ -39,12 +39,15 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
  | <a href="#U"><strong>U</strong></a>
  | <a href="#W"><strong>W</strong></a>
  
@@ -52,23 +55,53 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#web.api.api.add_booking">add_booking() (in module web.api.api)</a>
+      <li><a href="index.html#web.api.booking.add_booking">add_booking() (in module web.api.booking)</a>
 </li>
-      <li><a href="index.html#web.api.api.add_person">add_person() (in module web.api.api)</a>
+      <li><a href="index.html#web.api.admin.admin_booking.add_booking_admin">add_booking_admin() (in module web.api.admin.admin_booking)</a>
 </li>
-      <li><a href="index.html#web.api.api.add_person2">add_person2() (in module web.api.api)</a>
+      <li><a href="index.html#web.api.admin.admin_car.add_car">add_car() (in module web.api.admin.admin_car)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#web.api.api.add_person_type">add_person_type() (in module web.api.api)</a>
+      <li><a href="index.html#web.api.admin.admin_person.add_person">add_person() (in module web.api.admin.admin_person)</a>
 </li>
       <li>
-    ap.socket.transceiver
+    agentPi.ap.credentials
 
       <ul>
-        <li><a href="index.html#module-ap.socket.transceiver">module</a>
+        <li><a href="index.html#module-agentPi.ap.credentials">module</a>
 </li>
       </ul></li>
+      <li>
+    agentPi.ap.facialRec.facial
+
+      <ul>
+        <li><a href="index.html#module-agentPi.ap.facialRec.facial">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    agentPi.ap.scannerQR
+
+      <ul>
+        <li><a href="index.html#module-agentPi.ap.scannerQR">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentPi.ap.socket.transceiver
+
+      <ul>
+        <li><a href="index.html#module-agentPi.ap.socket.transceiver">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentPi.APmain
+
+      <ul>
+        <li><a href="index.html#module-agentPi.APmain">module</a>
+</li>
+      </ul></li>
+      <li><a href="index.html#agentPi.APmain.APMain">APMain (class in agentPi.APmain)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -79,6 +112,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#web.api.admin.admin_booking.booking">booking() (in module web.api.admin.admin_booking)</a>
+</li>
       <li><a href="index.html#web.api.models.BookingSchema">BookingSchema (class in web.api.models)</a>
 </li>
   </ul></td>
@@ -89,15 +124,25 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#web.api.models.Car">Car (class in web.api.models)</a>
 </li>
+      <li><a href="index.html#web.api.admin.admin_car.car">car() (in module web.api.admin.admin_car)</a>
+</li>
+      <li><a href="index.html#web.api.manager.car_usage">car_usage() (in module web.api.manager)</a>
+</li>
       <li><a href="index.html#web.api.models.CarColour">CarColour (class in web.api.models)</a>
 </li>
       <li><a href="index.html#web.api.models.CarColourSchema">CarColourSchema (class in web.api.models)</a>
 </li>
-      <li><a href="index.html#web.api.models.CarManufacturer">CarManufacturer (class in web.api.models)</a>
+      <li><a href="index.html#web.api.models.CarIssue">CarIssue (class in web.api.models)</a>
+</li>
+      <li><a href="index.html#web.api.models.CarIssueSchema">CarIssueSchema (class in web.api.models)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#web.api.models.CarManufacturer">CarManufacturer (class in web.api.models)</a>
+</li>
       <li><a href="index.html#web.api.models.CarManufacturerSchema">CarManufacturerSchema (class in web.api.models)</a>
+</li>
+      <li><a href="index.html#masterPiSocket.master.carOnline">carOnline() (in module masterPiSocket.master)</a>
 </li>
       <li><a href="index.html#web.api.models.CarSchema">CarSchema (class in web.api.models)</a>
 </li>
@@ -105,7 +150,9 @@
 </li>
       <li><a href="index.html#web.api.models.CarTypeSchema">CarTypeSchema (class in web.api.models)</a>
 </li>
-      <li><a href="index.html#master.confirmBooking">confirmBooking() (in module master)</a>
+      <li><a href="index.html#masterPiSocket.master.confirmBooking">confirmBooking() (in module masterPiSocket.master)</a>
+</li>
+      <li><a href="index.html#masterPiSocket.master.confirmRepair">confirmRepair() (in module masterPiSocket.master)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -113,7 +160,19 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#web.api.api.deactivate_booking">deactivate_booking() (in module web.api.api)</a>
+      <li><a href="index.html#web.api.booking.deactivate_booking">deactivate_booking() (in module web.api.booking)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#masterPiSocket.master.engComp">engComp() (in module masterPiSocket.master)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#masterPiSocket.master.EngLogin">EngLogin() (in module masterPiSocket.master)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -121,7 +180,7 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#master.FaceLogin">FaceLogin() (in module master)</a>
+      <li><a href="index.html#masterPiSocket.master.FaceLogin">FaceLogin() (in module masterPiSocket.master)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -129,16 +188,24 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#web.api.api.get_booking">get_booking() (in module web.api.api)</a>
+      <li><a href="index.html#web.api.admin.admin_booking.get_all_bookings_details">get_all_bookings_details() (in module web.api.admin.admin_booking)</a>
 </li>
-      <li><a href="index.html#web.api.api.get_bookings">get_bookings() (in module web.api.api)</a>
+      <li><a href="index.html#web.api.admin.admin_car.get_all_cars">get_all_cars() (in module web.api.admin.admin_car)</a>
 </li>
+      <li><a href="index.html#web.api.engineer.get_all_cars_with_issue">get_all_cars_with_issue() (in module web.api.engineer)</a>
+</li>
+      <li><a href="index.html#web.api.admin.admin_person.get_all_persons">get_all_persons() (in module web.api.admin.admin_person)</a>
+</li>
+      <li><a href="index.html#web.api.booking.get_booking">get_booking() (in module web.api.booking)</a>
+</li>
+      <li><a href="index.html#web.api.booking.get_bookings">get_bookings() (in module web.api.booking)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#web.api.api.get_car_colours">get_car_colours() (in module web.api.api)</a>
 </li>
       <li><a href="index.html#web.api.api.get_car_types">get_car_types() (in module web.api.api)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#web.api.api.get_cars">get_cars() (in module web.api.api)</a>
 </li>
       <li><a href="index.html#web.api.api.get_manufacturers">get_manufacturers() (in module web.api.api)</a>
@@ -150,14 +217,26 @@
   </ul></td>
 </tr></table>
 
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#web.api.api.handle_db_operation">handle_db_operation() (in module web.api.api)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#web.api.models.PersonSchema.Meta.include_fk">include_fk (web.api.models.PersonSchema.Meta attribute)</a>
 </li>
+      <li><a href="index.html#web.api.models.Booking.is_car_busy">is_car_busy() (web.api.models.Booking class method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#web.api.models.Booking.is_car_busy">is_car_busy() (web.api.models.Booking class method)</a>
+      <li><a href="index.html#web.api.booking.is_valid_user">is_valid_user() (in module web.api.booking)</a>
+</li>
+      <li><a href="index.html#web.api.admin.admin_car.issue">issue() (in module web.api.admin.admin_car)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -165,13 +244,15 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#master.Login">Login() (in module master)</a>
+      <li><a href="index.html#masterPiSocket.master.Login">Login() (in module masterPiSocket.master)</a>
+</li>
+      <li><a href="index.html#web.api.auth.login_mp_user">login_mp_user() (in module web.api.auth)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#web.api.api.loginUser">loginUser() (in module web.api.api)</a>
+      <li><a href="index.html#web.api.auth.login_user">login_user() (in module web.api.auth)</a>
 </li>
-      <li><a href="index.html#master.Logout">Logout() (in module master)</a>
+      <li><a href="index.html#masterPiSocket.master.Logout">Logout() (in module masterPiSocket.master)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -183,30 +264,52 @@
 </li>
       <li><a href="index.html#web.api.models.CarSchema.make_car">make_car() (web.api.models.CarSchema method)</a>
 </li>
+      <li><a href="index.html#web.api.models.CarIssueSchema.make_issue">make_issue() (web.api.models.CarIssueSchema method)</a>
+</li>
       <li><a href="index.html#web.api.models.PersonSchema.make_person">make_person() (web.api.models.PersonSchema method)</a>
 </li>
-      <li><a href="index.html#web.api.models.PersonTypeSchema.make_person_type">make_person_type() (web.api.models.PersonTypeSchema method)</a>
-</li>
       <li>
-    master
+    masterPiSocket.master
 
       <ul>
-        <li><a href="index.html#module-master">module</a>
+        <li><a href="index.html#module-masterPiSocket.master">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#web.api.models.PersonSchema.Meta.model">model (web.api.models.PersonSchema.Meta attribute)</a>
 </li>
       <li>
     module
 
       <ul>
-        <li><a href="index.html#module-ap.socket.transceiver">ap.socket.transceiver</a>
+        <li><a href="index.html#module-agentPi.ap.credentials">agentPi.ap.credentials</a>
 </li>
-        <li><a href="index.html#module-master">master</a>
+        <li><a href="index.html#module-agentPi.ap.facialRec.facial">agentPi.ap.facialRec.facial</a>
+</li>
+        <li><a href="index.html#module-agentPi.ap.scannerQR">agentPi.ap.scannerQR</a>
+</li>
+        <li><a href="index.html#module-agentPi.ap.socket.transceiver">agentPi.ap.socket.transceiver</a>
+</li>
+        <li><a href="index.html#module-agentPi.APmain">agentPi.APmain</a>
+</li>
+        <li><a href="index.html#module-masterPiSocket.master">masterPiSocket.master</a>
+</li>
+        <li><a href="index.html#module-web.api.admin.admin">web.api.admin.admin</a>
+</li>
+        <li><a href="index.html#module-web.api.admin.admin_booking">web.api.admin.admin_booking</a>
+</li>
+        <li><a href="index.html#module-web.api.admin.admin_car">web.api.admin.admin_car</a>
+</li>
+        <li><a href="index.html#module-web.api.admin.admin_person">web.api.admin.admin_person</a>
 </li>
         <li><a href="index.html#module-web.api.api">web.api.api</a>
+</li>
+        <li><a href="index.html#module-web.api.auth">web.api.auth</a>
+</li>
+        <li><a href="index.html#module-web.api.booking">web.api.booking</a>
+</li>
+        <li><a href="index.html#module-web.api.engineer">web.api.engineer</a>
+</li>
+        <li><a href="index.html#module-web.api.manager">web.api.manager</a>
 </li>
         <li><a href="index.html#module-web.api.models">web.api.models</a>
 </li>
@@ -219,15 +322,25 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="index.html#web.api.models.Person">Person (class in web.api.models)</a>
 </li>
-      <li><a href="index.html#web.api.models.PersonSchema">PersonSchema (class in web.api.models)</a>
+      <li><a href="index.html#web.api.admin.admin_person.person">person() (in module web.api.admin.admin_person)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#web.api.models.PersonSchema">PersonSchema (class in web.api.models)</a>
+</li>
       <li><a href="index.html#web.api.models.PersonSchema.Meta">PersonSchema.Meta (class in web.api.models)</a>
 </li>
-      <li><a href="index.html#web.api.models.PersonType">PersonType (class in web.api.models)</a>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#web.api.auth.register_user">register_user() (in module web.api.auth)</a>
 </li>
-      <li><a href="index.html#web.api.models.PersonTypeSchema">PersonTypeSchema (class in web.api.models)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="index.html#web.api.auth.role_required">role_required() (in module web.api.auth)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -239,7 +352,9 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="index.html#master.updateLocation">updateLocation() (in module master)</a>
+      <li><a href="index.html#masterPiSocket.master.updateLocation">updateLocation() (in module masterPiSocket.master)</a>
+</li>
+      <li><a href="index.html#masterPiSocket.master.updateOnly">updateOnly() (in module masterPiSocket.master)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -247,6 +362,34 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    web.api.admin.admin
+
+      <ul>
+        <li><a href="index.html#module-web.api.admin.admin">module</a>
+</li>
+      </ul></li>
+      <li>
+    web.api.admin.admin_booking
+
+      <ul>
+        <li><a href="index.html#module-web.api.admin.admin_booking">module</a>
+</li>
+      </ul></li>
+      <li>
+    web.api.admin.admin_car
+
+      <ul>
+        <li><a href="index.html#module-web.api.admin.admin_car">module</a>
+</li>
+      </ul></li>
+      <li>
+    web.api.admin.admin_person
+
+      <ul>
+        <li><a href="index.html#module-web.api.admin.admin_person">module</a>
+</li>
+      </ul></li>
       <li>
     web.api.api
 
@@ -256,6 +399,34 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    web.api.auth
+
+      <ul>
+        <li><a href="index.html#module-web.api.auth">module</a>
+</li>
+      </ul></li>
+      <li>
+    web.api.booking
+
+      <ul>
+        <li><a href="index.html#module-web.api.booking">module</a>
+</li>
+      </ul></li>
+      <li>
+    web.api.engineer
+
+      <ul>
+        <li><a href="index.html#module-web.api.engineer">module</a>
+</li>
+      </ul></li>
+      <li>
+    web.api.manager
+
+      <ul>
+        <li><a href="index.html#module-web.api.manager">module</a>
+</li>
+      </ul></li>
       <li>
     web.api.models
 

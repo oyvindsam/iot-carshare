@@ -16,6 +16,11 @@ def get_folder():
 
 @api_blueprint.route('/manager/statistics/car-usage', methods=['GET'])
 def car_usage():
+    """
+    Get car usage statuistics
+    Returns: link to image
+
+    """
     bookings = Booking.query.all()
     times = []
     for booking in bookings:
