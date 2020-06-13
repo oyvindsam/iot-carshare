@@ -1,0 +1,20 @@
+Aditya Raj (s3730562):
+	- Admin Page
+		- Google voice search Integration
+	- Engineer page
+		- Google maps Integration
+
+Oyvind Samuelsen (s3801950):
+	- Statistical data representation with google cloud studio
+	- Front-end + back-end:
+		- Manager
+		- Engineer
+		- Admin
+
+Samit Sharma (s3752136):
+	- Engineer Authentication
+		- QR code
+		- Bluetooth
+	- Sockets Integration
+
+Sagar Chandrakant Pardikar (s3715199):
