@@ -59,19 +59,33 @@ python3 APmain.py
 
     Aditya Raj (s3730562):
 
-    - (MP) Designed the website (booking, cancel booking etc)
+    - Designed the website (booking, cancel booking etc)
     - Google calendar integration
+    - Admin Page
+		- Google voice search Integration
+	- Engineer page
+		- Google maps Integration
 
     Oyvind Samuelsen (s3801950):
 
     - Setting up Restful/Flask API environment
     - Implement Appropriate restful function calls
     - Tests
+    - Statistical data representation with google cloud studio
+	- Front-end + back-end:
+		- Manager
+		- Engineer
+		- Admin
 
     Samit Sharma (s3752136):
 
-    - (AP) Facial Recognition
-    - (MP) Socket
+    - User Authentication
+    - Facial Recognition
+    - Socket
+    - Engineer Authentication
+		- QR code
+		- Bluetooth
+	- Sockets Integration
 
     Sagar Chandrakant Pardikar (s3715199):
 
