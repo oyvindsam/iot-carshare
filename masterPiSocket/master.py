@@ -210,7 +210,7 @@ def engComp(username, carId, token):
     """
     print(f"Logout - {username} [Car ID({carId})]")
 
-    issue = {'issue': ""}
+    issue = {'car_id': carId, 'issue': f"Service complete by - {username}"}
 
     response = requests.post(f"http://{IPADD}:5000/api/admin/car/{carId}/issue", headers=token, json=json.dumps(issue))
     if response.status_code == 200:
