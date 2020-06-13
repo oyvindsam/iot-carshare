@@ -100,3 +100,30 @@ def login_user():
     }
     return jsonify(response), 200
 
+@api_blueprint.route('/auth/mp/login', methods=['POST'])
+def login_mp_user():
+    """
+    Get user username from form post, try to log in user.
+    Returns: http 200 response with json data with token, and user details
+
+    """
+    data = request.get_json()
+    username = data.get('username', None)
+    if username is None:
+        return abort(400, description='Invalid data passed')
+
+    # check if user exists, then check password
+    person = Person.query.filter_by(username=username).first()
+    if person is None:
+        return abort(403, 'Invalid username')
+
+    # currently the token does not expire!
+    access_token = create_access_token(identity=person, expires_delta=False)
+    response = {
+        'access_token': access_token,
+        'username': person.username,
+        'type': person.type,
+        'email': person.email
+    }
+    return jsonify(response), 200
+

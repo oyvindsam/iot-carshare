@@ -61,6 +61,7 @@ flask-bootstrap = "*"
 matplotlib = "*"
 flask-wtf = "*"
 email-validator = "*"
+pyzbar = "*"
 
 [requires]
 python_version = "3"
