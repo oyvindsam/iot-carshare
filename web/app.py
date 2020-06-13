@@ -14,6 +14,8 @@ from site_web import site_blueprint
 CONFIG_FILE_PROD = 'carshare_config_local.ProductionConfig'
 CONFIG_FILE_DEV = 'carshare_config_local.DevelopmentConfig'
 
+api_address = 'http://127.0.0.1:5000'
+
 
 def create_app(config=None):
     """

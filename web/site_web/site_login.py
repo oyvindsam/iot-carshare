@@ -3,8 +3,8 @@ from functools import wraps
 import requests
 from flask import request, render_template, g, redirect, session, abort
 
+from app import api_address
 from site_web import site_blueprint
-from site_web.flask_site import api_address
 
 
 def require_type(required_type):

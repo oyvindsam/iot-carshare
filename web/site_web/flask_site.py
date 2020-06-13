@@ -1,5 +1,4 @@
 import ast
-import base64
 import json
 import os
 import os.path
@@ -15,9 +14,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from oauth2client import file
 
+from app import api_address
 from site_web import site_blueprint
-
-api_address = 'http://127.0.0.1:5000'
 
 
 # Client Landing webpage.

@@ -2,7 +2,7 @@ import requests
 from flask import render_template, session
 
 from site_web import site_blueprint
-from site_web.flask_site import api_address
+from app import api_address
 from site_web.site_login import require_type
 
 

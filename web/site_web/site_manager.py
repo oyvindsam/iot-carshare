@@ -1,6 +1,3 @@
-import base64
-
-import PIL
 import requests
 from flask import render_template
 

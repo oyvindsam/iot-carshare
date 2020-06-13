@@ -9,7 +9,7 @@ from wtforms.fields.html5 import IntegerField
 from wtforms.validators import InputRequired
 
 from site_web import site_blueprint
-from site_web.flask_site import api_address
+from app import api_address
 
 
 class CarForm(FlaskForm):
