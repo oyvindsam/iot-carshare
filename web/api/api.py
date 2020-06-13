@@ -1,8 +1,8 @@
 from flask import jsonify, request, abort
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError, IntegrityError
 
-from api import api_blueprint, jwt
+from api import api_blueprint
 from .auth import role_required
 from .booking import is_valid_user
 from .models import db, Person, PersonSchema, Booking, Car, CarSchema, \
@@ -46,6 +46,25 @@ def conflict(e):
     return jsonify(error=str(e)), 409
 
 
+# catchall server error
+@api_blueprint.errorhandler(500)
+def server_error(e):
+    return jsonify(error=str(e)), 500
+
+
+def handle_db_operation(db_transaction):
+    """
+    Wrap all db call with this, to catch errors
+    Returns: wrapped function, or error
+
+    """
+
+    try:
+        return db_transaction()
+    except IntegrityError as ie:
+        return abort(500, description='Failed to commit to database, check foreign keys')
+
+
 @api_blueprint.route('/person/<string:username>', methods=['GET'])
 @role_required([PersonType.CUSTOMER, PersonType.ADMIN])
 def get_person(username: str):
@@ -86,7 +105,7 @@ def get_cars():
 
     active_bookings = Booking.query.filter_by(status=BookingStatusEnum.ACTIVE)
     active_car_ids = set([b.car.id for b in active_bookings])
-    available_cars = Car.query.filter(~Car.id.in_(active_car_ids))
+    available_cars = Car.query.filter(~Car.id.in_(active_car_ids)).filter(Car.issue == None)
 
     filters = request.values.to_dict()
     if len(filters) > 0:

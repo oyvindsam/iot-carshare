@@ -84,38 +84,45 @@ class StatisticsTest(TestCase):
 
             booking6 = duplicate_db_object(BookingSchema, booking1)
             booking6.car_id = car2.id
-            booking6.start_time = datetime.now() - timedelta(days=6)
-            booking6.end_time = datetime.now() - timedelta(days=5, hours=5)
+            booking6.start_time = datetime.now() - timedelta(days=5)
+            booking6.end_time = datetime.now() - timedelta(days=4, hours=5)
 
-            self.booking1 = add_to_db(booking1).id
-            self.booking2 = add_to_db(booking2).id
-            self.booking3 = add_to_db(booking3).id
-            self.booking4 = add_to_db(booking4).id
-            self.booking5 = add_to_db(booking5).id
+            #self.booking1 = add_to_db(booking1).id
+            ##self.booking2 = add_to_db(booking2).id
+            ##self.booking3 = add_to_db(booking3).id
+            ##self.booking4 = add_to_db(booking4).id
+            ##self.booking5 = add_to_db(booking5).id
             self.booking6 = add_to_db(booking6).id
 
     def test_car_usage(self):
         with self.app.app_context():
             with self.app.test_client() as app:
                 bookings = filter(
-                    lambda b: (b.start_time > datetime.now() - timedelta(weeks=1)) &
+                    lambda b: (b.start_time > datetime.now() - timedelta(
+                        weeks=1)) &
                               (b.start_time < datetime.now()),
                     Booking.query.all())
                 bookings = [b for b in bookings]
-                xs = [datetime.now() - timedelta(days=x) for x in range(7, 0, -1)]  # hours in a week
+                xs = [datetime.now().replace(hour=0, minute=0) - timedelta(days=x) for x in
+                      range(7, 0, -1)]  # hours in a week
+                print(xs)
                 ys = []
                 for day in xs:
                     day_count = 0
                     end = day + timedelta(days=1)
 
                     for b in bookings:
+                        print(b.start_time)
                         if (b.start_time < day < b.end_time) \
                                 | (day < b.start_time < end) \
                                 | (day < b.start_time < end):
                             day_count += 1
                     ys.append(day_count)
-
+                print(ys)
                 xs = [x.strftime('%d-%m-%y') for x in xs]
+
+                fig, ax = plt.subplots()
+
                 plt.plot(xs, ys)
                 plt.xlabel('Date')
                 plt.ylabel('Active rentals')
