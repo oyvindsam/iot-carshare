@@ -10,6 +10,7 @@ from datetime import datetime
 from ap.socket.transceiver import Transceiver
 from ap.facialRec.facial import Facial
 from ap.scannerQR import ScannerQR
+from agentPi.ap.scannerBlue import ScannerBlue
 
 class Credentials:
 
@@ -23,6 +24,7 @@ class Credentials:
         self.__trans = Transceiver()
         self.__facial = Facial()
         self.__scanQR = ScannerQR()
+        self.__scanBlue = ScannerBlue()
 
     def signIn(self, username, password, carId):
         """
@@ -145,6 +147,36 @@ class Credentials:
                 return res
             else:
                 return {"error": True ,"type" : "eng-login", "msg" : "Invalid QR code format"}
+        else:
+            return {"error": True ,"type" : "eng-login", "msg" : "Current Login Already Exists"}
+
+    def blueSignIn(self, carId):
+        """
+        Bluetooth Signin for Engineers
+
+        Args:
+            None
+
+        Returns:
+            json: Return a json object from the Transciever class with the appropriate result or error based on the QR code scanned
+            ex:
+            {"success": True ,"type" : string, "msg" : string}
+            {"error": True ,"type" : string, "msg" : string}
+        """
+
+        if (self.__user_exists == False):
+            result = self.__scanBlue.search()
+            if "success" in result:
+                data = {"type": "eng-login", "username": result['data'], "dateTime": datetime.now().isoformat(), "car_id": carId}
+                res = self.__trans.send(data)
+                if "success" in res:
+                    self.__user_exists = True
+                    self.__user_username = result['data']
+                    self.__user_type = "engineer"
+                    self.__user_token = res['token']
+                return res
+            else:
+                return {"error": True ,"type" : "eng-login", "msg" : "Could not find the Auth Device"}
         else:
             return {"error": True ,"type" : "eng-login", "msg" : "Current Login Already Exists"}
 
