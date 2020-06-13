@@ -11,6 +11,10 @@
         <input id = "vc" class="vc"  name="voice" type="submit" value="Voice Search"/>
     </form>
 
+    {%for v in vrc%}
+    <input class="form-control search-input" type="text" value={{v.vo}} />
+{% endfor%}
+
     <table data-toggle="table" data-search="true">
         <thead>
         <tr>
