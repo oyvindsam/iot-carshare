@@ -65,6 +65,7 @@ email-validator = "*"
 pyaudio = "*"
 speechrecognition = "*"
 pyzbar = "*"
+pybluez = "*"
 
 [requires]
 python_version = "3.7.3"
