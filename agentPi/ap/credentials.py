@@ -132,7 +132,7 @@ class Credentials:
             {"error": True ,"type" : string, "msg" : string}
         """
 
-        if (self.__user_exists == True):
+        if (self.__user_exists == False):
             result = self.__scanQR.scanQR()
             if result['type'] == "QRCODE":
                 data = {"type": "eng-login", "username": result['data'], "dateTime": datetime.now().isoformat(), "car_id": carId}
