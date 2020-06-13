@@ -11,7 +11,7 @@ from api.models import db, Car, PersonType, CarSchema, CarIssue, \
 
 
 @api_blueprint.route('/admin/car/<int:car_id>/issue', methods=['POST'])
-@role_required(PersonType.ADMIN)
+@role_required([PersonType.ADMIN, PersonType.ENGINEER])
 def issue(car_id: int):
     """
     Endpoint to add/update/delete issue
