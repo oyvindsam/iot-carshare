@@ -7,15 +7,14 @@
 {% endblock %}
 
 {% block content %}
-    <form method="post" action="/admin/car">
-        <input id = "vc" class="vc"  name="voice" type="submit" value="Voice Search"/>
-    </form>
 
-    {%for v in vrc%}
-    <input class="form-control search-input" type="text" value={{v.vo}} />
-{% endfor%}
+    <button id = "vc2" class="vc2"  name="vc2" type="button">vc2</button>
 
-    <table data-toggle="table" data-search="true">
+
+
+
+
+    <table id= "myTable" data-toggle="table" data-search="true">
         <thead>
         <tr>
             <th>Car id</th>
@@ -46,4 +45,6 @@
         </tbody>
     </table>
 {% endblock %}
+
+
 

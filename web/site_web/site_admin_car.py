@@ -51,13 +51,36 @@ def car_list():
         except:
             pass
         print(value)
-        l = {'vo': value}
         car_data = requests.get(f"{api_address}/api/admin/car", headers=session['auth'])
-        return render_template('admin/car-list.html', car_data=car_data.json(), vrc=l)
+        return render_template('admin/car-list.html', car_data=car_data.json(), vrc=value)
     else:
         car_data = requests.get(f"{api_address}/api/admin/car", headers=session['auth'])
 
         return render_template('admin/car-list.html', car_data=car_data.json())
+
+@site_blueprint.route('/admin/carvoice', methods=['GET', 'POST'])
+def car_voice():
+    """
+    Load cars from api and pass to car list view
+    Returns: view
+
+    """
+
+    global value
+    if request.method == 'POST':
+        speech = rc.Recognizer()
+
+        with rc.Microphone() as source:
+            print("Say something!")
+            audio = speech.listen(source)
+
+        try:
+            value = speech.recognize_google(audio)
+        except:
+            pass
+        print(value)
+        return value
+
 
 
 @site_blueprint.route('/admin/car/new', methods=['GET', 'POST'])
