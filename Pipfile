@@ -64,6 +64,7 @@ flask-wtf = "*"
 email-validator = "*"
 pyaudio = "*"
 speechrecognition = "*"
+pyzbar = "*"
 
 [requires]
 python_version = "3.7.3"
