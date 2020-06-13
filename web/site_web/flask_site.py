@@ -5,6 +5,7 @@ import os
 import os.path
 import pickle
 import urllib
+from datetime import datetime
 from urllib.parse import unquote, urlparse, parse_qs
 
 import requests
@@ -23,6 +24,17 @@ api_address = 'http://127.0.0.1:5000'
 @site_blueprint.route('/')
 def index():
     return render_template('index.html')
+
+def fix_datetime(date_str):
+    """
+    Helper method to load formatted datetime string
+    Args:
+        date_str (str): string in correct datetime format
+
+    Returns: datetime
+
+    """
+    return datetime.strptime(date_str, "%Y-%m-%dT%H:%M")
 
 
 # method for the webpage through which the user can book cars
@@ -119,6 +131,10 @@ def timeBook():
     startDateTime = startDateTime + ':00+10:00'
     endDateTime = endDateTime + ':00+10:00'
 
+    # format for api
+    start_time = str(fix_datetime(request.form['bookingstarttime']))
+    end_time = str(fix_datetime(request.form['bookingendtime']))
+
     username = session['person']['username']
     email = session['person']['email']
 
@@ -180,8 +196,8 @@ def timeBook():
         print(google_event_id)
         initload = ({
             'car_id': carid,
-            'start_time': startDateTime,
-            'end_time': endDateTime,
+            'start_time': start_time,
+            'end_time': end_time,
             'google_calendar_id': google_event_id,
         })
 
@@ -242,38 +258,38 @@ def cancelbook():
     of the user to do a DELETE request which updates the bookings with the booking which was cancelled
     """
 
-    calID = request.form['googleid']
     bookingID = request.form['bookingId']
-    usrName = request.form['username']
-    decoder = base64.b64decode(calID+'=').decode('utf-8')
-    decoder = decoder.split()
-    calID = decoder[0]
-    str(bookingID)
-    SCOPES = ["https://www.googleapis.com/auth/calendar"]
-    store = file.Storage('token.json')
-    creds = None
-
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                '../credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
-
-    service = build('calendar', 'v3', credentials=creds)
-    response = service.events().delete(calendarId='primary', eventId = calID).execute()
+    # calID = request.form['googleid']
+    # usrName = request.form['username']
+    # decoder = base64.b64decode(calID+'=').decode('utf-8')
+    # decoder = decoder.split()
+    # calID = decoder[0]
+    # str(bookingID)
+    # SCOPES = ["https://www.googleapis.com/auth/calendar"]
+    # store = file.Storage('token.json')
+    # creds = None
+    #
+    # # The file token.pickle stores the user's access and refresh tokens, and is
+    # # created automatically when the authorization flow completes for the first
+    # # time.
+    #
+    # if os.path.exists('token.pickle'):
+    #     with open('token.pickle', 'rb') as token:
+    #         creds = pickle.load(token)
+    # # If there are no (valid) credentials available, let the user log in.
+    # if not creds or not creds.valid:
+    #     if creds and creds.expired and creds.refresh_token:
+    #         creds.refresh(Request())
+    #     else:
+    #         flow = InstalledAppFlow.from_client_secrets_file(
+    #             '../credentials.json', SCOPES)
+    #         creds = flow.run_local_server(port=0)
+    #     # Save the credentials for the next run
+    #     with open('token.pickle', 'wb') as token:
+    #         pickle.dump(creds, token)
+    #
+    # service = build('calendar', 'v3', credentials=creds)
+    # response = service.events().delete(calendarId='primary', eventId = calID).execute()
     #print(response)
     username = session['person']['username']
     url = f"{api_address}/api/person/{username}/booking/{bookingID}"

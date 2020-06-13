@@ -1,7 +1,8 @@
 import json
 import requests
+import speech_recognition as rc
 
-from flask import render_template, session, redirect
+from flask import render_template, session, redirect, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField
 from wtforms.fields.html5 import IntegerField
@@ -28,15 +29,58 @@ class CarForm(FlaskForm):
     issue_id = IntegerField(default=-1, render_kw={'readonly': True})
 
 
-@site_blueprint.route('/admin/car')
+@site_blueprint.route('/admin/car', methods=['GET', 'POST'])
 def car_list():
     """
     Load cars from api and pass to car list view
     Returns: view
 
     """
-    car_data = requests.get(f"{api_address}/api/admin/car", headers=session['auth'])
-    return render_template('admin/car-list.html', car_data=car_data.json())
+
+    global value
+    if request.method == 'POST':
+        vc = request.form['voice']
+        speech = rc.Recognizer()
+
+        with rc.Microphone() as source:
+            print("Say something!")
+            audio = speech.listen(source)
+
+        try:
+            value = speech.recognize_google(audio)
+        except:
+            pass
+        print(value)
+        car_data = requests.get(f"{api_address}/api/admin/car", headers=session['auth'])
+        return render_template('admin/car-list.html', car_data=car_data.json(), vrc=value)
+    else:
+        car_data = requests.get(f"{api_address}/api/admin/car", headers=session['auth'])
+
+        return render_template('admin/car-list.html', car_data=car_data.json())
+
+@site_blueprint.route('/admin/carvoice', methods=['GET', 'POST'])
+def car_voice():
+    """
+    Load cars from api and pass to car list view
+    Returns: view
+
+    """
+
+    global value
+    if request.method == 'POST':
+        speech = rc.Recognizer()
+
+        with rc.Microphone() as source:
+            print("Say something!")
+            audio = speech.listen(source)
+
+        try:
+            value = speech.recognize_google(audio)
+        except:
+            pass
+        print(value)
+        return value
+
 
 
 
@@ -132,4 +176,3 @@ def car_detail_delete(id):
     """
     response = requests.delete(f"{api_address}/api/admin/car/{id}", headers=session['auth'])
     return redirect('/admin/car')
-

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "050ce624248552b7a469b2542765986b8d67b32c0438c300814fb424dce623da"
+            "sha256": "ee1c7887abe794d961450eac040c4afaf2ea193562d44102e08f867c09b7eeeb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -139,6 +139,14 @@
             ],
             "index": "pypi",
             "version": "==3.3.7.1"
+        },
+        "flask-httpauth": {
+            "hashes": [
+                "sha256:29e0288869a213c7387f0323b6bf2c7191584fb1da8aa024d9af118e5cd70de7",
+                "sha256:9e028e4375039a49031eb9ecc40be4761f0540476040f6eff329a31dabd4d000"
+            ],
+            "index": "pypi",
+            "version": "==4.1.0"
         },
         "flask-jwt-extended": {
             "hashes": [
@@ -567,6 +575,21 @@
             ],
             "version": "==0.2.8"
         },
+        "pyaudio": {
+            "hashes": [
+                "sha256:0d92f6a294565260a282f7c9a0b0d309fc8cc988b5ee5b50645634ab9e2da7f7",
+                "sha256:259bb9c1363be895b4f9a97e320a6017dd06bc540728c1a04eb4a7b6fe75035b",
+                "sha256:2a19bdb8ec1445b4f3e4b7b109e0e4cec1fd1f1ce588592aeb6db0b58d4fb3b0",
+                "sha256:51b558d1b28c68437b53218279110db44f69f3f5dd3d81859f569a4a96962bdc",
+                "sha256:589bfad2c615dd4b5d3757e763019c42ab82f06fba5cae64ec02fd7f5ae407ed",
+                "sha256:8f89075b4844ea94dde0c951c2937581c989fabd4df09bfd3f075035f50955df",
+                "sha256:93bfde30e0b64e63a46f2fd77e85c41fd51182a4a3413d9edfaf9ffaa26efb74",
+                "sha256:cf1543ba50bd44ac0d0ab5c035bb9c3127eb76047ff12235149d9adf86f532b6",
+                "sha256:f78d543a98b730e64621ebf7f3e2868a79ade0a373882ef51c0293455ffa8e6e"
+            ],
+            "index": "pypi",
+            "version": "==0.2.11"
+        },
         "pygments": {
             "hashes": [
                 "sha256:647344a061c249a3b74e230c739f434d7ea4d8b1d5f3721bc0f3558049b38f44",
@@ -632,11 +655,11 @@
         },
         "rsa": {
             "hashes": [
-                "sha256:0ddc7ab19b5781148e405a4de7f1e9929e8c1e015d11a53b81e9a6242ee8e098",
-                "sha256:efaf0c32afee1c136e5cd2e7ceecf2dfc65dac00fb812a1b3b8b72f6fea38dbb"
+                "sha256:109ea5a66744dd859bf16fe904b8d8b627adafb9408753161e766a92e7d681fa",
+                "sha256:23778f5523461cf86ae075f9482a99317f362bca752ae57cb118044066f4026f"
             ],
             "markers": "python_version >= '3'",
-            "version": "==4.4.1"
+            "version": "==4.6"
         },
         "six": {
             "hashes": [
@@ -653,6 +676,13 @@
             ],
             "index": "pypi",
             "version": "==2.0.0"
+        },
+        "speechrecognition": {
+            "hashes": [
+                "sha256:4d8f73a0c05ec70331c3bacaa89ecc06dfa8d9aba0899276664cda06ab597e8e"
+            ],
+            "index": "pypi",
+            "version": "==3.8.1"
         },
         "sphinx": {
             "hashes": [

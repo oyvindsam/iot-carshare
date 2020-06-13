@@ -67,6 +67,11 @@ def setup_clean_db(PRODUCTION_DB=False):
         db.create_all()
 
 
+app = create_app(CONFIG_FILE_DEV)
+with app.app_context():
+    populate_db(app)
+
+
 #setup_clean_db(PRODUCTION_DB=False)
 
 # pass in a valid app context

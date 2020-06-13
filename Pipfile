@@ -62,6 +62,8 @@ flask-bootstrap = "*"
 matplotlib = "*"
 flask-wtf = "*"
 email-validator = "*"
+pyaudio = "*"
+speechrecognition = "*"
 
 [requires]
 python_version = "3.7.3"
