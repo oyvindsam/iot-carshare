@@ -14,7 +14,7 @@ from site_web import site_blueprint
 CONFIG_FILE_PROD = 'carshare_config_local.ProductionConfig'
 CONFIG_FILE_DEV = 'carshare_config_local.DevelopmentConfig'
 
-api_address = 'http://10.0.0.77:5000'
+api_address = 'http://127.0.0.1:5000'
 
 
 def create_app(config=None):
@@ -54,6 +54,7 @@ def create_app(config=None):
 
 # if __name__ == '__main__':
 #     # create app from config
+#     # run with python3 -m flask run
 #     app = create_app(CONFIG_FILE_DEV)
 #     with app.app_context():
 #         populate_db(app)
