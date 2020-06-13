@@ -86,7 +86,7 @@ def Login(username, password, carId):
     print(f"Login - {username} [Car ID({carId})]")
 
     postData = {'username': username, 'password': password}
-    response = requests.post(f"{IPADD}/api/auth/login", json=json.dumps(postData))
+    response = requests.post(f"http://{IPADD}:5000/api/auth/login", json=postData)
     if response.status_code == 200:
         print("Successful Login")
         data = response.json()
@@ -117,7 +117,7 @@ def FaceLogin(username, carId):
     print(f"Facial Recognition Login - {username} [Car ID({carId})]")
 
     postData = {'username': username}
-    response = requests.post(f"{IPADD}/api/auth/mp/login", json=json.dumps(postData))
+    response = requests.post(f"http://{IPADD}:5000/api/auth/mp/login", json=postData)
     if response.status_code == 200:
         print("Successful Login")
         data = response.json()
@@ -145,18 +145,19 @@ def EngLogin(username, carId):
         {"success": True ,"type" : string, "msg" : string}
         {"error": True ,"type" : string, "msg" : string}
     """
-    print(f"Facial Recognition Login - {username} [Car ID({carId})]")
+    print(f"QR Engineer Login - {username} [Car ID({carId})]")
 
     postData = {'username': username}
-    response = requests.post(f"{IPADD}/api/auth/mp/login", json=json.dumps(postData))
+    response = requests.post(f"http://{IPADD}:5000/api/auth/mp/login", json=postData)
     if response.status_code == 200:
         print("Successful Login")
         data = response.json()
+        print()
         if data.get('type')!="ENGINEER":
             return {"error": True, "type": "eng-login", "msg": "User not an Engineer"}
 
         token = {'Authorization': 'Bearer ' + data.get('access_token')}
-        repairRes = confirmRepair(username, carId, token)
+        repairRes = confirmRepair(carId, token)
         if "success" in repairRes:
             return {"success": True, "type": "eng-login", "msg": f"Logged in Engineer {username}", "token": token}
         if "error" in repairRes:
@@ -209,7 +210,9 @@ def engComp(username, carId, token):
     """
     print(f"Logout - {username} [Car ID({carId})]")
 
-    response = requests.put(f"http://{IPADD}:5000/api/person/{username}/booking", headers=token)
+    issue = {'issue': ""}
+
+    response = requests.post(f"http://{IPADD}:5000/api/admin/car/{carId}/issue", headers=token, json=json.dumps(issue))
     if response.status_code == 200:
         print("Succesfully Completed Service")
         return {"success": True, "type": "eng-comp", "msg": f"Logged out Engineer {username}"}
@@ -268,12 +271,12 @@ def confirmRepair(carId, token):
         {"error": True}
     """
 
-    response = requests.get(f"http://{IPADD}:5000/api/car", headers=token)
+    response = requests.get(f"http://{IPADD}:5000/api/engineer/car", headers=token)
     if response.status_code != 200:
         return {"error": True}
-    carData = json.loads(response.json())
+    carData = response.json()
     for c in carData:
-        if c['status'] == "Not active" and c['id'] == carId:
+        if c['car']['id'] == carId:
             return {"success": True}
     
     return {'error': True}
