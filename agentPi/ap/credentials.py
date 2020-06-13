@@ -10,7 +10,7 @@ from datetime import datetime
 from ap.socket.transceiver import Transceiver
 from ap.facialRec.facial import Facial
 from ap.scannerQR import ScannerQR
-from agentPi.ap.scannerBlue import ScannerBlue
+from ap.scannerBlue import ScannerBlue
 
 class Credentials:
 

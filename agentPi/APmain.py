@@ -128,7 +128,7 @@ class APMain:
         if (opt == "1"):
             APMain.credsClass.qrSignIn(APMain.car_id)
         elif (opt == "2"):
-            print("To be done")
+            APMain.credsClass.blueSignIn(APMain.car_id)
         elif (opt == "3"):
             return
         else:
