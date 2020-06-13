@@ -5,6 +5,7 @@ import os
 import os.path
 import pickle
 import urllib
+from datetime import datetime
 from urllib.parse import unquote, urlparse, parse_qs
 
 import requests
@@ -23,6 +24,17 @@ api_address = 'http://127.0.0.1:5000'
 @site_blueprint.route('/')
 def index():
     return render_template('index.html')
+
+def fix_datetime(date_str):
+    """
+    Helper method to load formatted datetime string
+    Args:
+        date_str (str): string in correct datetime format
+
+    Returns: datetime
+
+    """
+    return datetime.strptime(date_str, "%Y-%m-%dT%H:%M")
 
 
 # method for the webpage through which the user can book cars
@@ -119,6 +131,10 @@ def timeBook():
     startDateTime = startDateTime + ':00+10:00'
     endDateTime = endDateTime + ':00+10:00'
 
+    # format for api
+    start_time = str(fix_datetime(request.form['bookingstarttime']))
+    end_time = str(fix_datetime(request.form['bookingendtime']))
+
     username = session['person']['username']
     email = session['person']['email']
 
@@ -180,8 +196,8 @@ def timeBook():
         print(google_event_id)
         initload = ({
             'car_id': carid,
-            'start_time': startDateTime,
-            'end_time': endDateTime,
+            'start_time': start_time,
+            'end_time': end_time,
             'google_calendar_id': google_event_id,
         })
 
