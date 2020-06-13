@@ -1,0 +1,81 @@
+-i https://pypi.org/simple
+alabaster==0.7.12
+babel==2.8.0
+cachetools==4.1.0; python_version ~= '3.5'
+certifi==2020.4.5.1
+chardet==3.0.4
+click==7.1.2
+cycler==0.10.0
+dlib==19.19.0
+dnspython==1.16.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+docutils==0.16
+dominate==2.5.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+email-validator==1.1.1
+face-recognition-models==0.3.0
+face-recognition==1.3.0
+flask-bootstrap==3.3.7.1
+flask-httpauth==4.1.0
+flask-jwt-extended==3.24.1
+flask-marshmallow==0.12.0
+flask-mysql==1.5.1
+flask-mysqldb==0.2.0
+flask-sqlalchemy==2.4.1
+flask-wtf==0.14.3
+flask==1.1.2
+google-api-core==1.20.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+google-api-python-client==1.9.3
+google-auth-httplib2==0.0.3
+google-auth-oauthlib==0.4.1
+google-auth==1.17.2; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+googleapis-common-protos==1.52.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+httplib2==0.18.1
+idna==2.9
+imagesize==1.2.0
+imutils==0.5.3
+itsdangerous==1.1.0
+jinja2==2.11.2
+kiwisolver==1.2.0; python_version >= '3.6'
+markupsafe==1.1.1
+marshmallow-sqlalchemy==0.23.0
+marshmallow==3.6.0
+matplotlib==3.2.1
+mysqlclient==1.4.6
+numpy==1.18.4
+oauth2client==4.1.3
+oauthlib==3.1.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+packaging==20.4; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+passlib==1.7.2
+pillow==7.1.2
+pockets==0.9.1
+protobuf==3.12.2
+pyasn1-modules==0.2.8
+pyasn1==0.4.8
+pyaudio==0.2.11
+pybluez==0.23
+pygments==2.6.1
+pyjwt==1.7.1
+pymysql==0.9.3
+pyparsing==2.4.7
+python-dateutil==2.8.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+pytz==2020.1
+pyzbar==0.1.8
+requests-oauthlib==1.3.0
+requests==2.23.0
+rsa==4.6; python_version >= '3'
+six==1.15.0
+snowballstemmer==2.0.0
+speechrecognition==3.8.1
+sphinx==3.0.3
+sphinxcontrib-applehelp==1.0.2
+sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-htmlhelp==1.0.3
+sphinxcontrib-jsmath==1.0.1
+sphinxcontrib-napoleon==0.7
+sphinxcontrib-qthelp==1.0.3
+sphinxcontrib-serializinghtml==1.1.4
+sqlalchemy==1.3.17
+uritemplate==3.0.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+urllib3==1.25.9
+visitor==0.1.3
+werkzeug==1.0.1
+wtforms==2.3.1
