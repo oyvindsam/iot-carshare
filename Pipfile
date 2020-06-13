@@ -62,6 +62,7 @@ matplotlib = "*"
 flask-wtf = "*"
 email-validator = "*"
 pyzbar = "*"
+pybluez = "*"
 
 [requires]
 python_version = "3"
