@@ -5,11 +5,16 @@ Aditya Raj (s3730562):
 		- Google maps Integration
 
 Oyvind Samuelsen (s3801950):
-	- Statistical data representation with google cloud studio
-	- Front-end + back-end:
+	- Manager statistics charts with google cloud studio, pyplot
+	- Front-end + back-end + api:
 		- Manager
+		    - view charts
 		- Engineer
+		    - list cars with issues
 		- Admin
+		    - list bookings, cars, users
+		    - add new bookings, cars (with issue), users
+	- Authorization based on user type
 
 Samit Sharma (s3752136):
 	- Engineer Authentication
